@@ -1,0 +1,29 @@
+{
+  "name": "claudiajs-apibuilder-aws",
+  "version": "1.0.0",
+  "description": "Deploy Node.js project to AWS Lambda to recover data from a database with user authentication included",
+  "main": "main.js",
+  "scripts": {
+    "deploy": "claudia create --profile claudia --role claudia-lambda --version dev --region eu-west-1 --api-module app --timeout 30 --memory 256 --set-env-from-json config-env.json",
+    "update": "claudia update --profile claudia --role claudia-lambda --version dev --region eu-west-1 --api-module app --set-env-from-json config-env.json",
+    "release": "claudia set-version --profile claudia --role claudia-lambda --version production --set-env-from-json config-env.json",
+    "start": "ntl"
+  },
+  "keywords": [
+    "claudia",
+    "lambda",
+    "api-gateway",
+    "aws"
+  ],
+  "author": "Daniel Garcia",
+  "license": "ISC",
+  "devDependencies": {
+    "claudia": "^2.13.0",
+    "ntl": "^1.2.0"
+  },
+  "dependencies": {
+    "claudia-api-builder": "^2.5.1",
+    "jsonwebtoken": "^7.4.1",
+    "mysql": "^2.13.0"
+  }
+}

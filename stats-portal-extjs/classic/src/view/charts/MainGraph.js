@@ -44,7 +44,7 @@ Ext.define('PortalStats.view.charts.MainGraph', {
             docked: 'bottom'
         },
         captions: {
-            title: 'My Oxford English global stats'
+            title: 'User stats'
         },
         axes: [{
             type: 'numeric',

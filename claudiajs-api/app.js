@@ -117,7 +117,7 @@ api.get('/', function (request) {
 							return reject(err);
 						}
 						console.log('connected as id ' + connection.threadId);
-						connection.query('SELECT * FROM summary', function (error, results, fields) {
+						connection.query('SELECT * FROM users', function (error, results, fields) {
 							if (error) {
 								console.log('Error making query: ', error);
 								reject(error);

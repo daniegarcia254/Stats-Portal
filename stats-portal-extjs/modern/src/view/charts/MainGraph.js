@@ -51,7 +51,7 @@ Ext.define('PortalStats.view.charts.MainGraph', {
 			axes: [
 				{
 					type: 'numeric',
-					fields: ['active_users','moe_licenses','language_no_es','ftfe','phone_classes'],
+					fields: ['active','pending','suspended','retired'],
 					id: 'main-graph-y-axis',
 					minimum: 0,
 					grid: true,

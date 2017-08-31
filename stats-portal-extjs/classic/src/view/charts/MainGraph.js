@@ -49,7 +49,7 @@ Ext.define('PortalStats.view.charts.MainGraph', {
         axes: [{
             type: 'numeric',
             position: 'left',
-            fields: ['active_users', 'moe_licenses', 'language_no_es','ftfe','phone_classes'],
+            fields: ['active', 'pending', 'suspended','retired'],
             title: 'Number of users',
             titleMargin: 40,
             grid: true,

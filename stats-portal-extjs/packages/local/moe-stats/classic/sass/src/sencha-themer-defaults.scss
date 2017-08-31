@@ -1,0 +1,61 @@
+// tag field color
+
+.#{$prefix}tagfield-empty-input,
+.#{$prefix}tagfield-input-field {
+  color: $tag_field_color;
+}
+
+@mixin x-placeholder-text-color($color) {
+  &::-webkit-input-placeholder {
+    color: $color;
+  }
+
+  &:-moz-placeholder { /* Firefox 18- */
+    color: $color;
+  }
+
+  &::-moz-placeholder {  /* Firefox 19+ */
+    color: $color;
+  }
+
+  &:-ms-input-placeholder {
+    color: $color;
+  }
+}
+
+// fix bug where placeholder text color doesn't get $form-field-empty-color, $form-text-field-empty-color
+.#{$prefix}form-field {
+  @include x-placeholder-text-color($form-field-empty-color);
+}
+.#{$prefix}form-field.#{$prefix}form-text {
+  @include x-placeholder-text-color($form-text-field-empty-color);
+}
+
+// links
+a {
+  color: $link_color;
+  text-decoration: $link_text_decoration;
+
+  &:visited, &.#{$prefix}sencha-themer-visited {
+    color: $link_visited_color;
+    text-decoration: $link_visited_text_decoration;
+  }
+
+  &:hover, &.#{$prefix}sencha-themer-visited:hover {
+    color: $link_hover_color;
+    text-decoration: $link_hover_text_decoration;
+  }
+
+  &:active, &.#{$prefix}sencha-themer-visited:active {
+    color: $link_active_color;
+    text-decoration: $link_active_text_decoration;
+  }
+
+  &.#{$prefix}btn, &:hover.#{$prefix}btn, &:active.#{$prefix}btn {
+    text-decoration: none; // keep buttons from getting a text-decoration on hover
+  }
+}
+
+.#{$prefix}grid-cell-inner-row-numberer {
+  color: $grid_column_header_color
+}

@@ -1,0 +1,13 @@
+/**************************************************************************** 
+  MAIN GRAPH GRID
+****************************************************************************/
+#main-grid {
+	.x-column-header-over,
+	.x-column-header-open {
+		background-color: $base-light-color;
+	}
+	.x-column-header-trigger {
+		background-color: $base-light-color;
+		border-left: 1px solid $base-color;
+	}
+}

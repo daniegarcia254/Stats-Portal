@@ -1,0 +1,21 @@
+/**************************************************************************** 
+  LOGIN SCREEN
+****************************************************************************/
+#auth-login {
+    background-image: $auth-background-image;
+    padding: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+
+	.x-formpanel{
+		border-radius: 30px;
+	}
+
+    #login-form-error-label {
+		text-align: center;
+        color: $auth-login-error-color;
+        font-weight: bold;
+        font-size: 15px;
+    }
+}

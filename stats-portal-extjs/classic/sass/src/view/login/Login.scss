@@ -1,0 +1,25 @@
+/**************************************************************************** 
+  LOGIN SCREEN
+****************************************************************************/
+#auth-login-body {
+    background-image: $auth-background-image;
+    padding: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+
+    .x-panel-body-default{
+        background: transparent !important;
+    }
+
+    .auth-middle-panel {
+        background-color: $auth-background-color-middle;
+        border-radius: 30px;
+    }
+
+    #login-form-error-label {
+        color: $auth-login-error-color;
+        font-weight: bold;
+        font-size: 15px;
+    }
+}

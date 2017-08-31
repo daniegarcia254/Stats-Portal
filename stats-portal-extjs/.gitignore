@@ -1,0 +1,16 @@
+siesta/
+bootstrap.json
+bootstrap.css
+bootstrap.js
+classic.json
+classic.jsonp
+modern.json
+modern.jsonp
+ext/
+build/
+ui_specs/node_modules/
+karma/coverage
+karma_dir/
+node_modules/
+.sencha/
+/.vscode/

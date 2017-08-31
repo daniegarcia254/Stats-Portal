@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ ! -f /usr/src/app/back/claudia.json ]; then
+if [ ! -f claudia.json ]; then
 	npm run deploy
 fi
 

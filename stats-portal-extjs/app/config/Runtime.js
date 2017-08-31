@@ -12,7 +12,7 @@ Ext.define('PortalStats.config.Runtime',{
             dictionary: 'resources/dictionary.json'
         },
         months: ['January','February','March','April','May','June','July','August','September','October','November','December'],
-        back: 'API_GATEWAY_URL',
+        back: 'API_GATEWAY_URL/',
         token: null,
         warmUpTime: 300000,
         dictionary: null,

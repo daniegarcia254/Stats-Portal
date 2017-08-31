@@ -3,3 +3,4 @@ node_modules/
 credentials*.csv
 /.vscode/
 claudia.json
+api-url.json

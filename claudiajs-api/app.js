@@ -9,6 +9,7 @@ module.exports = api;
 
 // CORS configuration
 api.corsHeaders('Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Api-Version,X-Requested-With');
+api.corsOrigin('*');
 api.corsMaxAge(60);
 
 // Warm up lambda function
@@ -94,8 +95,9 @@ var verifyToken = function(request, callback){
 }
 
 // Return database data
-api.get('/', function (request) {
+api.get('/stats', function (request) {
 	var connection;
+	console.log("REQUEST", request);
 	return new Promise((resolve, reject) => {
 		try {
 			verifyToken(request, function(err){
@@ -105,9 +107,10 @@ api.get('/', function (request) {
 					var mysql = require('mysql');
 					connection = mysql.createConnection({
 						host: process.env.MYSQL_HOST,
-					  	user     : process.env.MYSQL_USER,
-					  	password : process.env.MYSQL_PWD,
-					  	database : process.env.MYSQL_DB,
+						port: parseInt(process.env.MYSQL_PORT) || 3306,
+					  	user: process.env.MYSQL_USER,
+					  	password: process.env.MYSQL_PWD,
+					  	database: process.env.MYSQL_DB,
 					  	insecureAuth: true
 					});
 

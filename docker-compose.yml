@@ -16,6 +16,10 @@ services:
     image: mysql:5.5
     container_name: stats_db
     privileged: true
+    expose:
+      - "3306"
+    ports:
+      - "10004:3306"
     volumes:
       - ./claudiajs-api/db-dump:/docker-entrypoint-initdb.d
     env_file:

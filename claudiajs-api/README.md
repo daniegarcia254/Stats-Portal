@@ -1,4 +1,4 @@
-# claudiajs-apibuilder-aws
+# ClaudiaJs-API
 
 Use (Claudia.js)[https://claudiajs.com/] and (Claudia API Builder)[https://claudiajs.com/claudia-api-builder.html] to create and deploy an AWS API Gateway that makes use of Lambda functions to query data from a database (inside or outside AWS). It also use JWT for user authentication.
 
@@ -17,8 +17,18 @@ aws_secret_access_key = XXXXXXXXXXXXXXXX
 
 You can also use ENV VARS to pass these values.
 
-##### Database connection configuration
-Just put the config values to connect to the database (host, database, user and password) in the file (config-env.json)[config-env.json]
+##### Configuration
+Just put the config values to connect to the database (host, database, user and password) in the file (config-env.json)[config-env.json], as well as the following values:
+
+- *MYSQL_HOST*: database host (default: "danigarcia-dev.com")
+- *MYSQL_PORT*: database port (default: "10004")
+- *MYSQL_DB*: database  (default: "stats")
+- *MYSQL_USER*: database user (default: "stats")
+- *MYSQL_PWD*: database pwd for user (default: "stats")
+- *MASTER_USER*: username for the user that will be allowed to login (default: "stats")
+- *MASTER_PWD*: password for the user (default: "st4ts")
+- *SESSION_DURATION*: session duration for the JWT (default: "86400" )
+- *SESSION_SECRET*: secrete key fot the JWT tokens generation
 
 ### Create
 Create the initial lambda function and the API Gateway that makes use of it. (dev version)

@@ -17,6 +17,8 @@ aws_secret_access_key = XXXXXXXXXXXXXXXX
 
 You can also use ENV VARS to pass these values.
 
+**NOTE:** If you're using the _Docker_ option to deploy the app, just put your AWS credentias in the [aws-credentials](aws-credentials) file.
+
 ##### Configuration
 Just put the config values to connect to the database (host, database, user and password) in the file [config-env.json](config-env.json), as well as the following values:
 

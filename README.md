@@ -46,10 +46,6 @@ Just put the config values to connect to the database (host, database, user and 
 - MASTER_PWD: password for the user (default: "st4ts")
 - SESSION_DURATION: session duration for the JWT (default: "86400" )
 - SESSION_SECRET: secrete key fot the JWT tokens generation.
-    
-#### Front-end
-
-The front-end needs no configuration
 
 ## Installation
 
@@ -57,7 +53,8 @@ Once you have everything configured, the easiest way to build and deploy the app
 ```
 docker-compose up && docker-compose build;
 ```
-The _Docker_ container will already include all the necessary requirements: _Sencha CMD 6.5.1_, _Ext JS 6.5.1_, _NodeJS_, _Apache Server_.
+The _Docker_ container will already include all the necessary requirements: 
+- _Sencha CMD 6.5.1_, _Ext JS 6.5.1_, _NodeJS_, _Apache Server_.
 
 Two containers will be created:
 - *stats_portal*: where the web application will be available through Apache Server

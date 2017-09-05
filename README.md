@@ -53,7 +53,7 @@ The front-end needs no configuration
 
 ## Installation
 
-The easiest way to build and deploy the application is by using _Docker_:
+Once you have everything configured, the easiest way to build and deploy the application is by using _Docker_:
 ```
 docker-compose up && docker-compose build;
 ```

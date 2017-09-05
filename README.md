@@ -1,39 +1,45 @@
-# claudiajs-apibuilder-aws
+# Stats Portal
 
-Use (Claudia.js)[https://claudiajs.com/] and (Claudia API Builder)[https://claudiajs.com/claudia-api-builder.html] to create and deploy an AWS API Gateway that makes use of Lambda functions to query data from a database (inside or outside AWS). It also use JWT for user authentication.
+Responisve web portal with:
+- Login screen
+- Main screen with graph and grid of user statistics
 
-The system is prepared to work with a single master user (username and password set on enviroment vars), but it would be very easy to add a register method to create new users and check it against the database.
+The portal has been developed using [Ext JS 6.5.1](http://docs.sencha.com/extjs/6.5.1/) on the front-end and with [Claudia.js](https://claudiajs.com/) in the backend. The user will be able to login in the portal and see some user statistics represented in a graph and a grid.
 
-### Configuration
-Make sure that claudia.js is correctly installed and configured following (these instructions)[https://claudiajs.com/tutorials/installing.html]
-##### AWS IAM User credentials
-The easiest way is to have a file in your home dir with the credentials stored (username, access key ID and secret access key):
-_**/home/{USER}/.aws/credentials**_
-```
-[claudia]
-aws_access_key_id = XXXXXXXXXXXXXXX
-aws_secret_access_key = XXXXXXXXXXXXXXXX
-```
+## Configuration
 
-You can also use ENV VARS to pass these values.
+#### Docker && Database
 
-##### Database connection configuration
-Just put the config values to connect to the database (host, database, user and password) in the file (config-env.json)[config-env.json]
+- _**[docker-compose.yml](docker-compose.yml)**_:
+    - Web app default port (Apache Server): 10001
+    - Database default port: 10004
+    
+- _**[mysql-environment.yml](mysql-environment.yml)**_: database configuration where the user stats will be stored
+    - MYSQL_ROOT_PASSWORD   --> MySQL Server ROOT user default password
+    - MYSQL_USER            --> MySQL username (default "stats")
+    - MYSQL_PASSWORD        --> MySQL username (default "stats")
+    - MYSQL_DATABASE        --> MySQL username (default "stats")
+    
+- _**[claudiajs-api/db-dump](claudiajs-api/db-dump)**_: data to create and populate the users' statistics database
 
-### Create
-Create the initial lambda function and the API Gateway that makes use of it. (dev version)
-```
-npm run create
-```
+#### Back-end
 
-### Update
-Deploy a new version of the Lambda function using project files, update any associated web APIs. (dev version)
-```
-npm run update
-```
+[See here](claudiajs-api/).
+    
+#### Front-end
 
-### Release
-Updates the lambda alias/api stage to point to the production version
+The front-end needs no configuration
+
+## Installation
+
+The easiest way to build and deploy the application is by using _Docker_:
 ```
-npm run release
+docker-compose up && docker-compose build;
 ```
+The _Docker_ container will already include all the necessary requirements: _Sencha CMD 6.5.1_, _Ext JS 6.5.1_, _NodeJS_, _Apache Server_.
+
+Two containers will be created:
+- *stats_portal*: where the web application will be available through Apache Server
+- *stats_db*: where the database will be hosted
+
+**NOTE**: the backend, with _ClaudiaJS_, will be deployed in a _AWS API Gateway_.

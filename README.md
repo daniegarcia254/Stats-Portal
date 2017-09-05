@@ -37,15 +37,15 @@ aws_secret_access_key = XXXXXXXXXXXXXXXX
 ##### Other
 Just put the config values to connect to the database (host, database, user and password) in the file [claudia-js/config-env.json](claudia-js/config-env.json), as well as the following values:
 
-MYSQL_HOST: database host (default: "danigarcia-dev.com")
-MYSQL_PORT: database port (default: "10004")
-MYSQL_DB: database (default: "stats")
-MYSQL_USER: database user (default: "stats")
-MYSQL_PWD: database pwd for user (default: "stats")
-MASTER_USER: username for the user that will be allowed to login (default: "stats")
-MASTER_PWD: password for the user (default: "st4ts")
-SESSION_DURATION: session duration for the JWT (default: "86400" )
-SESSION_SECRET: secrete key fot the JWT tokens generation.
+- MYSQL_HOST: database host (default: "danigarcia-dev.com")
+- MYSQL_PORT: database port (default: "10004")
+- MYSQL_DB: database (default: "stats")
+- MYSQL_USER: database user (default: "stats")
+- MYSQL_PWD: database pwd for user (default: "stats")
+- MASTER_USER: username for the user that will be allowed to login (default: "stats")
+- MASTER_PWD: password for the user (default: "st4ts")
+- SESSION_DURATION: session duration for the JWT (default: "86400" )
+- SESSION_SECRET: secrete key fot the JWT tokens generation.
     
 #### Front-end
 

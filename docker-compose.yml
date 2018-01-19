@@ -2,6 +2,7 @@ version: '3'
 services:
   stats_portal:
     container_name: stats_portal
+    restart: always
     links:
       - stats_db
     build:
@@ -15,6 +16,7 @@ services:
   stats_db:
     image: mysql:5.5
     container_name: stats_db
+    restart: always
     privileged: true
     expose:
       - "3306"

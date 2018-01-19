@@ -1,6 +1,6 @@
 # Stats Portal
 
-Responisve web portal with:
+Responsive web portal with:
 - Login screen
 - Main screen with graph and grid of user statistics
 

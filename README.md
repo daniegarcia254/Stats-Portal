@@ -4,7 +4,7 @@ Universal responsive web portal with:
 - Login screen
 - Main screen with graph and grid of user statistics
 
-The portal has been developed using [Ext JS 6.5.1](http://docs.sencha.com/extjs/6.5.1/) on the front-end and with [Claudia.js](https://claudiajs.com/) in the backend. The user will be able to login in the portal and see some user statistics represented in a graph and a grid.
+The portal has been developed using [Ext JS 6.5.1](http://docs.sencha.com/extjs/6.5.1/) on the client and with [Claudia.js](https://claudiajs.com/) in the server. The user will be able to login in the portal and see some user statistics represented in a graph and a grid.
 
 ## Configuration
 
@@ -25,7 +25,7 @@ The portal has been developed using [Ext JS 6.5.1](http://docs.sencha.com/extjs/
 #### Back-end
 
 ##### AWS Credentials
-To allow the deploy of the backend with _ClaudiaJS_ you will need and AWS account correctly configured. Make sure that claudia.js is correctly installed and configured following these [instructions](https://claudiajs.com/tutorials/installing.html).
+To deploy the server with  _ClaudiaJS_ you will need and AWS account correctly configured. Make sure that claudia.js is correctly installed and configured following these [instructions](https://claudiajs.com/tutorials/installing.html).
 
 Once you have everything configured, just put your AWS user credentials in the [claudia-js/aws-credentials](claudia-js/aws-credentials) file with the following format:
 ```
@@ -60,4 +60,4 @@ Two containers will be created:
 - *stats_portal*: where the web application will be available through Apache Server
 - *stats_db*: where the database will be hosted
 
-**NOTE**: the backend, with _ClaudiaJS_, will be deployed in a _AWS API Gateway_.
+**NOTE**: the server, with _ClaudiaJS_, will be deployed in a _AWS API Gateway_.

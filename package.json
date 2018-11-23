@@ -1,0 +1,19 @@
+{
+  "name": "stats-portal",
+  "version": "1.0.0",
+  "description": "ExtJS 6.6.0 Community Edition web application",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/daniegarcia254/Stats-Portal.git"
+  },
+  "author": "Daniel Garcia",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/daniegarcia254/Stats-Portal/issues"
+  },
+  "homepage": "https://github.com/daniegarcia254/Stats-Portal#readme"
+}

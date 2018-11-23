@@ -1,0 +1,17 @@
+{
+  "name": "Stats-ExtJS-Web",
+  "description": "Daniel Garcia: ExtJS 6.6.0 Community Edition web app with login, grids and charts",
+  "repository": "https://github.com/daniegarcia254/Stats-Portal",
+  "keywords": ["php", "javascript", "ExtJS", "claudiajs", "heroku", "dgarcia", "danigarciadev", "daniel", "dgarcia"],
+  "addons": [
+    "jawsdb"
+  ],
+  "buildpacks": [
+    {
+      "url": "heroku/php"
+    },
+    {
+      "url": "heroku/nodejs"
+    }
+  ]
+}

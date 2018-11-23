@@ -7,7 +7,6 @@ classic.jsonp
 modern.json
 modern.jsonp
 ext/
-build/
 ui_specs/node_modules/
 karma/coverage
 karma_dir/

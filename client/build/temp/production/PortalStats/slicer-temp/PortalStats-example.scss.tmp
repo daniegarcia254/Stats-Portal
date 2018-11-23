@@ -1,5 +1,5 @@
 $app-name:  dynamic( 'PortalStats' );
-$image-search-path: '/home/dgarcia/Devel/dgarcia/Stats-Portal/client/build/testing/PortalStats/classic/resources';
+$image-search-path: '/home/dgarcia/Devel/dgarcia/Stats-Portal/client/build/production/PortalStats/classic/resources';
 $theme-name:  dynamic( 'moe-stats' );
 $include-ext-abstractcomponent: dynamic(true);;
 $include-ext-abstractcontainer: dynamic(true);;
@@ -675,7 +675,6 @@ $include-ext-grid-rowcontext: dynamic(true);;
 $include-ext-grid-roweditor: dynamic(true);;
 $include-ext-grid-roweditorbuttons: dynamic(true);;
 $include-ext-grid-rownumberer: dynamic(true);;
-$include-ext-grid-scroller: dynamic(true);;
 $include-ext-grid-templatecolumn: dynamic(true);;
 $include-ext-grid-view: dynamic(true);;
 $include-ext-grid-viewdropzone: dynamic(true);;

@@ -97,7 +97,7 @@ var verifyToken = function(request, callback){
 // Return database data
 api.get('/stats', function (request) {
 	var connection;
-	console.log("REQUEST", request);
+	console.log("REQUEST: ", request);
 	return new Promise((resolve, reject) => {
 		try {
 			verifyToken(request, function(err){

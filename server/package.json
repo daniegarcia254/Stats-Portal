@@ -17,11 +17,9 @@
   ],
   "author": "Daniel Garcia",
   "license": "ISC",
-  "devDependencies": {
-    "claudia": "^2.13.0",
-    "ntl": "^1.2.0"
-  },
   "dependencies": {
+    "claudia": "^2.13.0",
+    "ntl": "^1.2.0",
     "claudia-api-builder": "^2.5.1",
     "jsonwebtoken": "^7.4.1",
     "mysql": "^2.13.0"

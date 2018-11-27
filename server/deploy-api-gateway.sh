@@ -5,4 +5,4 @@ if [ ! -f claudia.json ]; then
 fi
 
 npm run update
-npm run release > api-url.json
+npm run release

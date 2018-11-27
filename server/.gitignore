@@ -2,5 +2,4 @@ node_modules/
 .aws
 credentials*.csv
 /.vscode/
-claudia.json
 api-url.json

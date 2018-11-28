@@ -1,2 +1,2 @@
 web: vendor/bin/heroku-php-apache2 client/build/testing/PortalStats/
-deployapigateway: cd server; npm install; cd ..; chmod -R 0777 server/; cd server; mkdir /app/.aws; cp aws-credentials /app/.aws/credentials; ls -alt app.js; npm run update; npm run release
+deployapigateway: npm install -g claudia; cd server; npm install; cd ..; chmod -R 0777 server/; cd server; mkdir /app/.aws; cp aws-credentials /app/.aws/credentials; ls -alt app.js; npm run update; npm run release

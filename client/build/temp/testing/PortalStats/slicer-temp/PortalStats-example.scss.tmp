@@ -1,5 +1,5 @@
 $app-name:  dynamic( 'PortalStats' );
-$image-search-path: '/home/dgarcia/Devel/dgarcia/Stats-Portal/client/build/testing/PortalStats/classic/resources';
+$image-search-path: 'C:/Users/Daniel/Devel/StatsPortal/client/build/testing/PortalStats/classic/resources';
 $theme-name:  dynamic( 'moe-stats' );
 $include-ext-abstractcomponent: dynamic(true);;
 $include-ext-abstractcontainer: dynamic(true);;
@@ -1081,6 +1081,7 @@ $include-ext-util-taprepeater: dynamic(true);;
 $include-ext-util-taskmanager: dynamic(true);;
 $include-ext-util-taskrunner: dynamic(true);;
 $include-ext-util-textmetrics: dynamic(true);;
+$include-ext-util-tsvdecoder: dynamic(true);;
 $include-ext-util-xtemplatecompiler: dynamic(true);;
 $include-ext-util-xtemplateparser: dynamic(true);;
 $include-ext-util-paintmonitor-abstract: dynamic(true);;
@@ -1705,7 +1706,7 @@ $relative-image-path-for-uis: $charts-resource-path;
 @import '../../../../../ext/packages/charts/classic/sass/src/chart/legend/Legend';
 @import '../../../../../ext/packages/charts/classic/sass/src/chart/AbstractChart';
 
-/* including scss file adjacent to ../../../../../app/Application.js */
+/* including scss file adjacent to ..\..\..\..\..\app\Application.js */
 $default-resource-root: '' !default;
 $default-resource-path: 'images' !default;
 $current-package: false;

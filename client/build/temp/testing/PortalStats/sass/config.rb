@@ -1,2 +1,2 @@
-Compass.add_project_configuration('../../../../../sass/config.rb')
-cache_path = '/home/dgarcia/Devel/dgarcia/Stats-Portal/client/build/.sass-cache'
+Compass.add_project_configuration('..\..\..\..\..\sass\config.rb')
+cache_path = 'C:\Users\Daniel\Devel\StatsPortal\client/build/.sass-cache'

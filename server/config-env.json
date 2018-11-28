@@ -1,9 +1,9 @@
 {
-	"MYSQL_HOST":"***REMOVED***.us-east-1.rds.amazonaws.com",
+	"MYSQL_HOST":"xxxxxxxxxxxxxxxx.us-east-1.rds.amazonaws.com",
 	"MYSQL_PORT":"3306",
 	"MYSQL_DB":"zq92494n2sf9l20r",
-	"MYSQL_USER":"***REMOVED***",
-	"MYSQL_PWD":"***REMOVED***",
+	"MYSQL_USER":"xxxxxxxxxxxxx",
+	"MYSQL_PWD":"xxxxxxxxxxxx",
 	"MASTER_USER":"stats",
 	"MASTER_PWD":"st4ts",
 	"SESSION_DURATION":"86400",

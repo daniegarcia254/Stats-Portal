@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "description": "ExtJS 6.6.0 Community Edition web application",
   "main": "index.js",
+  "engines": {
+    "node": "6.10.3",
+    "npm": "3.10.10"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

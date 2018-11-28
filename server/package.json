@@ -6,8 +6,7 @@
   "scripts": {
     "deploy": "TMPDIR=/tmp claudia create --profile claudia --role claudia-lambda --name moe-stats --version dev --region eu-west-1 --api-module app --timeout 30 --memory 256 --set-env-from-json config-env.json --use-local-dependencies",
     "update": "TMPDIR=/tmp claudia update --profile claudia --role claudia-lambda --version dev --region eu-west-1 --api-module app --set-env-from-json config-env.json --use-local-dependencies",
-    "release": "TMPDIR=/tmp claudia set-version --profile claudia --role claudia-lambda --version production --set-env-from-json config-env.json",
-    "start": "ntl"
+    "release": "TMPDIR=/tmp claudia set-version --profile claudia --role claudia-lambda --version production --set-env-from-json config-env.json"
   },
   "keywords": [
     "claudia",
@@ -18,12 +17,11 @@
   "author": "Daniel Garcia",
   "license": "ISC",
   "dependencies": {
-    "claudia-api-builder": "^2.5.1",
+    "claudia-api-builder": "^4.1.1",
     "jsonwebtoken": "^7.4.1",
     "mysql": "^2.13.0"
   },
   "devDependencies": {
-    "claudia": "^2.13.0",
-    "ntl": "^1.2.0"
+    "claudia": "^5.2.0"
   }
 }

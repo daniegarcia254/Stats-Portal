@@ -1,7 +1,10 @@
 var $jscomp = $jscomp || {};
 $jscomp.scope = {};
-$jscomp.defineProperty = typeof Object.defineProperties == 'function' ? Object.defineProperty : function(target, property, descriptor) {
-  descriptor = (descriptor);
+$jscomp.ASSUME_ES5 = false;
+$jscomp.ASSUME_NO_NATIVE_MAP = false;
+$jscomp.ASSUME_NO_NATIVE_SET = false;
+$jscomp.defineProperty = $jscomp.ASSUME_ES5 || typeof Object.defineProperties == 'function' ? Object.defineProperty : function(target, property, descriptor) {
+  descriptor = descriptor;
   if (target == Array.prototype || target == Object.prototype) {
     return;
   }
@@ -65,7 +68,7 @@ $jscomp.polyfill('Array.prototype.copyWithin', function(orig) {
     return this;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.SYMBOL_PREFIX = 'jscomp_symbol_';
 $jscomp.initSymbol = function() {
   $jscomp.initSymbol = function() {
@@ -74,10 +77,13 @@ $jscomp.initSymbol = function() {
     $jscomp.global['Symbol'] = $jscomp.Symbol;
   }
 };
-$jscomp.symbolCounter_ = 0;
-$jscomp.Symbol = function(opt_description) {
-  return ($jscomp.SYMBOL_PREFIX + (opt_description || '') + $jscomp.symbolCounter_++);
-};
+$jscomp.Symbol = function() {
+  var counter = 0;
+  function Symbol(opt_description) {
+    return $jscomp.SYMBOL_PREFIX + (opt_description || '') + counter++;
+  }
+  return Symbol;
+}();
 $jscomp.initSymbolIterator = function() {
   $jscomp.initSymbol();
   var symbolIterator = $jscomp.global['Symbol'].iterator;
@@ -108,7 +114,7 @@ $jscomp.iteratorPrototype = function(next) {
   iterator[$jscomp.global['Symbol'].iterator] = function() {
     return this;
   };
-  return (iterator);
+  return iterator;
 };
 $jscomp.iteratorFromArray = function(array, transform) {
   $jscomp.initSymbolIterator();
@@ -141,7 +147,7 @@ $jscomp.polyfill('Array.prototype.entries', function(orig) {
     });
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Array.prototype.fill', function(orig) {
   if (orig) {
     return orig;
@@ -149,7 +155,7 @@ $jscomp.polyfill('Array.prototype.fill', function(orig) {
   var polyfill = function(value, opt_start, opt_end) {
     var length = this.length || 0;
     if (opt_start < 0) {
-      opt_start = Math.max(0, length + (opt_start));
+      opt_start = Math.max(0, length + opt_start);
     }
     if (opt_end == null || opt_end > length) {
       opt_end = length;
@@ -164,10 +170,10 @@ $jscomp.polyfill('Array.prototype.fill', function(orig) {
     return this;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.findInternal = function(array, callback, thisArg) {
   if (array instanceof String) {
-    array = (String(array));
+    array = String(array);
   }
   var len = array.length;
   for (var i = 0; i < len; i++) {
@@ -186,7 +192,7 @@ $jscomp.polyfill('Array.prototype.find', function(orig) {
     return $jscomp.findInternal(this, callback, opt_thisArg).v;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Array.prototype.findIndex', function(orig) {
   if (orig) {
     return orig;
@@ -195,7 +201,7 @@ $jscomp.polyfill('Array.prototype.findIndex', function(orig) {
     return $jscomp.findInternal(this, callback, opt_thisArg).i;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Array.from', function(orig) {
   if (orig) {
     return orig;
@@ -206,36 +212,36 @@ $jscomp.polyfill('Array.from', function(orig) {
       return x;
     };
     var result = [];
-    var iteratorFunction = (arrayLike)[Symbol.iterator];
+    var iteratorFunction = arrayLike[Symbol.iterator];
     if (typeof iteratorFunction == 'function') {
       arrayLike = iteratorFunction.call(arrayLike);
       var next;
       while (!(next = arrayLike.next()).done) {
-        result.push(opt_mapFn.call((opt_thisArg), next.value));
+        result.push(opt_mapFn.call(opt_thisArg, next.value));
       }
     } else {
       var len = arrayLike.length;
       for (var i = 0; i < len; i++) {
-        result.push(opt_mapFn.call((opt_thisArg), arrayLike[i]));
+        result.push(opt_mapFn.call(opt_thisArg, arrayLike[i]));
       }
     }
     return result;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Object.is', function(orig) {
   if (orig) {
     return orig;
   }
   var polyfill = function(left, right) {
     if (left === right) {
-      return left !== 0 || 1 / left === 1 / (right);
+      return left !== 0 || 1 / left === 1 / right;
     } else {
       return left !== left && right !== right;
     }
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Array.prototype.includes', function(orig) {
   if (orig) {
     return orig;
@@ -243,7 +249,7 @@ $jscomp.polyfill('Array.prototype.includes', function(orig) {
   var includes = function(searchElement, opt_fromIndex) {
     var array = this;
     if (array instanceof String) {
-      array = (String(array));
+      array = String(array);
     }
     var len = array.length;
     for (var i = opt_fromIndex || 0; i < len; i++) {
@@ -265,7 +271,7 @@ $jscomp.polyfill('Array.prototype.keys', function(orig) {
     });
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Array.of', function(orig) {
   if (orig) {
     return orig;
@@ -274,7 +280,7 @@ $jscomp.polyfill('Array.of', function(orig) {
     return Array.from(arguments);
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Array.prototype.values', function(orig) {
   if (orig) {
     return orig;
@@ -288,10 +294,9 @@ $jscomp.polyfill('Array.prototype.values', function(orig) {
 }, 'es6', 'es3');
 $jscomp.makeIterator = function(iterable) {
   $jscomp.initSymbolIterator();
-  var iteratorFunction = (iterable)[Symbol.iterator];
-  return iteratorFunction ? iteratorFunction.call(iterable) : $jscomp.arrayIterator((iterable));
+  var iteratorFunction = iterable[Symbol.iterator];
+  return iteratorFunction ? iteratorFunction.call(iterable) : $jscomp.arrayIterator(iterable);
 };
-$jscomp.EXPOSE_ASYNC_EXECUTOR = true;
 $jscomp.FORCE_POLYFILL_PROMISE = false;
 $jscomp.polyfill('Promise', function(NativePromise) {
   if (NativePromise && !$jscomp.FORCE_POLYFILL_PROMISE) {
@@ -369,10 +374,10 @@ $jscomp.polyfill('Promise', function(NativePromise) {
       this.reject_(new TypeError('A Promise cannot resolve to itself'));
     } else {
       if (value instanceof PolyfillPromise) {
-        this.settleSameAsPromise_((value));
+        this.settleSameAsPromise_(value);
       } else {
         if (isObject(value)) {
-          this.resolveToNonPromiseObj_((value));
+          this.resolveToNonPromiseObj_(value);
         } else {
           this.fulfill_(value);
         }
@@ -388,7 +393,7 @@ $jscomp.polyfill('Promise', function(NativePromise) {
       return;
     }
     if (typeof thenMethod == 'function') {
-      this.settleSameAsThenable_(thenMethod, (obj));
+      this.settleSameAsThenable_(thenMethod, obj);
     } else {
       this.fulfill_(obj);
     }
@@ -421,7 +426,7 @@ $jscomp.polyfill('Promise', function(NativePromise) {
     if (this.onSettledCallbacks_ != null) {
       var callbacks = this.onSettledCallbacks_;
       for (var i = 0; i < callbacks.length; ++i) {
-        (callbacks[i]).call();
+        callbacks[i].call();
         callbacks[i] = null;
       }
       this.onSettledCallbacks_ = null;
@@ -488,7 +493,7 @@ $jscomp.polyfill('Promise', function(NativePromise) {
       });
     }
   };
-  PolyfillPromise.resolve = function(opt_value) {
+  function resolvingPromise(opt_value) {
     if (opt_value instanceof PolyfillPromise) {
       return opt_value;
     } else {
@@ -496,25 +501,26 @@ $jscomp.polyfill('Promise', function(NativePromise) {
         resolve(opt_value);
       });
     }
-  };
-  PolyfillPromise.reject = function(opt_reason) {
+  }
+  PolyfillPromise['resolve'] = resolvingPromise;
+  PolyfillPromise['reject'] = function(opt_reason) {
     return new PolyfillPromise(function(resolve, reject) {
       reject(opt_reason);
     });
   };
-  PolyfillPromise.race = function(thenablesOrValues) {
+  PolyfillPromise['race'] = function(thenablesOrValues) {
     return new PolyfillPromise(function(resolve, reject) {
       var iterator = $jscomp.makeIterator(thenablesOrValues);
       for (var iterRec = iterator.next(); !iterRec.done; iterRec = iterator.next()) {
-        PolyfillPromise.resolve(iterRec.value).callWhenSettled_(resolve, reject);
+        resolvingPromise(iterRec.value).callWhenSettled_(resolve, reject);
       }
     });
   };
-  PolyfillPromise.all = function(thenablesOrValues) {
+  PolyfillPromise['all'] = function(thenablesOrValues) {
     var iterator = $jscomp.makeIterator(thenablesOrValues);
     var iterRec = iterator.next();
     if (iterRec.done) {
-      return PolyfillPromise.resolve([]);
+      return resolvingPromise([]);
     } else {
       return new PolyfillPromise(function(resolveAll, rejectAll) {
         var resultsArray = [];
@@ -531,19 +537,14 @@ $jscomp.polyfill('Promise', function(NativePromise) {
         do {
           resultsArray.push(undefined);
           unresolvedCount++;
-          PolyfillPromise.resolve(iterRec.value).callWhenSettled_(onFulfilled(resultsArray.length - 1), rejectAll);
+          resolvingPromise(iterRec.value).callWhenSettled_(onFulfilled(resultsArray.length - 1), rejectAll);
           iterRec = iterator.next();
         } while (!iterRec.done);
       });
     }
   };
-  if ($jscomp.EXPOSE_ASYNC_EXECUTOR) {
-    PolyfillPromise['$jscomp$new$AsyncExecutor'] = function() {
-      return new AsyncExecutor;
-    };
-  }
   return PolyfillPromise;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.executeAsyncGenerator = function(generator) {
   function passValueToGenerator(value) {
     return generator.next(value);
@@ -573,7 +574,7 @@ $jscomp.polyfill('WeakMap', function(NativeWeakMap) {
     try {
       var x = Object.seal({});
       var y = Object.seal({});
-      var map = new (NativeWeakMap)([[x, 2], [y, 3]]);
+      var map = new NativeWeakMap([[x, 2], [y, 3]]);
       if (map.get(x) != 2 || map.get(y) != 3) {
         return false;
       }
@@ -616,7 +617,7 @@ $jscomp.polyfill('WeakMap', function(NativeWeakMap) {
       var entry;
       while (!(entry = iter.next()).done) {
         var item = entry.value;
-        this.set((item[0]), (item[1]));
+        this.set(item[0], item[1]);
       }
     }
   };
@@ -641,7 +642,7 @@ $jscomp.polyfill('WeakMap', function(NativeWeakMap) {
     return delete key[prop][this.id_];
   };
   return PolyfillWeakMap;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.MapEntry = function() {
   this.previous;
   this.next;
@@ -649,14 +650,13 @@ $jscomp.MapEntry = function() {
   this.key;
   this.value;
 };
-$jscomp.ASSUME_NO_NATIVE_MAP = false;
 $jscomp.polyfill('Map', function(NativeMap) {
   var isConformant = !$jscomp.ASSUME_NO_NATIVE_MAP && function() {
     if (!NativeMap || !NativeMap.prototype.entries || typeof Object.seal != 'function') {
       return false;
     }
     try {
-      NativeMap = (NativeMap);
+      NativeMap = NativeMap;
       var key = Object.seal({x:4});
       var map = new NativeMap($jscomp.makeIterator([[key, 's']]));
       if (map.get(key) != 's' || map.size != 1 || map.get({x:4}) || map.set({x:4}, 't') != map || map.size != 2) {
@@ -690,8 +690,8 @@ $jscomp.polyfill('Map', function(NativeMap) {
       var iter = $jscomp.makeIterator(opt_iterable);
       var entry;
       while (!(entry = iter.next()).done) {
-        var item = (entry).value;
-        this.set((item[0]), (item[1]));
+        var item = entry.value;
+        this.set(item[0], item[1]);
       }
     }
   };
@@ -736,7 +736,7 @@ $jscomp.polyfill('Map', function(NativeMap) {
   };
   PolyfillMap.prototype.get = function(key) {
     var entry = maybeGetEntry(this, key).entry;
-    return (entry && (entry.value));
+    return entry && entry.value;
   };
   PolyfillMap.prototype.entries = function() {
     return makeIterator(this, function(entry) {
@@ -758,10 +758,10 @@ $jscomp.polyfill('Map', function(NativeMap) {
     var item;
     while (!(item = iter.next()).done) {
       var entry = item.value;
-      callback.call((opt_thisArg), (entry[1]), (entry[0]), this);
+      callback.call(opt_thisArg, entry[1], entry[0], this);
     }
   };
-  (PolyfillMap.prototype)[Symbol.iterator] = PolyfillMap.prototype.entries;
+  PolyfillMap.prototype[Symbol.iterator] = PolyfillMap.prototype.entries;
   var maybeGetEntry = function(map, key) {
     var id = getId(key);
     var list = map.data_[id];
@@ -800,7 +800,7 @@ $jscomp.polyfill('Map', function(NativeMap) {
   var getId = function(obj) {
     var type = obj && typeof obj;
     if (type == 'object' || type == 'function') {
-      obj = (obj);
+      obj = obj;
       if (!idMap.has(obj)) {
         var id = '' + ++mapIndex;
         idMap.set(obj, id);
@@ -811,7 +811,7 @@ $jscomp.polyfill('Map', function(NativeMap) {
     return 'p_' + obj;
   };
   return PolyfillMap;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.acosh', function(orig) {
   if (orig) {
     return orig;
@@ -821,7 +821,7 @@ $jscomp.polyfill('Math.acosh', function(orig) {
     return Math.log(x + Math.sqrt(x * x - 1));
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.asinh', function(orig) {
   if (orig) {
     return orig;
@@ -835,7 +835,7 @@ $jscomp.polyfill('Math.asinh', function(orig) {
     return x < 0 ? -y : y;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.log1p', function(orig) {
   if (orig) {
     return orig;
@@ -858,7 +858,7 @@ $jscomp.polyfill('Math.log1p', function(orig) {
     return Math.log(1 + x);
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.atanh', function(orig) {
   if (orig) {
     return orig;
@@ -869,7 +869,7 @@ $jscomp.polyfill('Math.atanh', function(orig) {
     return (log1p(x) - log1p(-x)) / 2;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.cbrt', function(orig) {
   if (orig) {
     return orig;
@@ -883,7 +883,7 @@ $jscomp.polyfill('Math.cbrt', function(orig) {
     return x < 0 ? -y : y;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.clz32', function(orig) {
   if (orig) {
     return orig;
@@ -916,7 +916,7 @@ $jscomp.polyfill('Math.clz32', function(orig) {
     return result;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.cosh', function(orig) {
   if (orig) {
     return orig;
@@ -927,7 +927,7 @@ $jscomp.polyfill('Math.cosh', function(orig) {
     return (exp(x) + exp(-x)) / 2;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.expm1', function(orig) {
   if (orig) {
     return orig;
@@ -948,7 +948,7 @@ $jscomp.polyfill('Math.expm1', function(orig) {
     return Math.exp(x) - 1;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.hypot', function(orig) {
   if (orig) {
     return orig;
@@ -980,7 +980,7 @@ $jscomp.polyfill('Math.hypot', function(orig) {
     }
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.imul', function(orig) {
   if (orig) {
     return orig;
@@ -996,7 +996,7 @@ $jscomp.polyfill('Math.imul', function(orig) {
     return al * bl + lh | 0;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.log10', function(orig) {
   if (orig) {
     return orig;
@@ -1005,7 +1005,7 @@ $jscomp.polyfill('Math.log10', function(orig) {
     return Math.log(x) / Math.LN10;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.log2', function(orig) {
   if (orig) {
     return orig;
@@ -1014,7 +1014,7 @@ $jscomp.polyfill('Math.log2', function(orig) {
     return Math.log(x) / Math.LN2;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.sign', function(orig) {
   if (orig) {
     return orig;
@@ -1024,7 +1024,7 @@ $jscomp.polyfill('Math.sign', function(orig) {
     return x === 0 || isNaN(x) ? x : x > 0 ? 1 : -1;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.sinh', function(orig) {
   if (orig) {
     return orig;
@@ -1038,7 +1038,7 @@ $jscomp.polyfill('Math.sinh', function(orig) {
     return (exp(x) - exp(-x)) / 2;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.tanh', function(orig) {
   if (orig) {
     return orig;
@@ -1053,7 +1053,7 @@ $jscomp.polyfill('Math.tanh', function(orig) {
     return x < 0 ? -z : z;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Math.trunc', function(orig) {
   if (orig) {
     return orig;
@@ -1067,16 +1067,16 @@ $jscomp.polyfill('Math.trunc', function(orig) {
     return x < 0 ? -y : y;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Number.EPSILON', function(orig) {
   return Math.pow(2, -52);
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Number.MAX_SAFE_INTEGER', function() {
   return 9007199254740991;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Number.MIN_SAFE_INTEGER', function() {
   return -9007199254740991;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Number.isFinite', function(orig) {
   if (orig) {
     return orig;
@@ -1088,7 +1088,7 @@ $jscomp.polyfill('Number.isFinite', function(orig) {
     return !isNaN(x) && x !== Infinity && x !== -Infinity;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Number.isInteger', function(orig) {
   if (orig) {
     return orig;
@@ -1100,7 +1100,7 @@ $jscomp.polyfill('Number.isInteger', function(orig) {
     return x === Math.floor(x);
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Number.isNaN', function(orig) {
   if (orig) {
     return orig;
@@ -1109,7 +1109,7 @@ $jscomp.polyfill('Number.isNaN', function(orig) {
     return typeof x === 'number' && isNaN(x);
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Number.isSafeInteger', function(orig) {
   if (orig) {
     return orig;
@@ -1118,7 +1118,7 @@ $jscomp.polyfill('Number.isSafeInteger', function(orig) {
     return Number.isInteger(x) && Math.abs(x) <= Number.MAX_SAFE_INTEGER;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Object.assign', function(orig) {
   if (orig) {
     return orig;
@@ -1138,7 +1138,7 @@ $jscomp.polyfill('Object.assign', function(orig) {
     return target;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('Object.entries', function(orig) {
   if (orig) {
     return orig;
@@ -1161,7 +1161,7 @@ $jscomp.polyfill('Object.getOwnPropertySymbols', function(orig) {
   return function() {
     return [];
   };
-}, 'es6-impl', 'es5');
+}, 'es6', 'es5');
 $jscomp.polyfill('Reflect.ownKeys', function(orig) {
   if (orig) {
     return orig;
@@ -1195,21 +1195,25 @@ $jscomp.polyfill('Object.getOwnPropertyDescriptors', function(orig) {
   };
   return getOwnPropertyDescriptors;
 }, 'es8', 'es5');
+$jscomp.underscoreProtoCanBeSet = function() {
+  var x = {a:true};
+  var y = {};
+  try {
+    y.__proto__ = x;
+    return y.a;
+  } catch (e) {
+  }
+  return false;
+};
+$jscomp.setPrototypeOf = typeof Object.setPrototypeOf == 'function' ? Object.setPrototypeOf : $jscomp.underscoreProtoCanBeSet() ? function(target, proto) {
+  target.__proto__ = proto;
+  if (target.__proto__ !== proto) {
+    throw new TypeError(target + ' is not extensible');
+  }
+  return target;
+} : null;
 $jscomp.polyfill('Object.setPrototypeOf', function(orig) {
-  if (orig) {
-    return orig;
-  }
-  if (typeof ''.__proto__ != 'object') {
-    return null;
-  }
-  var polyfill = function(target, proto) {
-    target.__proto__ = proto;
-    if (target.__proto__ !== proto) {
-      throw new TypeError(target + ' is not extensible');
-    }
-    return target;
-  };
-  return polyfill;
+  return orig || $jscomp.setPrototypeOf;
 }, 'es6', 'es5');
 $jscomp.polyfill('Object.values', function(orig) {
   if (orig) {
@@ -1236,21 +1240,51 @@ $jscomp.polyfill('Reflect.apply', function(orig) {
   };
   return polyfill;
 }, 'es6', 'es3');
-$jscomp.polyfill('Reflect.construct', function(orig) {
-  if (orig) {
-    return orig;
+$jscomp.objectCreate = $jscomp.ASSUME_ES5 || typeof Object.create == 'function' ? Object.create : function(prototype) {
+  var ctor = function() {
+  };
+  ctor.prototype = prototype;
+  return new ctor;
+};
+$jscomp.construct = function() {
+  function reflectConstructWorks() {
+    function Base() {
+    }
+    function Derived() {
+    }
+    new Base;
+    Reflect.construct(Base, [], Derived);
+    return new Base instanceof Base;
   }
-  var polyfill = function(target, argList, opt_newTarget) {
+  if (typeof Reflect != 'undefined' && Reflect.construct) {
+    if (reflectConstructWorks()) {
+      return Reflect.construct;
+    }
+    var brokenConstruct = Reflect.construct;
+    var patchedConstruct = function(target, argList, opt_newTarget) {
+      var out = brokenConstruct(target, argList);
+      if (opt_newTarget) {
+        Reflect.setPrototypeOf(out, opt_newTarget.prototype);
+      }
+      return out;
+    };
+    return patchedConstruct;
+  }
+  function construct(target, argList, opt_newTarget) {
     if (opt_newTarget === undefined) {
       opt_newTarget = target;
     }
     var proto = opt_newTarget.prototype || Object.prototype;
-    var obj = Object.create(proto);
-    var out = Reflect.apply(target, obj, argList);
+    var obj = $jscomp.objectCreate(proto);
+    var apply = Function.prototype.apply;
+    var out = apply.call(target, obj, argList);
     return out || obj;
-  };
-  return polyfill;
-}, 'es6', 'es5');
+  }
+  return construct;
+}();
+$jscomp.polyfill('Reflect.construct', function(orig) {
+  return $jscomp.construct;
+}, 'es6', 'es3');
 $jscomp.polyfill('Reflect.defineProperty', function(orig) {
   if (orig) {
     return orig;
@@ -1331,7 +1365,7 @@ $jscomp.polyfill('Reflect.isExtensible', function(orig) {
   if (orig) {
     return orig;
   }
-  if (typeof Object.isExtensible == 'function') {
+  if ($jscomp.ASSUME_ES5 || typeof Object.isExtensible == 'function') {
     return Object.isExtensible;
   }
   return function() {
@@ -1342,7 +1376,7 @@ $jscomp.polyfill('Reflect.preventExtensions', function(orig) {
   if (orig) {
     return orig;
   }
-  if (typeof Object.preventExtensions != 'function') {
+  if (!($jscomp.ASSUME_ES5 || typeof Object.preventExtensions == 'function')) {
     return function() {
       return false;
     };
@@ -1382,28 +1416,30 @@ $jscomp.polyfill('Reflect.set', function(orig) {
 $jscomp.polyfill('Reflect.setPrototypeOf', function(orig) {
   if (orig) {
     return orig;
-  }
-  if (typeof ''.__proto__ != 'object') {
-    return null;
-  }
-  var polyfill = function(target, proto) {
-    try {
-      target.__proto__ = proto;
-      return target.__proto__ === proto;
-    } catch (err) {
-      return false;
+  } else {
+    if ($jscomp.setPrototypeOf) {
+      var setPrototypeOf = $jscomp.setPrototypeOf;
+      var polyfill = function(target, proto) {
+        try {
+          setPrototypeOf(target, proto);
+          return true;
+        } catch (e) {
+          return false;
+        }
+      };
+      return polyfill;
+    } else {
+      return null;
     }
-  };
-  return polyfill;
+  }
 }, 'es6', 'es5');
-$jscomp.ASSUME_NO_NATIVE_SET = false;
 $jscomp.polyfill('Set', function(NativeSet) {
   var isConformant = !$jscomp.ASSUME_NO_NATIVE_SET && function() {
     if (!NativeSet || !NativeSet.prototype.entries || typeof Object.seal != 'function') {
       return false;
     }
     try {
-      NativeSet = (NativeSet);
+      NativeSet = NativeSet;
       var value = Object.seal({x:4});
       var set = new NativeSet($jscomp.makeIterator([value]));
       if (!set.has(value) || set.size != 1 || set.add(value) != set || set.size != 1 || set.add({x:4}) != set || set.size != 2) {
@@ -1434,7 +1470,7 @@ $jscomp.polyfill('Set', function(NativeSet) {
       var iter = $jscomp.makeIterator(opt_iterable);
       var entry;
       while (!(entry = iter.next()).done) {
-        var item = (entry).value;
+        var item = entry.value;
         this.add(item);
       }
     }
@@ -1464,15 +1500,15 @@ $jscomp.polyfill('Set', function(NativeSet) {
     return this.map_.values();
   };
   PolyfillSet.prototype.keys = PolyfillSet.prototype.values;
-  (PolyfillSet.prototype)[Symbol.iterator] = PolyfillSet.prototype.values;
+  PolyfillSet.prototype[Symbol.iterator] = PolyfillSet.prototype.values;
   PolyfillSet.prototype.forEach = function(callback, opt_thisArg) {
     var set = this;
     this.map_.forEach(function(value) {
-      return callback.call((opt_thisArg), value, value, set);
+      return callback.call(opt_thisArg, value, value, set);
     });
   };
   return PolyfillSet;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.checkStringArgs = function(thisArg, arg, func) {
   if (thisArg == null) {
     throw new TypeError("The 'this' value for String.prototype." + func + ' must not be null or undefined');
@@ -1505,7 +1541,7 @@ $jscomp.polyfill('String.prototype.codePointAt', function(orig) {
     return (first - 55296) * 1024 + second + 9216;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('String.prototype.endsWith', function(orig) {
   if (orig) {
     return orig;
@@ -1526,7 +1562,7 @@ $jscomp.polyfill('String.prototype.endsWith', function(orig) {
     return j <= 0;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('String.fromCodePoint', function(orig) {
   if (orig) {
     return orig;
@@ -1549,7 +1585,7 @@ $jscomp.polyfill('String.fromCodePoint', function(orig) {
     return result;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('String.prototype.includes', function(orig) {
   if (orig) {
     return orig;
@@ -1559,7 +1595,7 @@ $jscomp.polyfill('String.prototype.includes', function(orig) {
     return string.indexOf(searchString, opt_position || 0) !== -1;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.polyfill('String.prototype.repeat', function(orig) {
   if (orig) {
     return orig;
@@ -1582,7 +1618,7 @@ $jscomp.polyfill('String.prototype.repeat', function(orig) {
     return result;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.stringPadding = function(padString, padLength) {
   var padding = padString !== undefined ? String(padString) : ' ';
   if (!(padLength > 0) || !padding) {
@@ -1622,7 +1658,7 @@ $jscomp.polyfill('String.prototype.startsWith', function(orig) {
     searchString = searchString + '';
     var strLen = string.length;
     var searchLen = searchString.length;
-    var i = Math.max(0, Math.min((opt_position) | 0, string.length));
+    var i = Math.max(0, Math.min(opt_position | 0, string.length));
     var j = 0;
     while (j < searchLen && i < strLen) {
       if (string[i++] != searchString[j++]) {
@@ -1632,7 +1668,7 @@ $jscomp.polyfill('String.prototype.startsWith', function(orig) {
     return j >= searchLen;
   };
   return polyfill;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 $jscomp.arrayFromIterator = function(iterator) {
   var i;
   var arr = [];
@@ -1649,22 +1685,27 @@ $jscomp.arrayFromIterable = function(iterable) {
   }
 };
 $jscomp.inherits = function(childCtor, parentCtor) {
-  function tempCtor() {
-  }
-  tempCtor.prototype = parentCtor.prototype;
-  childCtor.superClass_ = parentCtor.prototype;
-  childCtor.prototype = new tempCtor;
+  childCtor.prototype = $jscomp.objectCreate(parentCtor.prototype);
   childCtor.prototype.constructor = childCtor;
-  for (var p in parentCtor) {
-    if (Object.defineProperties) {
-      var descriptor = Object.getOwnPropertyDescriptor(parentCtor, p);
-      if (descriptor) {
-        Object.defineProperty(childCtor, p, descriptor);
+  if ($jscomp.setPrototypeOf) {
+    var setPrototypeOf = $jscomp.setPrototypeOf;
+    setPrototypeOf(childCtor, parentCtor);
+  } else {
+    for (var p in parentCtor) {
+      if (p == 'prototype') {
+        continue;
       }
-    } else {
-      childCtor[p] = parentCtor[p];
+      if (Object.defineProperties) {
+        var descriptor = Object.getOwnPropertyDescriptor(parentCtor, p);
+        if (descriptor) {
+          Object.defineProperty(childCtor, p, descriptor);
+        }
+      } else {
+        childCtor[p] = parentCtor[p];
+      }
     }
   }
+  childCtor.superClass_ = parentCtor.prototype;
 };
 $jscomp.polyfill('WeakSet', function(NativeWeakSet) {
   function isConformant() {
@@ -1674,7 +1715,7 @@ $jscomp.polyfill('WeakSet', function(NativeWeakSet) {
     try {
       var x = Object.seal({});
       var y = Object.seal({});
-      var set = new (NativeWeakSet)([x]);
+      var set = new NativeWeakSet([x]);
       if (!set.has(x) || set.has(y)) {
         return false;
       }
@@ -1712,7 +1753,7 @@ $jscomp.polyfill('WeakSet', function(NativeWeakSet) {
     return this.map_['delete'](elem);
   };
   return PolyfillWeakSet;
-}, 'es6-impl', 'es3');
+}, 'es6', 'es3');
 try {
   if (Array.prototype.values.toString().indexOf('[native code]') == -1) {
     delete Array.prototype.values;
@@ -1787,7 +1828,7 @@ var Ext = Ext || {};
     }
   }
   Ext.buildSettings = Ext.apply({baseCSSPrefix:'x-'}, Ext.buildSettings || {});
-  Ext.apply(Ext, {idSeed:0, idPrefix:'ext-', isSecure:/^https/i.test(window.location.protocol), enableGarbageCollector:false, enableListenerCollection:true, name:Ext.sandboxName || 'Ext', privateFn:privateFn, emptyFn:emptyFn, identityFn:identityFn, frameStartTime:Ext.now(), manifest:manifest, debugConfig:Ext.debugConfig || manifest.debug || {hooks:{'*':true}}, enableAria:true, startsWithHashRe:/^#/, validIdRe:/^[a-z_][a-z0-9\-_]*$/i, BLANK_IMAGE_URL:'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw\x3d\x3d', 
+  Ext.apply(Ext, {idSeed:0, idPrefix:'ext-', isRobot:false, isSecure:/^https/i.test(window.location.protocol), enableGarbageCollector:false, enableListenerCollection:true, name:Ext.sandboxName || 'Ext', privateFn:privateFn, emptyFn:emptyFn, identityFn:identityFn, frameStartTime:Ext.now(), manifest:manifest, debugConfig:Ext.debugConfig || manifest.debug || {hooks:{'*':true}}, enableAria:true, startsWithHashRe:/^#/, validIdRe:/^[a-z_][a-z0-9\-_]*$/i, BLANK_IMAGE_URL:'data:image/gif;base64,R0lGODlhAQABAID/AMDAwAAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw\x3d\x3d', 
   makeIdSelector:function(id) {
     if (!Ext.validIdRe.test(id)) {
       Ext.raise('Invalid id selector: "' + id + '"');
@@ -2407,7 +2448,7 @@ Ext.Array = function() {
     }
     return ExtArray.binarySearch(items, item, comparatorFn);
   }, forEach:'forEach' in arrayPrototype ? function(array, fn, scope) {
-    return array.forEach(fn, scope);
+    array.forEach(fn, scope);
   } : function(array, fn, scope) {
     for (var i = 0, ln = array.length; i < ln; i++) {
       fn.call(scope, array[i], i, array);
@@ -3534,7 +3575,7 @@ Ext.Date = function() {
   return utilDate;
 }();
 Ext.Function = function() {
-  var lastTime = 0, animFrameId, animFrameHandlers = [], animFrameNoArgs = [], idSource = 0, animFrameMap = {}, slice = Array.prototype.slice, win = window, global = Ext.global, hasImmediate = !!(global.setImmediate && global.clearImmediate), requestAnimFrame = win.requestAnimationFrame || win.webkitRequestAnimationFrame || win.mozRequestAnimationFrame || win.oRequestAnimationFrame || function(callback) {
+  var lastTime = 0, animFrameId, animFrameHandlers = [], animFrameNoArgs = [], idSource = 0, animFrameMap = {}, slice = Array.prototype.slice, win = window, global = Ext.global, hasImmediate = !Ext.disableImmediate && !!(global.setImmediate && global.clearImmediate), requestAnimFrame = win.requestAnimationFrame || win.webkitRequestAnimationFrame || win.mozRequestAnimationFrame || win.oRequestAnimationFrame || function(callback) {
     var currTime = Ext.now(), timeToCall = Math.max(0, 16 - (currTime - lastTime)), timerFn = function() {
       callback(currTime + timeToCall);
     }, id;
@@ -3839,6 +3880,8 @@ Ext.Function = function() {
     var s = fn ? fn.toString() : '';
     s = s.replace(ExtFunction._stripCommentRe, '');
     return s;
+  }, fireElevatedHandlers:function() {
+    fireElevatedHandlers();
   }};
   Ext.asap = hasImmediate ? function(fn, scope, parameters) {
     var boundFn = fn, timerFn, timerId;
@@ -5146,8 +5189,8 @@ Ext.apply(Ext, {_namedScopes:{'this':{isThis:1}, controller:{isController:1}, ow
     }
   }
   if (!packages.ext && !packages.touch) {
-    Ext.setVersion('ext', '6.5.1.345');
-    Ext.setVersion('core', '6.5.1.345');
+    Ext.setVersion('ext', '6.5.3.57');
+    Ext.setVersion('core', '6.5.3.57');
   }
 })(Ext.manifest);
 Ext.Config = function(name) {
@@ -7461,14 +7504,16 @@ Ext.ClassManager = function(Class, alias, arraySlice, arrayFrom, global) {
   if (userAgent.match(/FB/) && browserName === 'Other') {
     browserName = browserNames.safari;
     engineName = engineNames.webkit;
-  }
-  if (userAgent.match(/Android.*Chrome/g)) {
-    browserName = 'ChromeMobile';
-  }
-  if (userAgent.match(/OPR/)) {
-    browserName = 'Opera';
-    browserMatch = userAgent.match(/OPR\/(\d+.\d+)/);
-    browserVersion = new Ext.Version(browserMatch[1]);
+  } else {
+    if (userAgent.match(/Android.*Chrome/g)) {
+      browserName = 'ChromeMobile';
+    } else {
+      browserMatch = userAgent.match(/OPR\/(\d+.\d+)/);
+      if (browserMatch) {
+        browserName = 'Opera';
+        browserVersion = new Ext.Version(browserMatch[1]);
+      }
+    }
   }
   Ext.apply(this, {engineName:engineName, engineVersion:engineVersion, name:browserName, version:browserVersion});
   this.setFlag(browserName, true, publish);
@@ -9174,7 +9219,7 @@ Ext.define('Ext.util.Event', function() {
           me.removeListener(fireFn, fireScope, i);
           fireFn = null;
           if (fireScope.$className !== 'Ext.container.Monitor') {
-            Ext.raise({msg:'Attempting to fire "' + me.name + '" event on destroyed ' + (fireScope.$className || 'object') + ' instance with id: ' + (fireScope.id || 'unknown'), instance:fireScope});
+            (Ext.raiseOnDestroyed ? Ext.raise : Ext.log.warn)({msg:'Attempting to fire "' + me.name + '" event on destroyed ' + (fireScope.$className || 'object') + ' instance with id: ' + (fireScope.id || 'unknown'), instance:fireScope});
           }
         }
         if (fireFn && fireFn.apply(fireScope, firingArgs) === false) {
@@ -9254,12 +9299,12 @@ Ext.define('Ext.util.Event', function() {
     };
   }, createBuffered:function(handler, listener, o, scope, wrapped) {
     listener.task = new Ext.util.DelayedTask;
-    if (Ext.Timer.track) {
-      o.$delayedTask = listener.task;
-    }
     return function() {
       if (listener.task) {
         var fireInfo;
+        if (Ext.Timer.track) {
+          o.$delayedTask = listener.task;
+        }
         if (!wrapped) {
           fireInfo = listener.ev.getFireInfo(listener, true);
           handler = fireInfo.fn;
@@ -11408,7 +11453,7 @@ Ext.define('Ext.data.request.Form', {extend:Ext.data.request.Base, alias:'reques
     Ext.fly(hiddenItem).set({type:'hidden', value:value, name:name});
     form.appendChild(hiddenItem);
     hiddens.push(hiddenItem);
-  }, hiddenItem, obj, value, name, vLen, v, hLen, h, request;
+  }, hiddenItem, obj, value, name, vLen, v, hLen, h;
   frame.set({name:id, cls:Ext.baseCSSPrefix + 'hidden-display', src:Ext.SSL_SECURE_URL, tabIndex:-1});
   document.body.appendChild(frameDom);
   document.body.appendChild(form);
@@ -11454,7 +11499,7 @@ Ext.define('Ext.data.request.Form', {extend:Ext.data.request.Base, alias:'reques
   if (me.aborted || me.timedout) {
     me.result = response = me.createException();
     response.responseXML = null;
-    response.responseText = '{success:false,message:"' + Ext.String.trim(response.statusText) + '"}';
+    response.responseText = Ext.encode({success:false, message:Ext.String.trim(response.statusText)});
     response.request = me;
     callback = options.failure;
     success = false;
@@ -11488,7 +11533,7 @@ Ext.define('Ext.data.request.Form', {extend:Ext.data.request.Base, alias:'reques
       me.result = response = me.createException();
       response.status = 400;
       response.statusText = (e$18.message || e$18.description) + '';
-      response.responseText = '{success:false,message:"' + Ext.String.trim(response.statusText) + '"}';
+      response.responseText = Ext.encode({success:false, message:Ext.String.trim(response.statusText)});
       response.responseXML = null;
       callback = options.failure;
       success = false;
@@ -11948,10 +11993,10 @@ Ext.define('Ext.mixin.Bufferable', function(Bufferable) {
         if (timer.asap) {
           Ext.unasap(id);
         } else {
-          if (def.idle) {
+          if (timer.idle) {
             Ext.un('idle', id, null, Bufferable.SINGLE);
           } else {
-            if (def.raf) {
+            if (timer.raf) {
               Ext.unraf(id);
             }
           }
@@ -11962,7 +12007,7 @@ Ext.define('Ext.mixin.Bufferable', function(Bufferable) {
     timer.args = null;
     timer.target[timer.flag] = false;
   }, _invoker:function() {
-    var timer = this, args = timer.args, target = timer.target;
+    var timer = this, args = timer.args || Ext.emptyArray, target = timer.target;
     ++timer.invokes;
     timer.cancel();
     target[timer.fn].apply(target, args);
@@ -12144,7 +12189,7 @@ Ext.define('Ext.ComponentManager', {alternateClassName:'Ext.ComponentMgr', singl
     callbacks.shift()(item);
   }
 }, each:function(fn, scope) {
-  return Ext.Object.each(this.all, fn, scope);
+  Ext.Object.each(this.all, fn, scope);
 }, getCount:function() {
   return this.count;
 }, getAll:function() {
@@ -12896,7 +12941,7 @@ Ext.define('Ext.util.Positionable', {mixinId:'positionable', _positionTopLeft:['
   var newRegion = this.getAlignToRegion(alignToEl, position, offsets);
   return [newRegion.x, newRegion.y];
 }, getAlignToRegion:function(alignToEl, posSpec, offset, minHeight) {
-  var me = this, inside, newRegion;
+  var me = this, inside, newRegion, bodyScroll;
   alignToEl = Ext.fly(alignToEl.el || alignToEl);
   if (!alignToEl || !alignToEl.dom) {
     Ext.raise({sourceClass:'Ext.util.Positionable', sourceMethod:'getAlignToXY', msg:"Attempted to align an element that doesn't exist"});
@@ -12909,6 +12954,10 @@ Ext.define('Ext.util.Positionable', {mixinId:'positionable', _positionTopLeft:['
       inside = me.constrainTo || me.container || me.el.parent();
     }
     inside = Ext.fly(inside.el || inside).getConstrainRegion();
+  }
+  if (alignToEl === Ext.getBody()) {
+    bodyScroll = alignToEl.getScroll();
+    offset = [bodyScroll.left, bodyScroll.top];
   }
   newRegion = me.getRegion().alignTo({target:alignToEl.getRegion(), inside:inside, minHeight:minHeight, offset:offset, align:posSpec, axisLock:true});
   return newRegion;
@@ -13687,7 +13736,7 @@ Ext.define('Ext.util.Region', function() {
     align = (rtl ? rtlAlignMap : alignMap)[align] || align;
     var offsetFactors = rtl ? RTLOffsetFactors : LTROffsetFactors, constrain, parts = alignRe.exec(align), result;
     if (!parts) {
-      Ext.raise({sourceClass:'Ext.util.Region', sourceMethod:'getAlignInfo', position:align, msg:'Attemmpted to align an element with an invalid position: "' + align + '"'});
+      Ext.raise({sourceClass:'Ext.util.Region', sourceMethod:'getAlignInfo', position:align, msg:'Attempted to align an element with an invalid position: "' + align + '"'});
     }
     result = {myEdge:parts[1], myOffset:parts[2], otherEdge:parts[4], otherOffset:parts[5], constrain:constrain[2]};
     if (parts[3]) {
@@ -13843,7 +13892,7 @@ Ext.define('Ext.util.Region', function() {
     }
     return p;
   }, alignTo:function(options) {
-    var me = this, Region = me.self, Offset = ExtUtil.Offset, target = parseRegion(options.target), targetPlusAnchorOffset, rtl = options.rtl, overlap = options.overlap, align = options.align, anchorSize = options.anchorSize, offset = options.offset, inside = options.inside, position = options.position, allowXTranslate = options.allowXTranslate, allowYTranslate = options.allowYTranslate, wasConstrained, result, initialPosition, constrainedPosition;
+    var me = this, Region = me.self, Offset = ExtUtil.Offset, Element = Ext.Element, target = parseRegion(options.target), targetPlusAnchorOffset, rtl = options.rtl, overlap = options.overlap, align = options.align, anchorSize = options.anchorSize, offset = options.offset, inside = options.inside, position = options.position, allowXTranslate = options.allowXTranslate, allowYTranslate = options.allowYTranslate, wasConstrained, result, initialPosition, constrainedPosition;
     if (offset) {
       offset = Offset.fromObject(offset);
       if (!(offset instanceof Offset)) {
@@ -13857,7 +13906,11 @@ Ext.define('Ext.util.Region', function() {
       }
     }
     if (inside && !inside.isRegion) {
-      inside = Ext.fly(inside).getRegion();
+      if (Ext.getDom(inside) === document.body) {
+        inside = new Region(0, Element.getDocumentWidth(), Element.getDocumentHeight(), 0);
+      } else {
+        inside = Ext.fly(inside).getRegion();
+      }
     }
     if (position) {
       if (position.length === 2) {
@@ -14109,7 +14162,7 @@ Ext.define('Ext.util.Region', function() {
     me.right = p.right;
     me.bottom = p.bottom;
     me.left = me.x = me[0] = p.x;
-    return this;
+    return me;
   }, toString:function() {
     return 'Region[' + this.top + ',' + this.right + ',' + this.bottom + ',' + this.left + ']';
   }, translateBy:function(x, y) {
@@ -15505,6 +15558,7 @@ Ext.define('Ext.event.publisher.ElementSize', {extend:Ext.event.publisher.Publis
     }
   }
   Ext.TaskQueue.flush();
+  Ext.Function.fireElevatedHandlers();
 }}}, function(ElementSize) {
   ElementSize.instance = new ElementSize;
 });
@@ -16693,6 +16747,9 @@ Ext.define('Ext.dom.Element', function(Element) {
         dom.setSelectionRange(start, end, direction);
       } else {
         if (dom.createTextRange) {
+          if (start > end) {
+            start = end;
+          }
           range = dom.createTextRange();
           range.moveStart('character', start);
           range.moveEnd('character', -(len - end));
@@ -16856,6 +16913,9 @@ Ext.define('Ext.dom.Element', function(Element) {
   }, isAncestor:function(el) {
     var ret = false, dom = this.dom, child = Ext.getDom(el);
     if (dom && child) {
+      if (!child.nodeType) {
+        return false;
+      }
       if (dom.contains) {
         return dom.contains(child);
       } else {
@@ -17856,6 +17916,10 @@ Ext.define('Ext.dom.Element', function(Element) {
         if (me.$ripples) {
           delete me.$ripples[rippleBubble.id];
         }
+        timeout = rippleParent.$rippleClearTimeout;
+        if (timeout) {
+          rippleParent.$rippleClearTimeout = Ext.undefer(timeout);
+        }
         if (unbound) {
           rippleContainer.destroy();
           ripple = rippleWrapper.child('.' + rippleContainerCls);
@@ -17871,10 +17935,6 @@ Ext.define('Ext.dom.Element', function(Element) {
             rippleClearFn();
           }
         }
-        timeout = rippleParent.$rippleClearTimeout;
-        if (timeout) {
-          rippleParent.$rippleClearTimeout = Ext.undefer(timeout);
-        }
       };
       rippleDestructionTimer = Ext.defer(rippleDestructor, options.destroyTime || 1000, me);
       if (!me.$ripples) {
@@ -17884,8 +17944,9 @@ Ext.define('Ext.dom.Element', function(Element) {
       rippleBubble.addCls(Ext.baseCSSPrefix + 'ripple');
     }
   }, destroyAllRipples:function() {
-    var me = this, ripple;
-    for (ripple in me.$ripples) {
+    var me = this, rippleEl, ripple;
+    for (rippleEl in me.$ripples) {
+      ripple = me.$ripples[rippleEl];
       Ext.undefer(ripple.timerId);
       if (ripple.destructor) {
         ripple.destructor();
@@ -18340,10 +18401,13 @@ Ext.define('Ext.dom.Element', function(Element) {
     if (Ext.isSafari) {
       bodyCls.push(Ext.baseCSSPrefix + 'safari');
     }
+    if (Ext.isSafari && Ext.browser.version.isLessThan(11)) {
+      bodyCls.push(Ext.baseCSSPrefix + 'safari10m');
+    }
     if (Ext.isSafari9) {
       bodyCls.push(Ext.baseCSSPrefix + 'safari9');
     }
-    if (Ext.browser.is.Safari && Ext.browser.version.isLessThan(9)) {
+    if (Ext.isSafari && Ext.browser.version.isLessThan(9)) {
       bodyCls.push(Ext.baseCSSPrefix + 'safari8m');
     }
     if (Ext.isChrome) {
@@ -18444,11 +18508,18 @@ Ext.define('Ext.GlobalEvents', {extend:Ext.mixin.Observable, alternateClassName:
     me.attachListeners();
   });
 }, setPressedComponent:function(component, e) {
-  var pressedComponent = this.pressedComponent;
+  var me = this, pressedComponent = me.pressedComponent;
   if (pressedComponent && pressedComponent.onRelease) {
     pressedComponent.onRelease(e);
   }
-  this.pressedComponent = component;
+  me.pressedComponent = component;
+  if (component) {
+    me.pressedScrollStart = Ext.on({scrollstart:function() {
+      me.setPressedComponent(null, e);
+    }, destroyable:true});
+  } else {
+    me.pressedScrollStart = Ext.destroy(me.pressedScrollStart);
+  }
 }, attachListeners:function() {
   var me = this, win = Ext.getWin(), winListeners = me.windowListeners;
   me.onlineState = Ext.isOnline();
@@ -18471,7 +18542,7 @@ Ext.define('Ext.GlobalEvents', {extend:Ext.mixin.Observable, alternateClassName:
   Ext.ComponentManager.handleDocumentMouseDown(e);
 }, fireMouseUp:function(e) {
   this.fireEvent('mouseup', e);
-  this.setPressedComponent(null);
+  this.setPressedComponent(null, e);
 }, fireResize:function() {
   var me = this, Element = Ext.Element, w = Element.getViewportWidth(), h = Element.getViewportHeight();
   if (me.curHeight !== h || me.curWidth !== w) {
@@ -19486,8 +19557,22 @@ Ext.define('Ext.mixin.Keyboard', function(Keyboard) {
     }
     return existingKeyMap || null;
   }, getKeyName:function(event) {
-    var code = event.isEvent ? event.keyCode || event.charCode : event;
-    return Ext.event.Event.keyCodes[code] || String.fromCharCode(code);
+    var keyCode;
+    if (event.isEvent) {
+      keyCode = event.keyCode || event.charCode;
+      event = event.browserEvent;
+      if (keyCode === 229 && 'code' in event) {
+        if (Ext.String.startsWith(event.code, 'Key')) {
+          return event.key.substr(3);
+        }
+        if (Ext.String.startsWith(event.code, 'Digit')) {
+          return event.key.substr(5);
+        }
+      }
+    } else {
+      keyCode = event;
+    }
+    return Ext.event.Event.keyCodes[keyCode] || String.fromCharCode(keyCode);
   }, matchEntry:function(entry, e) {
     var ev = e.browserEvent, code;
     if (e.type !== entry.event) {
@@ -19738,18 +19823,24 @@ Ext.define('Ext.mixin.Focusable', {mixinId:'focusable', $isFocusableEntity:true,
         focusTarget = fromComponent.getFocusEl();
       }
     }
-    if (Ext.getDoc().contains(focusTarget) && Ext.fly(focusTarget).isFocusable()) {
-      fromComponent = Ext.Component.from(focusTarget);
-      if (fromComponent) {
-        fromComponent.revertFocusTo(focusTarget);
-      } else {
+    if (focusTarget && focusTarget.$isFocusableEntity) {
+      if (!focusTarget.destroyed && focusTarget.isFocusable()) {
         focusTarget.focus();
       }
     } else {
-      if (focusEvent.fromComponent && focusEvent.fromComponent.focus) {
-        reverted = focusEvent.fromComponent.focus();
-        if (!reverted) {
-          activeElement.blur();
+      if (Ext.getDoc().contains(focusTarget) && Ext.fly(focusTarget).isFocusable()) {
+        fromComponent = Ext.Component.from(focusTarget);
+        if (fromComponent) {
+          fromComponent.revertFocusTo(focusTarget);
+        } else {
+          focusTarget.focus();
+        }
+      } else {
+        if (focusEvent.fromComponent && focusEvent.fromComponent.focus) {
+          reverted = focusEvent.fromComponent.focus();
+          if (!reverted) {
+            activeElement.blur();
+          }
         }
       }
     }
@@ -20279,6 +20370,8 @@ touchAction:null, eventHandlers:{focus:'handleFocusEvent', blur:'handleBlurEvent
   }
 }, applyCls:function(cls) {
   return cls && Ext.dom.Element.splitCls(cls);
+}, applyUi:function(ui) {
+  return this.parseUi(ui, true);
 }, removeCls:function(cls, prefix, suffix) {
   if (!this.destroyed) {
     this.el.replaceCls(cls, null, prefix, suffix);
@@ -20335,10 +20428,10 @@ touchAction:null, eventHandlers:{focus:'handleFocusEvent', blur:'handleBlurEvent
     el.un('touchstart', 'onRippleStart', me);
     el.un('touchend', 'onRippleStart', me);
     el.destroyAllRipples();
-    if (ripple.release !== false) {
-      el.on('touchstart', 'onRippleStart', me);
-    } else {
+    if (ripple.release) {
       el.on('touchend', 'onRippleStart', me);
+    } else {
+      el.on('touchstart', 'onRippleStart', me);
     }
   }
 }, shouldRipple:function(e) {
@@ -20590,17 +20683,23 @@ touchAction:null, eventHandlers:{focus:'handleFocusEvent', blur:'handleBlurEvent
     prototype.initElementListeners(elementConfig);
   }
   return elementConfig;
+}, parseUi:function(ui, asString) {
+  ui = Ext.String.splitWords(ui);
+  if (asString) {
+    ui = ui.join(' ');
+  }
+  return ui;
 }, addUi:function(ui) {
   this.setUi(this.doAddUi(ui, this.getUi()));
 }, doAddUi:function(ui, oldUi) {
-  var me = this, spaceRe = me.spaceRe, newUi = null, i, u, len;
+  var me = this, newUi = null, i, u, len;
   if (ui) {
-    ui = ui.split(spaceRe);
+    ui = me.parseUi(ui);
     len = ui.length;
-    oldUi = oldUi && oldUi.split(spaceRe) || [];
+    oldUi = me.parseUi(oldUi);
     for (i = 0; i < len; i++) {
       u = ui[i];
-      if (oldUi.indexOf(u) === -1) {
+      if (Ext.Array.indexOf(oldUi, u) === -1) {
         oldUi.push(u);
       }
     }
@@ -20610,14 +20709,14 @@ touchAction:null, eventHandlers:{focus:'handleFocusEvent', blur:'handleBlurEvent
 }, removeUi:function(ui) {
   this.setUi(this.doRemoveUi(ui, this.getUi()));
 }, doRemoveUi:function(ui, oldUi) {
-  var me = this, spaceRe = me.spaceRe, newUi = null, i, u, index, len;
+  var me = this, newUi = null, i, u, index, len;
   if (ui) {
-    ui = ui.split(spaceRe);
+    ui = me.parseUi(ui);
     len = ui.length;
-    oldUi = oldUi && oldUi.split(spaceRe) || [];
+    oldUi = me.parseUi(oldUi);
     for (i = 0; i < len; i++) {
       u = ui[i];
-      index = oldUi.indexOf(u);
+      index = Ext.Array.indexOf(oldUi, u);
       if (index !== -1) {
         oldUi.splice(index, 1);
       }
@@ -20650,7 +20749,7 @@ touchAction:null, eventHandlers:{focus:'handleFocusEvent', blur:'handleBlurEvent
 }, syncUiCls:function(refs) {
   var me = this, ui = me.getUi(), currentUiCls = me.currentUiCls || (me.currentUiCls = {}), baseCls = me.baseCls, uiReferences = refs || me.uiReferences, classClsList = me.classClsList, classClsListLen = classClsList ? classClsList.length : 0, uiCls, uiLen, refName, refEl, cls, suffix, uiSuffix, i, j;
   if (ui) {
-    ui = ui.split(' ');
+    ui = me.parseUi(ui);
     uiLen = ui.length;
   }
   for (refName in uiReferences) {
@@ -21003,7 +21102,7 @@ Ext.define('Ext.overrides.Widget', {override:'Ext.Widget', mixins:[Ext.mixin.Tra
     this.topModal = null;
   }
 }, range:document.createRange()}, config:{flex:{evented:true, $value:null}, itemId:undefined, floated:null, relative:null, x:null, y:null, shadow:null, shim:null, alwaysOnTop:null, toFrontOnShow:true, translatable:{lazy:true, $value:null}, constrainAlign:null, alignSelf:null}, inheritUi:false, floatedCls:Ext.baseCSSPrefix + 'floated', floatedSelector:'.' + Ext.baseCSSPrefix + 'floated', shadowCls:Ext.baseCSSPrefix + 'shadow', noShadowCls:Ext.baseCSSPrefix + 'no-shadow', floatWrapCls:Ext.baseCSSPrefix + 
-'float-wrap', shimCls:Ext.baseCSSPrefix + 'shim', isInner:true, clearPropertiesOnDestroy:'async', beforeHide:Ext.emptyFn, afterHide:function() {
+'float-wrap', shimCls:Ext.baseCSSPrefix + 'shim', rootCls:Ext.baseCSSPrefix + 'root', isInner:true, clearPropertiesOnDestroy:'async', beforeHide:Ext.emptyFn, afterHide:function() {
   var me = this, parent = me.getParent();
   if (parent && parent.afterItemHide) {
     parent.afterItemHide(me);
@@ -21261,8 +21360,9 @@ Ext.define('Ext.overrides.Widget', {override:'Ext.Widget', mixins:[Ext.mixin.Tra
     }
   }
   me.syncFloatedState(floated, oldFloated, me.rendered && oldFloated === false);
-}, applyUi:function(ui, oldUi) {
+}, applyUi:function(ui) {
   var me = this, inheritedUi = me._inheritedUi;
+  ui = me.callParent([ui]);
   if (inheritedUi) {
     ui = me.doAddUi(inheritedUi, ui);
   }
@@ -21564,15 +21664,22 @@ Ext.define('Ext.overrides.Widget', {override:'Ext.Widget', mixins:[Ext.mixin.Tra
     }
   }
 }, updateAlwaysOnTop:function(alwaysOnTop) {
-  this.getFloatWrap().getData().alwaysOnTop = Number(alwaysOnTop);
-  this.syncAlwaysOnTop();
+  var me = this;
+  me.getFloatWrap().getData().alwaysOnTop = Number(alwaysOnTop);
+  if (!me.floatParentNode) {
+    me.findFloatParent();
+  }
+  if (!me.isConfiguring) {
+    me.syncAlwaysOnTop();
+  }
 }, syncAlwaysOnTop:function(fromMousedown) {
-  var me = this, positionEl = me.getFloatWrap().dom, parentEl = me.floatParentNode, nodes = parentEl.dom.childNodes, len = nodes.length, i, startIdx, alwaysOnTop = Number(me.getAlwaysOnTop()), range = me.statics().range, refNode, isTopModal;
+  var me = this, positionEl = me.getFloatWrap().dom, parentEl = me.floatParentNode, nodes = parentEl.dom.childNodes, len = nodes.length, alwaysOnTop = Number(me.getAlwaysOnTop()), range = me.statics().range, maskCls = Ext.Mask.prototype.baseCls, i, startIdx, nodeEl, refNode, isTopModal, currentAlwaysOnTop;
+  startIdx = parentEl === Ext.floatRoot ? 0 : 1;
+  isTopModal = me.getModal() && positionEl.previousSibling && Ext.fly(positionEl.previousSibling).hasCls(maskCls);
   if (positionEl.nextSibling) {
-    isTopModal = me.getModal() && positionEl.previousSibling && Ext.fly(positionEl.previousSibling).hasCls(Ext.Mask.prototype.baseCls);
-    startIdx = parentEl === Ext.floatRoot ? 0 : 1;
     for (i = len - 1; i >= startIdx; i--) {
-      if (!Ext.fly(nodes[i]).is('.' + me.shimCls) && nodes[i] !== positionEl) {
+      nodeEl = Ext.fly(nodes[i]);
+      if (!nodeEl.hasCls(me.shimCls) && !nodeEl.hasCls(maskCls) && nodes[i] !== positionEl) {
         if (alwaysOnTop >= (Ext.get(nodes[i]).getData().alwaysOnTop || 0)) {
           refNode = nodes[i].nextSibling;
           break;
@@ -21592,12 +21699,29 @@ Ext.define('Ext.overrides.Widget', {override:'Ext.Widget', mixins:[Ext.mixin.Tra
     } else {
       parentEl.dom.insertBefore(positionEl, refNode);
     }
-    if (isTopModal) {
-      me.showModalMask();
+  } else {
+    if (positionEl.previousSibling) {
+      for (i = len - 2; i >= startIdx; i--) {
+        if (!Ext.fly(nodes[i]).is('.' + me.shimCls) && nodes[i] !== positionEl) {
+          currentAlwaysOnTop = Ext.get(nodes[i]).getData().alwaysOnTop;
+          if (alwaysOnTop < currentAlwaysOnTop) {
+            refNode = nodes[i];
+            parentEl.dom.insertBefore(refNode, null);
+            if (nodes[i - 1] && Ext.fly(nodes[i - 1]).hasCls(maskCls)) {
+              parentEl.dom.insertBefore(nodes[i - 1], refNode);
+              i -= 1;
+            }
+            alwaysOnTop = currentAlwaysOnTop;
+          }
+        }
+      }
     }
-    me.syncShim();
   }
-  if (refNode) {
+  if (isTopModal) {
+    me.showModalMask();
+  }
+  me.syncShim();
+  if (refNode && !Ext.fly(refNode).hasCls(maskCls)) {
     Ext.Component.from(refNode).syncShim();
   } else {
     return true;
@@ -21648,7 +21772,7 @@ Ext.define('Ext.overrides.Widget', {override:'Ext.Widget', mixins:[Ext.mixin.Tra
   this.borrow(Ext.util.Positionable, ['clipTo', 'clearClip']);
   Widget.createAlias({prev:'previousSibling', next:'nextSibling'});
   Ext.getFloatRoot = function() {
-    var fp = Ext.floatRoot, viewport = Ext['Viewport'], range = Widget.range;
+    var fp = Ext.floatRoot, viewport = Ext['Viewport'], prototype = Widget.prototype, range = Widget.range;
     if (fp) {
       if (fp.el.dom.nextSibling) {
         if (fp.el.contains(document.activeElement)) {
@@ -21660,11 +21784,7 @@ Ext.define('Ext.overrides.Widget', {override:'Ext.Widget', mixins:[Ext.mixin.Tra
         }
       }
     } else {
-      if (viewport) {
-        fp = viewport.floatWrap = viewport.element.createChild({cls:Widget.prototype.floatWrapCls, id:'ext-global-floatWrap', 'data-sticky':true});
-      } else {
-        fp = Ext.getBody().createChild({cls:Widget.prototype.floatWrapCls, id:'ext-global-floatWrap', 'data-sticky':true});
-      }
+      fp = Ext.getBody().createChild({cls:prototype.floatWrapCls + ' ' + prototype.rootCls, id:'ext-global-floatWrap', 'data-sticky':true});
       fp.$skipResourceCheck = true;
       Ext.floatRoot = fp;
     }
@@ -22726,8 +22846,8 @@ Ext.define('Ext.util.translatable.ScrollPosition', {extend:Ext.util.translatable
   position.y = element.getScrollTop();
   return position;
 }});
-Ext.define('Ext.scroll.Scroller', {extend:Ext.Evented, alias:'scroller.scroller', mixins:[Ext.mixin.Factoryable], factoryConfig:{defaultType:'scroller'}, isScroller:true, config:{direction:undefined, element:undefined, scrollbars:null, snapSelector:null, snapOffset:null, msSnapInterval:null, x:true, y:true, scrollElement:null, size:null, spacerXY:null, touchAction:null}, snappableCls:Ext.baseCSSPrefix + 'scroller-snappable', elementCls:Ext.baseCSSPrefix + 'scroller', spacerCls:Ext.baseCSSPrefix + 
-'scroller-spacer', noScrollbarsCls:Ext.baseCSSPrefix + 'no-scrollbars', scrollEndBuffer:100, statics:{create:function(config, type) {
+Ext.define('Ext.scroll.Scroller', {extend:Ext.Evented, alias:'scroller.scroller', mixins:[Ext.mixin.Factoryable, Ext.mixin.Bufferable], factoryConfig:{defaultType:'scroller'}, bufferableMethods:{onDomScrollEnd:100}, isScroller:true, config:{direction:undefined, element:undefined, scrollbars:null, snapSelector:null, snapOffset:null, msSnapInterval:null, x:true, y:true, scrollElement:null, size:null, spacerXY:null, touchAction:null}, snappableCls:Ext.baseCSSPrefix + 'scroller-snappable', elementCls:Ext.baseCSSPrefix + 
+'scroller', spacerCls:Ext.baseCSSPrefix + 'scroller-spacer', noScrollbarsCls:Ext.baseCSSPrefix + 'no-scrollbars', statics:{create:function(config, type) {
   return Ext.Factory.scroller(config, type);
 }, getScrollingElement:function() {
   var doc = document, standard = this.$standardScrollElement, el = doc.scrollingElement, iframe, frameDoc;
@@ -22755,11 +22875,9 @@ Ext.define('Ext.scroll.Scroller', {extend:Ext.Evented, alias:'scroller.scroller'
   var me = this;
   me.position = {x:0, y:0};
   me.callParent([config]);
-  me.bufferedOnDomScrollEnd = Ext.Function.createBuffered(me.onDomScrollEnd, me.scrollEndBuffer, me);
 }, destroy:function() {
   var me = this, partners = me._partners, key;
   Ext.undefer(me.restoreTimer);
-  Ext.undefer(me.bufferedOnDomScrollEnd.timer);
   me.setX(Ext.emptyString);
   me.setY(Ext.emptyString);
   if (me._spacer) {
@@ -22774,7 +22892,7 @@ Ext.define('Ext.scroll.Scroller', {extend:Ext.Evented, alias:'scroller.scroller'
     }
   }
   me.setElement(null);
-  me.bufferedOnDomScrollEnd = me._partners = me.component = null;
+  me._partners = me.component = null;
   if (me.translatable) {
     me.translatable.destroy();
     me.translatable = null;
@@ -23390,7 +23508,7 @@ Ext.define('Ext.scroll.Scroller', {extend:Ext.Evented, alias:'scroller.scroller'
         me.fireScrollStart(x, y, xDelta, yDelta);
       }
       me.fireScroll(x, y, xDelta, yDelta);
-      me.bufferedOnDomScrollEnd(x, y, xDelta, yDelta);
+      me.onDomScrollEnd(x, y, xDelta, yDelta);
     }
   }
   return position;
@@ -23415,12 +23533,15 @@ Ext.define('Ext.scroll.Scroller', {extend:Ext.Evented, alias:'scroller.scroller'
     Ext.undefer(this.onDomScrollEnd.timer);
     return;
   }
-}, onDomScrollEnd:function(x, y, xDelta, yDelta) {
+}, doOnDomScrollEnd:function(x, y, xDelta, yDelta) {
   var me = this;
   if (me.destroying || me.destroyed) {
     return;
   }
   me.isScrolling = Ext.isScrolling = false;
+  if (x === undefined) {
+    return;
+  }
   me.trackingScrollLeft = x;
   me.trackingScrollTop = y;
   me.fireScrollEnd(x, y, xDelta, yDelta);
@@ -23432,7 +23553,8 @@ Ext.define('Ext.scroll.Scroller', {extend:Ext.Evented, alias:'scroller.scroller'
   this.updateDomScrollPosition(true);
   this.fireScroll(x, y, xDelta, yDelta);
 }, onPartnerScrollEnd:function(partner, x, y, xDelta, yDelta) {
-  this.onDomScrollEnd(x, y, xDelta, yDelta);
+  this.cancelOnDomScrollEnd();
+  this.doOnDomScrollEnd(x, y, xDelta, yDelta);
 }, removeSnapStylesheet:function() {
   var stylesheet = this.snapStylesheet;
   if (stylesheet) {
@@ -23453,12 +23575,20 @@ Ext.define('Ext.scroll.Scroller', {extend:Ext.Evented, alias:'scroller.scroller'
   }
 }}}, function(Scroller) {
   Ext.getViewportScroller = function() {
-    return Scroller.viewport || (Scroller.viewport = new Scroller);
+    var scroller = Scroller.viewport;
+    if (!scroller) {
+      Scroller.viewport = scroller = new Scroller;
+      Scroller.initViewportScroller();
+    }
+    return scroller;
   };
   Ext.setViewportScroller = function(scroller) {
     if (Scroller.viewport !== scroller) {
       Ext.destroy(Scroller.viewport);
-      Scroller.viewport = scroller.isScroller ? scroller : new Scroller(scroller);
+      if (scroller && !scroller.isScroller) {
+        scroller = new Scroller(scroller);
+      }
+      Scroller.viewport = scroller;
     }
   };
   Ext.onReady(function() {
@@ -23466,8 +23596,8 @@ Ext.define('Ext.scroll.Scroller', {extend:Ext.Evented, alias:'scroller.scroller'
   });
 });
 Ext.define('Ext.Component', {extend:Ext.Widget, alternateClassName:['Ext.lib.Component', 'Ext.Gadget'], xtype:'component', cachedConfig:{margin:null, padding:null, tabIndex:null}, eventedConfig:{left:null, top:null, right:null, bottom:null, minWidth:null, minHeight:null, maxWidth:null, maxHeight:null, scrollable:null, docked:null, centered:{lazy:true, $value:null}}, config:{displayed:null, html:null, draggable:null, zIndex:null, tpl:null, enterAnimation:null, exitAnimation:null, showAnimation:null, 
-hideAnimation:null, tplWriteMode:'overwrite', data:null, contentEl:null, record:null, tooltip:null, axisLock:null, modal:{lazy:true, $value:null}, hideOnMaskTap:null, weight:null, userSelectable:null}, modelValidation:null, defaultBindProperty:'html', isComponent:true, positioned:false, rendered:false, activeAnimation:null, dockPositions:{top:true, right:true, bottom:true, left:true}, bodyElement:null, classCls:Ext.baseCSSPrefix + 'component', rootCls:Ext.baseCSSPrefix + 'root', floatingCls:Ext.baseCSSPrefix + 
-'floating', hiddenCls:Ext.baseCSSPrefix + 'hidden', _scrollableCfg:{x:{x:true, y:false}, y:{x:false, y:true}, horizontal:{x:true, y:false}, vertical:{x:false, y:true}, both:{x:true, y:true}, 'true':{x:true, y:true}, 'false':{x:false, y:false}}, statics:{from:function(el, limit, selector) {
+hideAnimation:null, tplWriteMode:'overwrite', data:null, contentEl:null, record:null, tooltip:null, axisLock:null, modal:{lazy:true, $value:null}, hideOnMaskTap:null, weight:null, userSelectable:null}, modelValidation:null, defaultBindProperty:'html', isComponent:true, positioned:false, rendered:false, activeAnimation:null, dockPositions:{top:true, right:true, bottom:true, left:true}, bodyElement:null, classCls:Ext.baseCSSPrefix + 'component', floatingCls:Ext.baseCSSPrefix + 'floating', hiddenCls:Ext.baseCSSPrefix + 
+'hidden', _scrollableCfg:{x:{x:true, y:false}, y:{x:false, y:true}, horizontal:{x:true, y:false}, vertical:{x:false, y:true}, both:{x:true, y:true}, 'true':{x:true, y:true}, 'false':{x:false, y:false}}, statics:{from:function(el, limit, selector) {
   return Ext.ComponentManager.from(el, limit, selector);
 }, fromElement:function(el, limit, selector) {
   return Ext.ComponentManager.from(el, limit, selector);
@@ -23958,7 +24088,7 @@ hideAnimation:null, tplWriteMode:'overwrite', data:null, contentEl:null, record:
   }
   return me;
 }, preprocessShow:function(component, alignment, options) {
-  var me = this, hideMode = me.getHideMode(), hidden, newlyRendered;
+  var me = this, hideMode = me.getHideMode(), hidden;
   if (me.isContainer) {
     me.getItems();
   }
@@ -23973,7 +24103,6 @@ hideAnimation:null, tplWriteMode:'overwrite', data:null, contentEl:null, record:
     } else {
       hidden = hidden !== false;
       me.findFloatParent(hidden);
-      newlyRendered = true;
     }
     if (component) {
       me.notifyIf();
@@ -23989,12 +24118,10 @@ hideAnimation:null, tplWriteMode:'overwrite', data:null, contentEl:null, record:
     if (me.getModal()) {
       me.showModalMask();
     }
-    if (!newlyRendered) {
-      if (me.getToFrontOnShow()) {
-        me.toFront();
-      } else {
-        me.syncAlwaysOnTop();
-      }
+    if (me.getToFrontOnShow()) {
+      me.toFront();
+    } else {
+      me.syncAlwaysOnTop();
     }
     if (hidden) {
       me.setVisibility(false);
@@ -24002,7 +24129,11 @@ hideAnimation:null, tplWriteMode:'overwrite', data:null, contentEl:null, record:
     }
   }
 }, showBy:function(component, alignment, options) {
-  var me = this;
+  var me = this, offset;
+  if (Ext.isArray(options)) {
+    offset = options;
+    options = {offset:offset};
+  }
   if (me.isVisible()) {
     me.alignTo(component, alignment, options);
   } else {
@@ -24046,7 +24177,7 @@ hideAnimation:null, tplWriteMode:'overwrite', data:null, contentEl:null, record:
     if (animation === undefined || animation && !Ext.isObject(animation)) {
       animation = me.getShowAnimation();
     }
-    if (animation) {
+    if (animation && !me.isConfiguring) {
       me.on({beforehiddenchange:'onBeforeHiddenChange', scope:me, single:true, args:[animation]});
     }
     me.setHidden(false);
@@ -24110,6 +24241,14 @@ hideAnimation:null, tplWriteMode:'overwrite', data:null, contentEl:null, record:
   return this.renderElement.isPainted();
 }, applyTpl:function(tpl) {
   return Ext.XTemplate.get(tpl);
+}, updateTpl:function(tpl) {
+  if (!this.isConfiguring) {
+    if (tpl) {
+      this.doUpdateTpl();
+    } else {
+      this.getInnerHtmlElement().setHtml('');
+    }
+  }
 }, applyData:function(data) {
   if (Ext.isObject(data)) {
     return Ext.apply({}, data);
@@ -24122,11 +24261,10 @@ hideAnimation:null, tplWriteMode:'overwrite', data:null, contentEl:null, record:
 }, updateData:function(newData) {
   var me = this;
   if (newData) {
-    var tpl = me.getTpl(), tplWriteMode = me.getTplWriteMode();
-    if (tpl) {
-      tpl[tplWriteMode](me.getInnerHtmlElement(), newData);
+    me.doUpdateTpl(newData);
+    if (!me.isConfiguring) {
+      me.fireEvent('updatedata', me, newData);
     }
-    this.fireEvent('updatedata', me, newData);
   }
 }, applyRecord:function(config) {
   if (config && Ext.isObject(config) && config.isModel) {
@@ -24142,7 +24280,7 @@ hideAnimation:null, tplWriteMode:'overwrite', data:null, contentEl:null, record:
     me.updateData('');
   } else {
     newRecord.join(me);
-    me.updateData(newRecord.getData(true));
+    me.doUpdateTpl(newRecord.getData(true));
   }
 }, afterEdit:function() {
   this.updateRecord(this.getRecord());
@@ -24412,6 +24550,13 @@ hideAnimation:null, tplWriteMode:'overwrite', data:null, contentEl:null, record:
     }
   }
   return ret;
+}, doUpdateTpl:function(data) {
+  var me = this, tpl = me.getTpl(), writeMode;
+  if (tpl) {
+    writeMode = me.getTplWriteMode();
+    data = data || me.getData() || {};
+    tpl[writeMode](me.getInnerHtmlElement(), data);
+  }
 }, getRenderTarget:function() {
   return this.bodyElement;
 }, handleElementPainted:function(el) {
@@ -26974,6 +27119,14 @@ Ext.define('Ext.util.Collection', {mixins:[Ext.mixin.Observable], isCollection:t
     ret = this.map[key] === item;
   }
   return ret;
+}, containsAll:function(items) {
+  var all = Ext.isArray(items) ? items : arguments, i;
+  for (i = all.length; i-- > 0;) {
+    if (!this.contains(all[i])) {
+      return false;
+    }
+  }
+  return true;
 }, containsKey:function(key) {
   return key in this.map;
 }, createFiltered:function(property, value, anyMatch, caseSensitive, exactMatch) {
@@ -27699,6 +27852,9 @@ Ext.define('Ext.util.Collection', {mixins:[Ext.mixin.Observable], isCollection:t
     me.setSource(source);
     me.autoSource = source;
   } else {
+    if (source.destroyed) {
+      return;
+    }
     if (source.length || me.length) {
       me.onCollectionRefresh(source);
     }
@@ -31117,8 +31273,12 @@ Ext.define('Ext.data.Model', {alternateClassName:'Ext.data.Record', isEntity:tru
       if (typeof proxy === 'string') {
         proxy = {type:proxy};
       }
-      defaults = me.schema.constructProxy(me);
-      proxy = proxy ? Ext.merge(defaults, proxy) : defaults;
+      defaults = Ext.merge(me.schema.constructProxy(me), proxy);
+      if (proxy && proxy.type) {
+        proxy = proxy.schema === false ? proxy : defaults;
+      } else {
+        proxy = defaults;
+      }
     }
     proxy = me.setProxy(proxy);
   }
@@ -31936,6 +32096,8 @@ Ext.define('Ext.data.reader.Reader', {alternateClassName:['Ext.data.Reader', 'Ex
   }
   return out;
 }, defaultRecordCreator:function(data, Model) {
+  return new Model(data);
+}, defaultRecordCreatorFromServer:function(data, Model) {
   var record = new Model(data);
   record.phantom = false;
   return record;
@@ -32171,7 +32333,7 @@ Ext.define('Ext.data.proxy.Proxy', {mixins:[Ext.mixin.Factoryable, Ext.mixin.Obs
   if (!batch) {
     batch = new Ext.data.Batch(options.batch);
   }
-  batch.on('complete', Ext.bind(me.onBatchComplete, me, [options], 0));
+  batch.on('complete', Ext.bind(me.onBatchComplete, me, [options], 0), null, {single:true, priority:1000});
   actions = me.getBatchOrder().split(',');
   aLen = actions.length;
   for (a = 0; a < aLen; a++) {
@@ -32244,7 +32406,7 @@ Ext.define('Ext.data.proxy.Memory', {extend:Ext.data.proxy.Client, alias:'proxy.
 }, erase:function(operation) {
   this.finishOperation(operation);
 }, read:function(operation) {
-  var me = this, resultSet = me.getReader().read(me.getData()), records = resultSet.getRecords(), sorters = operation.getSorters(), grouper = operation.getGrouper(), filters = operation.getFilters(), start = operation.getStart(), limit = operation.getLimit(), meta;
+  var me = this, reader = me.getReader(), resultSet = reader.read(me.getData(), {recordCreator:reader.defaultRecordCreatorFromServer}), records = resultSet.getRecords(), sorters = operation.getSorters(), grouper = operation.getGrouper(), filters = operation.getFilters(), start = operation.getStart(), limit = operation.getLimit(), meta;
   if (operation.process(resultSet, null, null, false) !== false) {
     if (operation.success && me.getClearOnRead()) {
       this.setData(null);
@@ -32441,6 +32603,7 @@ Ext.define('Ext.data.ProxyStore', {extend:Ext.data.AbstractStore, config:{model:
     me.resumeEvents();
   }
   me.isSyncing = false;
+  batch.destroy();
   me.fireEvent('datachanged', me);
 }, onBatchException:function(batch, operation) {
 }, filterNew:function(item) {
@@ -32523,6 +32686,9 @@ Ext.define('Ext.data.ProxyStore', {extend:Ext.data.AbstractStore, config:{model:
   if (me.fireEvent('beforeload', me, operation) !== false) {
     me.onBeforeLoad(operation);
     me.loading = true;
+    if (me.hasListeners.beginload) {
+      me.fireEvent('beginload', me, operation);
+    }
     operation.execute();
   }
 }, reload:function(options) {
@@ -32904,7 +33070,7 @@ extraParams:{}}, primitiveRe:/string|number|boolean/, create:function() {
     if (response.status === 204) {
       resultSet = reader.getNullResultSet();
     } else {
-      resultSet = reader.read(me.extractResponseData(response), {recordCreator:operation.getRecordCreator()});
+      resultSet = reader.read(me.extractResponseData(response), {recordCreator:operation.getRecordCreator() || reader.defaultRecordCreatorFromServer});
     }
     operation.process(resultSet, request, response);
     exception = !operation.wasSuccessful();
@@ -33776,6 +33942,7 @@ Ext.define('Ext.data.Store', {extend:Ext.data.ProxyStore, alias:'store.store', m
     me.resumeEvents();
   }
 }, onCollectionAdd:function(collection, info) {
+  this.loadCount = this.loadCount || 1;
   this.onCollectionAddItems(collection, info.items, info);
 }, onCollectionFilterAdd:function(collection, items) {
   this.onCollectionAddItems(collection, items);
@@ -35253,7 +35420,7 @@ Ext.define('Ext.util.KeyNav', {alternateClassName:'Ext.KeyNav', disabled:false, 
     map = me.map = new Ext.util.KeyMap(keymapCfg);
     me.destroyKeyMap = true;
   }
-  this.addBindings(config);
+  me.addBindings(config);
   map.disable();
   if (!config.disabled) {
     map.enable();
@@ -35646,6 +35813,9 @@ classCls:Ext.baseCSSPrefix + 'container', managedBordersCls:Ext.baseCSSPrefix + 
     if (me.initialized && collection.length > 0) {
       me.removeAll();
     }
+    if (me.weighted && !items.isWidget && !items.xtype) {
+      items = Ext.convertKeyedItems(items);
+    }
     me.add(items);
     if (me.initialized) {
       activeItem = me.initialConfig.activeItem || me.config.activeItem || 0;
@@ -35730,15 +35900,8 @@ classCls:Ext.baseCSSPrefix + 'container', managedBordersCls:Ext.baseCSSPrefix + 
 }, add:function(newItems) {
   var me = this, items = me.getItems(), weighted = me.weighted, addingArray = true, addedItems = [], doWeightedInsert, i, ln, item, instanced;
   if (!Ext.isArray(newItems)) {
-    if (weighted && !newItems.isWidget && !newItems.xtype) {
-      newItems = Ext.convertKeyedItems(newItems);
-      if (newItems.length === 1) {
-        addingArray = false;
-      }
-    } else {
-      newItems = [newItems];
-      addingArray = false;
-    }
+    newItems = [newItems];
+    addingArray = false;
   }
   if (weighted) {
     if (items.length) {
@@ -35778,16 +35941,13 @@ classCls:Ext.baseCSSPrefix + 'container', managedBordersCls:Ext.baseCSSPrefix + 
     me.initFocusableContainer();
   }
   return addingArray ? addedItems : addedItems[0];
-}, onItemWeightChange:function(item, weight, oldWeight) {
-  var itemsCollection = this.getItems(), items = itemsCollection.items, i = itemsCollection.indexOf(item);
-  if (weight > oldWeight) {
-    for (++i; i < itemsCollection.length && item.weight > items[i].weight; i++) {
-    }
-  } else {
-    for (--i; i > 0 && item.weight < items[i].weight; i--) {
-    }
-  }
-  this.insert(i, item);
+}, onItemWeightChange:function(item) {
+  var items = this.getItems(), oldIndex = items.indexOf(item), index;
+  items.remove(item);
+  index = items.findInsertionIndex(item, Ext.weightSortFn);
+  items.insert(index, item);
+  this.insertInner(item, index);
+  this.onItemMove(item, index, oldIndex);
 }, doAdd:function(item, instanced) {
   var me = this, items = me.getItems(), index;
   if (!items.has(item)) {
@@ -36090,11 +36250,16 @@ classCls:Ext.baseCSSPrefix + 'container', managedBordersCls:Ext.baseCSSPrefix + 
         var item;
         if (typeof activeItem == 'string') {
           item = me.child(activeItem);
-          activeItem = {xtype:activeItem};
+        } else {
+          if (activeItem.isComponent) {
+            item = activeItem;
+          } else {
+            activeItem = Ext.apply({$initParent:me}, activeItem);
+            item = me.factoryItem(activeItem);
+          }
         }
-        if (!item || !item.isComponent) {
-          activeItem.$initParent = me;
-          item = me.factoryItem(activeItem);
+        if (!item) {
+          return null;
         }
         me.pendingActiveItem = item;
         if (!item.isInnerItem()) {
@@ -37387,7 +37552,7 @@ Ext.define('Ext.viewport.Default', function() {
     }
     return template;
   }, isReady:false, isViewport:true, isMaximizing:false, id:'ext-viewport', isInputRegex:/^(input|textarea|select|a)$/i, isInteractiveWebComponentRegEx:/^(audio|video)$/i, notScalableRe:/user-scalable=no/, focusable:false, focusEl:null, ariaEl:null, allSidesCls:[Ext.baseCSSPrefix + 'top', Ext.baseCSSPrefix + 'right', Ext.baseCSSPrefix + 'bottom', Ext.baseCSSPrefix + 'left'], sideClsMap:{top:Ext.baseCSSPrefix + 'top', right:Ext.baseCSSPrefix + 'right', bottom:Ext.baseCSSPrefix + 'bottom', left:Ext.baseCSSPrefix + 
-  'left'}, hasViewportCls:Ext.baseCSSPrefix + 'has-viewport', hasUnscalableViewportCls:Ext.baseCSSPrefix + 'has-unscalable-viewport', fullscreenItemCls:Ext.baseCSSPrefix + 'fullscreen', constructor:function(config) {
+  'left'}, hasViewportCls:Ext.baseCSSPrefix + 'has-viewport', fixedCls:Ext.baseCSSPrefix + 'fixed-viewport', fullscreenItemCls:Ext.baseCSSPrefix + 'fullscreen', constructor:function(config) {
     var me = this;
     me.doPreventPanning = me.doPreventPanning.bind(me);
     me.doPreventZooming = me.doPreventZooming.bind(me);
@@ -37396,14 +37561,16 @@ Ext.define('Ext.viewport.Default', function() {
     me.callParent([config]);
     me.updateSize();
     me.windowOuterHeight = me.getWindowOuterHeight();
-    Ext.setViewportScroller(me.getScrollable() || {x:false, y:false, element:Ext.getBody(), component:me});
+    Ext.setViewportScroller(me.getScrollable() || Ext.getViewportScroller().setConfig({x:false, y:false, component:me}));
     Ext.getBody().setStyle('overflow', 'hidden');
     Ext.get(document.documentElement).addCls(me.hasViewportCls);
     me.stretchHeights = me.stretchHeights || {};
     if (Ext.feature.has.OrientationChange) {
       me.addWindowListener('orientationchange', me.onOrientationChange.bind(me));
     }
-    me.preventOverscroll();
+    if (!Ext.os.is.iOS || !me.isScalable()) {
+      Ext.get(document.documentElement).addCls(me.fixedCls);
+    }
     Ext.GlobalEvents.on('resize', 'onWindowResize', me, {priority:1000});
     Ext.onDocumentReady(me.onDomReady, me);
     return me;
@@ -37447,13 +37614,10 @@ Ext.define('Ext.viewport.Default', function() {
     if (this.getAutoRender()) {
       this.render();
     }
-    if (Ext.browser.name === 'ChromeiOS') {
-      this.setHeight('-webkit-calc(100% - ' + (window.outerHeight - window.innerHeight) / 2 + 'px)');
-    }
   }, render:function() {
     var me = this, body = Ext.getBody();
     if (!me.rendered) {
-      me.callParent([body]);
+      me.callParent([body, Ext.floatRoot]);
       me.setOrientation(me.determineOrientation());
       Ext.getBody().addCls(Ext.baseCSSPrefix + me.getOrientation());
     }
@@ -37779,15 +37943,18 @@ Ext.define('Ext.viewport.Default', function() {
       menu = menus[side];
       menu.setDisplayed(menu.isHidden());
     }
+  }, applyScrollable:function(scrollable) {
+    return this.callParent([scrollable, Ext.getViewportScroller()]);
   }, doDestroy:function() {
-    if (Ext.floatRoot) {
-      document.body.appendChild(Ext.floatRoot.dom);
-      delete this.floatWrap;
-      Ext.floatRoot.getData().component = null;
+    var me = this, docEl = Ext.get(document.documentElement), scroller = me._scrollable;
+    docEl.removeCls(me.hasViewportCls);
+    docEl.removeCls(me.fixedCls);
+    if (scroller) {
+      scroller.setConfig({x:true, y:true});
+      me._scrollable = null;
     }
-    Ext.getBody().setStyle('overflow', '');
-    Ext.GlobalEvents.un('resize', 'onWindowResize', this);
-    this.callParent();
+    Ext.un('resize', 'onWindowResize', me);
+    me.callParent();
     Ext.Viewport = null;
   }, privates:{addMeta:function(name, content) {
     var meta = document.createElement('meta');
@@ -37839,6 +38006,13 @@ Ext.define('Ext.viewport.Default', function() {
       return me;
     }
     me.callParent([eventName, fn, scope, options, order, caller, manager]);
+  }, isScalable:function() {
+    var me = this, metas = document.querySelectorAll('meta[name\x3d"viewport"]'), meta = metas.length && metas[metas.length - 1], scalable = true, content;
+    if (meta) {
+      content = meta.getAttribute('content');
+      scalable = !(content && me.notScalableRe.test(content));
+    }
+    return scalable;
   }, onTap:function(e) {
   }, onSwipeStart:function(e) {
     var side = this.sideForSwipeDirection(e.direction), menu = this.getMenus()[side];
@@ -37957,14 +38131,6 @@ Ext.define('Ext.viewport.Default', function() {
       me.translate(viewportAfter.translateX, viewportAfter.translateY, {duration:200});
     }
     me.$swiping = false;
-  }, preventOverscroll:function() {
-    var me = this, metas = document.querySelectorAll('meta[name\x3d"viewport"]'), meta = metas.length && metas[metas.length - 1], content;
-    if (meta) {
-      content = meta.getAttribute('content');
-      if (content && me.notScalableRe.test(content)) {
-        Ext.get(document.documentElement).addCls(me.hasUnscalableViewportCls);
-      }
-    }
   }, sideForDirection:function(direction) {
     if (direction === 'up') {
       direction = 'top';
@@ -38289,13 +38455,7 @@ Ext.define('Ext.viewport.Viewport', {singleton:true, setup:function(config) {
       viewportName = 'Default';
       break;
   }
-  Ext.Viewport = viewport = Ext.create('Ext.viewport.' + viewportName, config);
-  if (Ext.floatRoot) {
-    viewport.floatWrap = Ext.floatRoot;
-    viewport.element.dom.appendChild(Ext.floatRoot.dom);
-    Ext.floatRoot.getData().component = viewport;
-  }
-  return viewport;
+  return Ext.Viewport = viewport = Ext.create('Ext.viewport.' + viewportName, config);
 }});
 Ext.define('Ext.overrides.app.Application', {override:'Ext.app.Application', config:{viewport:null}, quickTips:false, destroy:function() {
   this.setQuickTips(false);
@@ -40261,19 +40421,25 @@ Ext.define('Ext.app.bind.Stub', {extend:Ext.app.bind.AbstractStub, isStub:true, 
 }, afterCommit:function(record) {
   this.afterEdit(record, null);
 }, afterEdit:function(record, modifiedFieldNames) {
-  var children = this.children, len = modifiedFieldNames && modifiedFieldNames.length, associations = record.associations, bindMappings = this.bindMappings.model, key, i, child;
+  var children = this.children, len = modifiedFieldNames && modifiedFieldNames.length, associations = record.associations, bindMappings = this.bindMappings.model, key, i, child, name, ref;
   if (children) {
     if (len) {
       for (i = 0; i < len; ++i) {
-        child = children[modifiedFieldNames[i]];
+        name = modifiedFieldNames[i];
+        child = children[name];
+        if (!child) {
+          ref = record.fieldsMap[name];
+          ref = ref && ref.reference;
+          child = ref && children[ref.role];
+        }
         if (child) {
-          child.invalidate();
+          child.invalidate(true);
         }
       }
     } else {
       for (key in children) {
         if (!(associations && key in associations)) {
-          children[key].invalidate();
+          children[key].invalidate(true);
         }
       }
     }
@@ -40446,7 +40612,7 @@ Ext.define('Ext.app.bind.Stub', {extend:Ext.app.bind.AbstractStub, isStub:true, 
         if (associatedEntity && boundValue.autoLoad !== false && !boundValue.complete && !boundValue.hasPendingLoad()) {
           boundValue.load();
         }
-        boundValue.on({scope:me, beforeload:'onStoreDataChanged', load:'onStoreDataChanged', datachanged:'onStoreDataChanged', destroy:'onDestroyBound'});
+        boundValue.on({scope:me, beginload:'onStoreDataChanged', load:'onStoreDataChanged', datachanged:'onStoreDataChanged', destroy:'onDestroyBound'});
       }
     }
     me.boundValue = boundValue;
@@ -40458,7 +40624,7 @@ Ext.define('Ext.app.bind.Stub', {extend:Ext.app.bind.AbstractStub, isStub:true, 
     if (current.isModel) {
       current.unjoin(me);
     } else {
-      current.un({scope:me, beforeload:'onStoreDataChanged', load:'onStoreDataChanged', datachanged:'onStoreDataChanged', destroy:'onDestroyBound'});
+      current.un({scope:me, beginload:'onStoreDataChanged', load:'onStoreDataChanged', datachanged:'onStoreDataChanged', destroy:'onDestroyBound'});
     }
   }
 }, onDestroyBound:function() {
@@ -41510,7 +41676,7 @@ Ext.define('Ext.app.bind.Parser', {extend:Ext.parse.Parser, infix:{':':{priority
   }
   return 'v' + pos;
 }}});
-Ext.define('Ext.app.bind.Template', {buffer:null, slots:null, tokens:null, constructor:function(text) {
+Ext.define('Ext.app.bind.Template', {escapes:false, buffer:null, slots:null, tokens:null, constructor:function(text) {
   var me = this, initters = me._initters, name;
   me.text = text;
   for (name in initters) {
@@ -41532,35 +41698,61 @@ Ext.define('Ext.app.bind.Template', {buffer:null, slots:null, tokens:null, const
     return buffer[0];
   }
   return buffer.join('');
+}, getText:function() {
+  return this.buffer.join('');
 }, getTokens:function() {
   return this.tokens;
 }, isStatic:function() {
   var tokens = this.getTokens(), slots = this.slots;
   return tokens.length === 0 && slots.length === 0;
-}, privates:{parse:function() {
-  var me = this, text = me.text, parser = Ext.app.bind.Parser.fly(), buffer = me.buffer = [], slots = me.slots = [], last = 0, length = text.length, pos = 0, i;
-  for (i in me._initters) {
-    delete me[i];
+}, privates:{literalChar:'~', escapeChar:'\\', parse:function() {
+  var me = this, text = me.text, parser = Ext.app.bind.Parser.fly(), buffer = me.buffer = [], slots = me.slots = [], length = text.length, pos = 0, escapes = me.escapes, current = '', i = 0, esc = me.escapeChar, lit = me.literalChar, escaped, tokens, tokensMap, lastEscaped, c, prev, key;
+  for (key in me._initters) {
+    delete me[key];
   }
-  me.tokens = [];
-  me.tokensMap = {};
-  for (i = 0; i < length;) {
-    last = i;
-    if ((i = text.indexOf('{', last)) < 0) {
-      buffer[pos++] = text.substring(last);
-      break;
+  me.tokens = tokens = [];
+  me.tokensMap = tokensMap = {};
+  while (i < length) {
+    c = text[i];
+    lastEscaped = escaped;
+    escaped = escapes && c === esc;
+    if (escaped) {
+      c = text[i + 1];
+      ++i;
+    } else {
+      if (c === lit && prev === lit && !lastEscaped) {
+        current = current.slice(0, -1);
+        current += text.substring(i + 1);
+        break;
+      } else {
+        if (c === '{') {
+          if (current) {
+            buffer[pos++] = current;
+            current = '';
+          }
+          parser.reset(text, i + 1);
+          i = me.parseExpression(parser, pos);
+          ++pos;
+          continue;
+        }
+      }
     }
-    if (last < i) {
-      buffer[pos++] = text.substring(last, i);
-    }
-    parser.reset(text, i + 1);
-    slots[pos++] = parser.compileExpression(me.tokens, me.tokensMap);
-    i = parser.token.at + 1;
-    parser.expect('}');
+    current += c;
+    ++i;
+    prev = c;
+  }
+  if (current) {
+    buffer[pos] = current;
   }
   parser.release();
   me.single = buffer.length === 0 && slots.length === 1;
   return me;
+}, parseExpression:function(parser, pos) {
+  var i;
+  this.slots[pos] = parser.compileExpression(this.tokens, this.tokensMap);
+  i = parser.token.at + 1;
+  parser.expect('}');
+  return i;
 }}});
 Ext.define('Ext.app.bind.TemplateBinding', {extend:Ext.app.bind.BaseBinding, isTemplateBinding:true, lastValue:undefined, value:undefined, constructor:function(template, owner, callback, scope, options) {
   var me = this, tpl = new Ext.app.bind.Template(template), tokens = tpl.getTokens();
@@ -41572,7 +41764,7 @@ Ext.define('Ext.app.bind.TemplateBinding', {extend:Ext.app.bind.BaseBinding, isT
     me.multiBinding = new Ext.app.bind.Multi(tokens, owner, me.onBindData, me);
   } else {
     me.isStatic = true;
-    me.onData(tpl.text);
+    me.onData(tpl.getText());
   }
 }, destroy:function() {
   var me = this;
@@ -41615,7 +41807,7 @@ Ext.define('Ext.app.bind.TemplateBinding', {extend:Ext.app.bind.BaseBinding, isT
     this.scheduler.sortItem(multi);
   }
 }}});
-Ext.define('Ext.data.ChainedStore', {extend:Ext.data.AbstractStore, alias:'store.chained', config:{source:null, remoteFilter:false, remoteSort:false}, mixins:[Ext.data.LocalStore], updateRemoteFilter:function(remoteFilter, oldRemoteFilter) {
+Ext.define('Ext.data.ChainedStore', {extend:Ext.data.AbstractStore, alias:'store.chained', isChainedStore:true, config:{source:null, remoteFilter:false, remoteSort:false}, mixins:[Ext.data.LocalStore], updateRemoteFilter:function(remoteFilter, oldRemoteFilter) {
   if (remoteFilter) {
     Ext.raise('Remote filtering cannot be used with chained stores.');
   }
@@ -41758,7 +41950,7 @@ Ext.define('Ext.data.ChainedStore', {extend:Ext.data.AbstractStore, alias:'store
   me.callParent();
 }, privates:{getSourceValue:function(method, defaultValue) {
   var source = this.getSource(), val = defaultValue;
-  if (source) {
+  if (source && !source.destroyed) {
     val = source[method]();
   }
   return val;
@@ -41768,13 +41960,26 @@ Ext.define('Ext.data.ChainedStore', {extend:Ext.data.AbstractStore, alias:'store
 }, loadsSynchronously:function() {
   return this.getSource().loadsSynchronously();
 }}});
-Ext.define('Ext.app.ViewModel', {mixins:[Ext.mixin.Factoryable, Ext.mixin.Identifiable], alias:'viewmodel.default', isViewModel:true, factoryConfig:{name:'viewModel'}, collectTimeout:100, expressionRe:/^(?:\{(?:(\d+)|([a-z_][\w\.]*))\})$/i, $configStrict:false, config:{data:true, formulas:{$value:null, merge:function(newValue, currentValue, target, mixinClass) {
+Ext.define('Ext.app.ViewModel', {mixins:[Ext.mixin.Factoryable, Ext.mixin.Identifiable], alias:'viewmodel.default', isViewModel:true, factoryConfig:{name:'viewModel'}, collectTimeout:100, expressionRe:/^(?:\{(?:(\d+)|([a-z_][\w\.]*))\})$/i, statics:{escape:function(value) {
+  var ret = value, key;
+  if (typeof value === 'string') {
+    ret = '~~' + value;
+  } else {
+    if (value && value.constructor === Object) {
+      ret = {};
+      for (key in value) {
+        ret[key] = this.escape(value[key]);
+      }
+    }
+  }
+  return ret;
+}}, $configStrict:false, config:{data:true, formulas:{$value:null, merge:function(newValue, currentValue, target, mixinClass) {
   return this.mergeNew(newValue, currentValue, target, mixinClass);
 }}, links:null, parent:null, root:true, scheduler:null, schema:'default', session:null, stores:null, view:null}, constructor:function(config) {
   this.bindings = {};
   this.initConfig(config);
 }, destroy:function() {
-  var me = this, scheduler = me._scheduler, stores = me.storeInfo, parent = me.getParent(), task = me.collectTask, children = me.children, bindings = me.bindings, key, store, autoDestroy;
+  var me = this, scheduler = me._scheduler, stores = me.storeInfo, parent = me.getParent(), task = me.collectTask, children = me.children, bindings = me.bindings, key, store, autoDestroy, storeBinding;
   me.destroying = true;
   if (task) {
     task.cancel();
@@ -41788,11 +41993,12 @@ Ext.define('Ext.app.ViewModel', {mixins:[Ext.mixin.Factoryable, Ext.mixin.Identi
   if (stores) {
     for (key in stores) {
       store = stores[key];
+      storeBinding = store.$binding;
       autoDestroy = store.autoDestroy;
       if (autoDestroy || !store.$wasInstance && autoDestroy !== false) {
         store.destroy();
       }
-      Ext.destroy(store.$binding);
+      Ext.destroy(storeBinding);
     }
   }
   if (parent) {
@@ -44441,7 +44647,7 @@ grouper:null, constructor:function(config) {
           if (record.isLoaded()) {
             me.handleNodeExpand(record, record.childNodes, toAdd);
           } else {
-            record.set('expanded', false);
+            record.set('expanded', false, {silent:true});
             record.expand();
           }
         }
@@ -44831,7 +45037,7 @@ grouper:null, constructor:function(config) {
       }
     }
     if (me.loading && node) {
-      node.set('loading', true);
+      node.set('loading', true, {silent:!(me.contains(node) || node === me.getRoot())});
     }
     if (doClear) {
       me.clearData(true);
@@ -46144,18 +46350,10 @@ Ext.define('Ext.data.reader.Xml', {alternateClassName:'Ext.data.XmlReader', exte
       return field.mapping(raw, self);
     };
   } else {
-    if (autoMapping && !namespace) {
-      if (Ext.isIE9m) {
-        result = function(raw, self) {
-          return self.getNodeValue(raw.selectSingleNode(selector));
-        };
-      } else {
-        if (Ext.supports.XmlQuerySelector) {
-          result = function(raw, self) {
-            return self.getNodeValue(raw.querySelector(selector));
-          };
-        }
-      }
+    if (autoMapping && !namespace && Ext.supports.XmlQuerySelector) {
+      result = function(raw, self) {
+        return self.getNodeValue(raw.querySelector(selector));
+      };
     }
     if (!result) {
       result = function(raw, self) {
@@ -47009,7 +47207,7 @@ Ext.define('Ext.data.virtual.PageMap', {isVirtualPageMap:true, config:{cacheSize
   me.loadQueues = alive && {active:[], prefetch:[]};
   if (pages) {
     for (pg in pages) {
-      pages[pg].destroy();
+      me.destroyPage(pages[pg]);
     }
   }
 }, getPage:function(number, autoCreate) {
@@ -47055,14 +47253,13 @@ Ext.define('Ext.data.virtual.PageMap', {isVirtualPageMap:true, config:{cacheSize
     }
   }
 }, updatePageCount:function(pageCount, oldPageCount) {
-  var pages = this.pages, store = this.store, pageNumber, page;
+  var pages = this.pages, pageNumber, page;
   if (oldPageCount === null || pageCount < oldPageCount) {
     for (pageNumber in pages) {
       page = pages[pageNumber];
       if (page.number >= pageCount) {
         this.clearPage(page);
-        store.onPageDestroy(page);
-        page.destroy();
+        this.destroyPage(page);
       }
     }
   }
@@ -47077,6 +47274,9 @@ Ext.define('Ext.data.virtual.PageMap', {isVirtualPageMap:true, config:{cacheSize
   if (!fromCache) {
     Ext.Array.remove(me.cache, page);
   }
+}, destroyPage:function(page) {
+  this.store.onPageDestroy(page);
+  page.destroy();
 }, loadNext:function() {
   var me = this, concurrency = me.getConcurrentLoading(), loading = me.loading, loadQueues = me.loadQueues, page;
   me.queueTimer = null;
@@ -47124,8 +47324,7 @@ Ext.define('Ext.data.virtual.PageMap', {isVirtualPageMap:true, config:{cacheSize
       page = cache.shift();
       me.clearPage(page, true);
       store.onPageEvicted(page);
-      store.onPageDestroy(page);
-      page.destroy();
+      me.destroyPage(page);
     }
   }
 }, prefetchSortFn:function(a, b) {
@@ -47710,7 +47909,7 @@ Ext.define('Ext.dom.Fly', {extend:Ext.dom.Element, alternateClassName:'Ext.dom.E
   if (!dom) {
     return me.detach();
   }
-  me.dom = dom.isElement ? dom.dom : dom;
+  me.dom = Ext.getDom(dom);
   if (!Ext.cache[dom.id]) {
     data = me.peekData();
     if (data) {
@@ -47719,7 +47918,7 @@ Ext.define('Ext.dom.Fly', {extend:Ext.dom.Element, alternateClassName:'Ext.dom.E
   }
   return me;
 }, detach:function() {
-  this.dom = null;
+  return this.dom = null;
 }, addListener:function() {
   Ext.raise('Cannot use addListener() on Ext.dom.Fly instances. ' + 'Please use Ext.get() to retrieve an Ext.dom.Element instance instead.');
 } || null, removeListener:function() {
@@ -49908,22 +50107,29 @@ Ext.define('Ext.mixin.ItemRippler', {mixinId:'itemrippler', config:{itemRipple:n
   if (!item) {
     return;
   }
-  var me = this, start = e.type.match(me.rippleStateRe), itemRipple = me.shouldRippleItem(item, e), release = itemRipple && itemRipple.release, isRelease = release === true, el = item.isWidget ? item.el : item, pos, delta, rs;
+  var me = this, start = e.type.match(me.rippleStateRe), itemRipple = me.shouldRippleItem(item, e), release = itemRipple && itemRipple.release, isRelease = release === true, el = item.isWidget ? item.el : item, pos, delta, rs, rippledItems;
   if (itemRipple && start && isRelease) {
     me.$rippleStart = e.getXY();
   }
   if (itemRipple && el && (!start && isRelease || start && release !== true)) {
+    rippledItems = me.$rippledItems || (me.$rippledItems = []);
     rs = me.$rippleStart;
     if (rs) {
       pos = e.getXY();
       delta = Math.sqrt(Math.pow(pos[0] - rs[0], 2) + Math.pow(pos[1] - rs[1], 2));
       if (delta <= 8) {
         el.ripple(e, itemRipple);
+        rippledItems.push(el);
       }
     } else {
       el.ripple(e, itemRipple);
+      rippledItems.push(el);
     }
     me.$rippleStart = null;
+  }
+}, destroyAllRipples:function() {
+  for (var items = this.$rippledItems; items && items.length;) {
+    items.pop().destroyAllRipples();
   }
 }, privates:{noItemRippleSelector:'.' + Ext.baseCSSPrefix + 'item-no-ripple, ' + '.' + Ext.baseCSSPrefix + 'item-no-tap', rippleStateRe:/start|down/}});
 Ext.define('Ext.mixin.ConfigProxy', function(ConfigProxy) {
@@ -50780,10 +50986,9 @@ Ext.define('Ext.util.TextMetrics', {statics:{shared:null, measure:function(el, t
     return Ext.Number.constrain(Ext.util.TextMetrics.measure(this.dom, Ext.valueFrom(text, this.dom.innerHTML, true)).width, min || 0, max || 1000000);
   }});
 });
-Ext.define('Ext.Tool', {extend:Ext.Component, alternateClassName:'Ext.panel.Tool', xtype:['tool', 'paneltool'], isPanelTool:true, isTool:true, focusable:true, tabIndex:0, focusEl:'element', ariaEl:'element', inheritUi:true, classCls:Ext.baseCSSPrefix + 'tool', pressedCls:Ext.baseCSSPrefix + 'pressed', hoveredCls:Ext.baseCSSPrefix + 'hovered', element:{reference:'element', tabIndex:0, listeners:{click:'onClick', mousedown:'onMouseDown', mouseover:'onMouseOver', mouseout:'onMouseOut'}, children:[{reference:'iconElement', 
-cls:Ext.baseCSSPrefix + 'icon-el ' + Ext.baseCSSPrefix + 'font-icon'}]}, handler:null, scope:null, toolOwner:null, config:{iconCls:null, type:null}, stopEvent:true, weight:10, updateIconCls:function(iconCls, oldValue) {
-  var iconElement = this.iconElement;
-  iconElement.replaceCls(oldValue, iconCls);
+Ext.define('Ext.Tool', {extend:Ext.Component, alternateClassName:'Ext.panel.Tool', xtype:['tool', 'paneltool'], isPanelTool:true, isTool:true, focusable:true, tabIndex:0, focusEl:'element', ariaEl:'element', inheritUi:true, classCls:Ext.baseCSSPrefix + 'tool', pressedCls:Ext.baseCSSPrefix + 'pressed', hoveredCls:Ext.baseCSSPrefix + 'hovered', passiveCls:Ext.baseCSSPrefix + 'passive', element:{reference:'element', tabIndex:0, listeners:{click:'onClick', mousedown:'onMouseDown', mouseover:'onMouseOver', 
+mouseout:'onMouseOut'}, children:[{reference:'iconElement', cls:Ext.baseCSSPrefix + 'icon-el ' + Ext.baseCSSPrefix + 'font-icon'}]}, handler:null, scope:null, toolOwner:null, config:{iconCls:null, type:null, passive:null}, stopEvent:true, weight:10, updateIconCls:function(iconCls, oldValue) {
+  this.iconElement.replaceCls(oldValue, iconCls);
 }, updateType:function(type, oldType) {
   var me = this, baseCls = Ext.Tool.prototype.classCls, iconElement = me.iconElement;
   me.type = type;
@@ -50791,6 +50996,14 @@ cls:Ext.baseCSSPrefix + 'icon-el ' + Ext.baseCSSPrefix + 'font-icon'}]}, handler
 }, updateDisabled:function(disabled, oldDisabled) {
   this.callParent([disabled, oldDisabled]);
   this.el.removeCls([this.hoveredCls, this.pressedCls]);
+}, updatePassive:function(passive) {
+  var me = this;
+  me.setDisabled(passive);
+  me.el.toggleCls(me.passiveCls, passive);
+  me.el.setTabIndex(passive ? null : me.getTabIndex());
+  me.focusable = !passive;
+}, shouldRipple:function(e) {
+  return !this.getPassive() && this.callParent();
 }, privates:{_toolTypes:{close:1, collapse:1, disclosure:1, down:1, expand:1, gear:1, help:1, left:1, maximize:1, minimize:1, minus:1, menu:1, next:1, pin:1, plus:1, prev:1, print:1, refresh:1, restore:1, right:1, save:1, search:1, toggle:1, unpin:1, up:1}, invokeToolHandler:function(me, handler, scope, args, ev) {
   if (handler) {
     Ext.callback(handler, me.scope, args, 0, me);
@@ -51004,6 +51217,7 @@ Ext.define('Ext.layout.Box', {extend:Ext.layout.Auto, alias:'layout.box', isBox:
   }
   return this;
 }, destroy:function() {
+  Ext.destroy(this.getOverflow());
   this.positionSortFn = null;
   this.callParent();
 }, updateContainer:function(container, oldContainer) {
@@ -51206,6 +51420,7 @@ Ext.define('Ext.Button', {extend:Ext.Component, xtype:'button', isButton:true, c
 eventedConfig:{pressed:false}, preventDefaultAction:true, isMenuOwner:true, baseCls:Ext.baseCSSPrefix + 'button', hasMenuCls:Ext.baseCSSPrefix + 'has-menu', hoveredCls:Ext.baseCSSPrefix + 'hovered', pressedCls:Ext.baseCSSPrefix + 'pressed', pressingCls:Ext.baseCSSPrefix + 'pressing', hasBadgeCls:Ext.baseCSSPrefix + 'has-badge', hasIconCls:Ext.baseCSSPrefix + 'has-icon', hasTextCls:Ext.baseCSSPrefix + 'has-text', hasArrowCls:Ext.baseCSSPrefix + 'has-arrow', noArrowCls:Ext.baseCSSPrefix + 'no-arrow', 
 defaultBindProperty:'text', publishes:['pressed'], element:{reference:'element', onclick:'return Ext.doEv(this, event);'}, focusable:true, focusEl:'buttonElement', ariaEl:'buttonElement', backgroundColorEl:'innerElement', focusClsEl:'el', initialize:function() {
   var me = this, el = me.el;
+  me.callParent();
   if (me.getConfig('menu', true)) {
     me.addCls(me.hasMenuCls);
   }
@@ -51345,8 +51560,10 @@ defaultBindProperty:'text', publishes:['pressed'], element:{reference:'element',
 }, disableFocusable:function() {
   this.callParent();
   this.buttonElement.dom.disabled = true;
+}, findEventTarget:function(e) {
+  return this.element;
 }, onPress:function(e) {
-  var me = this, element = me.element, pressedDelay = me.getPressedDelay(), pressingCls = me.pressingCls;
+  var me = this, element = this.findEventTarget(e), pressedDelay = me.getPressedDelay(), pressingCls = me.pressingCls;
   if (!me.getDisabled() && !e.button) {
     if (pressedDelay > 0) {
       me.pressedTimeout = Ext.defer(function() {
@@ -51363,12 +51580,15 @@ defaultBindProperty:'text', publishes:['pressed'], element:{reference:'element',
 }, onRelease:function(e) {
   this.fireAction('release', [this, e], 'doRelease');
 }, doRelease:function(me, e) {
+  var element = me.findEventTarget(e);
   if (!me.getDisabled()) {
     if (me.hasOwnProperty('pressedTimeout')) {
       Ext.undefer(me.pressedTimeout);
       delete me.pressedTimeout;
     } else {
-      me.element.removeCls(me.pressingCls);
+      if (element) {
+        element.removeCls(me.pressingCls);
+      }
     }
   }
 }, onClick:function(e) {
@@ -51406,11 +51626,11 @@ defaultBindProperty:'text', publishes:['pressed'], element:{reference:'element',
   }
 }, onEscKey:function(e) {
   var menu = this.getMenu();
-  if (!this.getDisabled() && menu && menu.isVisible()) {
+  if (menu && !this.getDisabled() && menu.isVisible()) {
     menu.hide();
+    e.stopEvent();
+    return false;
   }
-  e.stopEvent();
-  return false;
 }, onFocus:function(e) {
   if (!this.keyHandlersAdded) {
     this.setKeyMap({scope:'this', SPACE:'onEnterKey', ENTER:'onEnterKey', DOWN:'onDownKey', ESC:'onEscKey'});
@@ -51765,45 +51985,47 @@ Ext.define('Ext.Panel', function(Panel) {
   }, applyBbar:function(toolbar, previous) {
     return this.normalizeDockedBars(toolbar, previous, 'bottom');
   }, applyButtons:function(buttons, oldButtons) {
-    var me = this, array = Ext.convertKeyedItems(buttons, 'xxx', 'xxx'), buttonDefaults = me.getButtonDefaults(), standardButtons = me.getStandardButtons(), toolbar = me.getButtonToolbar(), n = array.length, button, defaults, handler, i;
+    var me = this, array = Ext.convertKeyedItems(buttons, 'xxx', 'xxx'), buttonDefaults = me.getButtonDefaults(), standardButtons = me.getStandardButtons(), toolbar = me.getButtonToolbar(), n = array ? array.length : 0, button, defaults, handler, i;
     if (buttons && typeof buttons === 'object') {
       if (buttons.xtype || buttons.itemId || buttons.items || buttons.reference) {
         return me.normalizeDockedBars(buttons, oldButtons, 'bottom', toolbar);
       }
     }
-    if (array === buttons) {
-      array = [];
-      for (i = 0; i < n; ++i) {
-        button = buttons[i];
-        if (typeof button === 'string') {
-          if (!Ext.Toolbar.shortcuts[button]) {
-            button = Ext.applyIf({itemId:button, text:button}, buttonDefaults);
+    if (buttons) {
+      if (array === buttons) {
+        array = [];
+        for (i = 0; i < n; ++i) {
+          button = buttons[i];
+          if (typeof button === 'string') {
+            if (!Ext.Toolbar.shortcuts[button]) {
+              button = Ext.applyIf({itemId:button, text:button}, buttonDefaults);
+            }
+          } else {
+            if (buttonDefaults) {
+              button = Ext.apply({}, button, buttonDefaults);
+            }
           }
-        } else {
-          if (buttonDefaults) {
-            button = Ext.apply({}, button, buttonDefaults);
-          }
+          array[i] = button;
         }
-        array[i] = button;
-      }
-    } else {
-      for (i = 0; i < n; ++i) {
-        button = array[i];
-        handler = button.xxx;
-        defaults = standardButtons[button.itemId];
-        if (defaults) {
-          Ext.applyIf(button, defaults);
-        } else {
+      } else {
+        for (i = 0; i < n; ++i) {
+          button = array[i];
+          handler = button.xxx;
+          defaults = standardButtons[button.itemId];
+          if (defaults) {
+            Ext.applyIf(button, defaults);
+          } else {
+            if (handler) {
+              Ext.raise('Button handler short-hand is only valid for standardButtons');
+            }
+          }
           if (handler) {
-            Ext.raise('Button handler short-hand is only valid for standardButtons');
+            delete button.xxx;
+            button.handler = handler;
           }
-        }
-        if (handler) {
-          delete button.xxx;
-          button.handler = handler;
-        }
-        if (buttonDefaults) {
-          Ext.applyIf(button, buttonDefaults);
+          if (buttonDefaults) {
+            Ext.applyIf(button, buttonDefaults);
+          }
         }
       }
     }
@@ -52143,14 +52365,14 @@ floated:true, isInputRegex:/^(input|textarea|select|a)$/i, destroy:function() {
 Ext.define('Ext.Dialog', {extend:Ext.Panel, xtype:['dialog', 'window'], alternateClassName:['Ext.Window', 'Ext.window.Window'], isDialog:true, isWindow:true, ariaRole:'dialog', classCls:Ext.baseCSSPrefix + 'dialog', cachedConfig:{dismissAction:['cancel', 'abort', 'no', 'close'], maximizeAnimation:{easing:'ease-in', from:{opacity:0.6}, to:{opacity:1}}, maximizeProxy:{centered:false, draggable:false, modal:false, showAnimation:null, hideAnimation:null}, maximizeTool:{itemId:'maximize', tooltip:'Maximize to fullscreen'}, 
 restoreAnimation:{easing:'ease-in', from:{opacity:1}, to:{opacity:0.6}}, restoreTool:{itemId:'restore', tooltip:'Restore to original size'}}, config:{constrainDrag:true, dismissHandler:null, maximizable:null, maximized:null, maskTapHandler:null, restorable:null}, border:true, bodyBorder:false, centered:true, floated:true, focusable:false, tabIndex:-1, draggable:{handle:'.' + Ext.baseCSSPrefix + 'draggable', listeners:{beforedragstart:'onBeforeDragDialog', scope:'this'}}, keyMap:{ESC:'onEscape', scope:'this'}, 
 modal:true, shadow:true, headerCls:Ext.baseCSSPrefix + 'dialogheader', titleCls:Ext.baseCSSPrefix + 'dialogtitle', toolCls:[Ext.baseCSSPrefix + 'paneltool', Ext.baseCSSPrefix + 'dialogtool'], hideMode:'offsets', hideAnimation:{type:'popOut', duration:250, easing:'ease-out'}, showAnimation:{type:'popIn', duration:150, easing:'ease-out'}, initialize:function() {
-  this.callParent();
-  if (this.tabGuard) {
-    this.addPlugin({type:'tabguard', tabGuardBeforeIndex:this.tabGuardBeforeIndex, tabGuardAfterIndex:this.tabGuardAfterIndex});
+  var me = this;
+  me.callParent();
+  if (me.tabGuard) {
+    me.addPlugin({type:'tabguard', tabGuardBeforeIndex:me.tabGuardBeforeIndex, tabGuardAfterIndex:me.tabGuardAfterIndex});
   }
 }, doDestroy:function() {
-  var me = this;
-  Ext.destroy(me.maximizeTool, me.restoreTool);
-  me.callParent();
+  Ext.destroy(this.maximizeTool, this.restoreTool);
+  this.callParent();
 }, close:function(event) {
   var me = this, buttons = me.getButtons(), actions = me.getDismissAction(), handler = me.getDismissHandler(), action, closeAction, closeActionIsDestroy, done, i, n;
   event = event || null;
@@ -52805,8 +53027,19 @@ Ext.define('Ext.field.Input', {extend:Ext.field.Field, xtype:'inputfield', isInp
   if (inputElement.value !== value) {
     inputElement.value = value;
   }
+}, reset:function() {
+  var me = this, original = me.originalValue;
+  if (me.isEqual(original, me.getValue())) {
+    me.setInputValue(original);
+    if (!me.isValid()) {
+      me.validate();
+    }
+  } else {
+    me.setValue(original);
+  }
+  return me;
 }, privates:{canSetInputValue:function() {
-  return !this.hasFocus;
+  return true;
 }, setInputAttribute:function(attribute, newValue) {
   var inputElement = this.inputElement.dom;
   if (!Ext.isEmpty(newValue, true)) {
@@ -52904,6 +53137,9 @@ defaultBindProperty:'value', twoWayBindable:{value:1}, publishes:{value:1}, inpu
   return [{reference:'inputWrapElement', cls:Ext.baseCSSPrefix + 'input-wrap-el' + (Ext.supports.WebKitInputTableBoxModelBug ? ' ' + this.webkitBorderBoxBugCls : ''), children:template}, {reference:'underlineElement', cls:Ext.baseCSSPrefix + 'underline-el'}];
 }, initialize:function() {
   var me = this;
+  if (Ext.isRobot) {
+    me.focusedInputDelay = 0;
+  }
   me.callParent();
   me.inputElement.on({keyup:'onKeyUp', keydown:'onKeyDown', keypress:'onKeyPress', paste:'onPaste', mousedown:'onMouseDown', scope:me});
   me.syncEmptyState();
@@ -53118,6 +53354,7 @@ defaultBindProperty:'value', twoWayBindable:{value:1}, publishes:{value:1}, inpu
   return trigger;
 }, onKeyDown:function(event) {
   var me = this, inputMask = me.getInputMask();
+  me.lastKeyTime = Date.now();
   if (inputMask) {
     inputMask.onKeyDown(me, me.getValue(), event);
   }
@@ -53211,7 +53448,9 @@ defaultBindProperty:'value', twoWayBindable:{value:1}, publishes:{value:1}, inpu
 }, getTextSelection:function() {
   return this.inputElement.getTextSelection();
 }, select:function(start, end, direction) {
-  this.inputElement.selectText(start, end, direction);
+  if (this.containsFocus) {
+    this.inputElement.selectText(start, end, direction);
+  }
   return this;
 }, reset:function() {
   this.callParent();
@@ -53221,12 +53460,9 @@ defaultBindProperty:'value', twoWayBindable:{value:1}, publishes:{value:1}, inpu
 }, onMouseDown:function(e) {
   this.fireEvent('mousedown', e);
 }, trimValueToMaxLength:function() {
-  var maxLength = this.getMaxLength();
-  if (maxLength) {
-    var value = this.getValue();
-    if (value.length > this.getMaxLength()) {
-      this.setValue(value.slice(0, maxLength));
-    }
+  var me = this, maxLength = me.getMaxLength(), value = me.getValue();
+  if (maxLength && value.length > maxLength) {
+    me.setValue(value.slice(0, maxLength));
   }
 }, doDestroy:function() {
   var me = this, triggers = me.getTriggers(), triggerGroups = me.triggerGroups, name, animation;
@@ -53259,7 +53495,7 @@ defaultBindProperty:'value', twoWayBindable:{value:1}, publishes:{value:1}, inpu
     }
   }
   return items;
-}, privates:{forceInputChange:false, hasMask:false, applyParseValidator:function(config) {
+}, privates:{focusedInputDelay:300, forceInputChange:false, hasMask:false, lastKeyTime:0, applyParseValidator:function(config) {
   return this.decodeValidator(config);
 }, updateLabelInPlaceholder:function(inside) {
   var me = this, placeHolder = me.getPlaceholder() || '', anim = me._animPlaceholderLabel;
@@ -53273,7 +53509,8 @@ defaultBindProperty:'value', twoWayBindable:{value:1}, publishes:{value:1}, inpu
 }, updateAnimateUnderline:function(value) {
   this.toggleCls(Ext.baseCSSPrefix + 'animate-underline', value);
 }, canSetInputValue:function() {
-  return this.hasMask || this.forceInputChange || this.callParent();
+  var me = this;
+  return me.hasMask || me.forceInputChange || !me.hasFocus || Date.now() - me.lastKeyTime > me.focusedInputDelay;
 }, doPositionPlaceholder:function(inside, doAnimate) {
   var me = this, labelElement = me.labelElement, anim, animation, info, insideInfo, outsideInfo;
   animation = labelElement.getActiveAnimation();
@@ -53293,9 +53530,9 @@ defaultBindProperty:'value', twoWayBindable:{value:1}, publishes:{value:1}, inpu
     labelElement.setStyle(anim.to);
   }
 }, getPlaceholderLabel:function() {
-  var label = this.getLabel();
-  if (label && this.getRequired()) {
-    label += ' ' + this.requiredIndicator;
+  var me = this, label = me.getLabel();
+  if (label && me.getRequired()) {
+    label += ' ' + me.requiredIndicator;
   }
   return label;
 }, getPlaceholderAnimInfo:function() {
@@ -53400,7 +53637,16 @@ defaultBindProperty:'value', twoWayBindable:{value:1}, publishes:{value:1}, inpu
       clearTrigger.hide();
     }
   }
-}}, deprecated:{'6.5':{configs:{placeHolder:'placeholder', clearIcon:'clearable'}, methods:{getPlaceHolder:'getPlaceholder', setPlaceHolder:'setPlaceholder'}}}});
+}}, deprecated:{'6.5':{configs:{placeHolder:'placeholder', clearIcon:'clearable'}, methods:{getPlaceHolder:'getPlaceholder', setPlaceHolder:'setPlaceholder'}}}}, function() {
+  if (Ext.os.is.Android) {
+    window.addEventListener('resize', function() {
+      var el = document.activeElement, tag = el && el.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA') {
+        el.scrollIntoView();
+      }
+    });
+  }
+});
 Ext.define('Ext.theme.material.field.Text', {override:'Ext.field.Text', config:{labelAlign:'placeholder', animateUnderline:true}});
 Ext.define('Ext.Img', {extend:Ext.Component, xtype:['image', 'img'], alternateClassName:'Ext.Image', config:{src:null, imageCls:Ext.baseCSSPrefix + 'img-image', backgroundCls:Ext.baseCSSPrefix + 'img-background', mode:'background'}, baseCls:Ext.baseCSSPrefix + 'img', beforeInitialize:function() {
   var me = this;
@@ -53505,7 +53751,177 @@ Ext.define('Ext.LoadMask', {extend:Ext.Mask, xtype:'loadmask', config:{message:'
 }, updateIndicator:function(newIndicator) {
   this[newIndicator ? 'removeCls' : 'addCls'](Ext.baseCSSPrefix + 'indicator-hidden');
 }});
+Ext.define('Ext.field.TextArea', {extend:Ext.field.Text, xtype:'textareafield', alternateClassName:'Ext.form.TextArea', config:{autoCapitalize:false, maxRows:null, clearable:false}, tag:'textarea', classCls:Ext.baseCSSPrefix + 'textareafield', applyMaxRows:function(maxRows) {
+  if (maxRows !== null && typeof maxRows !== 'number') {
+    throw new Error('Ext.field.TextArea: [applyMaxRows] trying to pass a value which is not a number');
+  }
+  return maxRows;
+}, updateMaxRows:function(newRows) {
+  this.setInputAttribute('rows', newRows);
+}, doKeyUp:function(me) {
+  this.syncEmptyState();
+}});
 Ext.define('Ext.layout.VBox', {extend:Ext.layout.Box, alias:'layout.vbox', config:{vertical:true}});
+Ext.define('Ext.MessageBox', {extend:Ext.Dialog, xtype:'messagebox', config:{iconCls:null, defaultTextHeight:75, buttons:null, message:null, prompt:null, layout:{type:'vbox', pack:'center'}, multiLine:null}, classCls:Ext.baseCSSPrefix + 'messagebox', closeAction:'hide', headerCls:[Ext.baseCSSPrefix + 'dialogheader', Ext.baseCSSPrefix + 'messageboxheader'], titleCls:[Ext.baseCSSPrefix + 'dialogtitle', Ext.baseCSSPrefix + 'messageboxtitle'], toolCls:[Ext.baseCSSPrefix + 'paneltool', Ext.baseCSSPrefix + 
+'dialogtool', Ext.baseCSSPrefix + 'messageboxtool'], statics:{INFO:Ext.baseCSSPrefix + 'msgbox-info', WARNING:Ext.baseCSSPrefix + 'msgbox-warning', QUESTION:Ext.baseCSSPrefix + 'msgbox-question', ERROR:Ext.baseCSSPrefix + 'msgbox-error', OK:{ok:'me.onClick'}, YES:{yes:'me.onClick'}, NO:{no:'me.onClick'}, CANCEL:{cancel:'me.onClick'}, OKCANCEL:{ok:'me.onClick', cancel:'me.onClick'}, YESNOCANCEL:{yes:'me.onClick', no:'me.onClick', cancel:'me.onClick'}, YESNO:{yes:'me.onClick', no:'me.onClick'}}, constructor:function(config) {
+  config = config || {};
+  if (config.hasOwnProperty('multiline') || config.hasOwnProperty('multiLine')) {
+    config.prompt = config.prompt || {};
+    Ext.applyIf(config.prompt, {multiLine:config.multiline || config.multiLine});
+    delete config.multiline;
+    delete config.multiLine;
+  }
+  this.defaultAllowedConfig = {};
+  var allowedConfigs = ['ui', 'showAnimation', 'hideAnimation', 'title', 'message', 'prompt', 'iconCls', 'buttons', 'defaultTextHeight'], ln = allowedConfigs.length, i, allowedConfig;
+  for (i = 0; i < ln; i++) {
+    allowedConfig = allowedConfigs[i];
+    this.defaultAllowedConfig[allowedConfig] = this.defaultConfig[allowedConfig];
+  }
+  this.callParent([config]);
+}, applyTitle:function(config) {
+  if (typeof config === 'string') {
+    return config;
+  }
+  return config.title;
+}, updateTitle:function(newTitle) {
+  var header = this.getHeader() || {};
+  if (Ext.isSimpleObject(header)) {
+    header.title = newTitle;
+    this.setHeader(header);
+  } else {
+    if (Ext.isFunction(header.setTitle)) {
+      header.setTitle(newTitle);
+    }
+  }
+}, applyMessage:function(config) {
+  config = {html:config, cls:this.baseCls + '-text'};
+  return Ext.factory(config, Ext.Component, this._message);
+}, updateMessage:function(newMessage) {
+  if (newMessage) {
+    this.add(newMessage);
+  }
+}, getMessage:function() {
+  if (this._message) {
+    return this._message.getHtml();
+  }
+  return null;
+}, applyIconCls:function(config) {
+  if (config) {
+    config = {xtype:'component', docked:'left', width:40, height:40, hidden:config ? false : true, cls:Ext.baseCSSPrefix + 'icon ' + config};
+    return Ext.factory(config, Ext.Component, this._iconCls);
+  }
+  return config;
+}, updateIconCls:function(newIconCls, oldIconCls) {
+  this.getTitle();
+  this.getButtons();
+  if (newIconCls) {
+    this.add(newIconCls);
+  } else {
+    this.remove(oldIconCls);
+  }
+}, getIconCls:function() {
+  var icon = this._iconCls, iconCls;
+  if (icon) {
+    iconCls = icon.getCls();
+    return iconCls ? iconCls[0] : null;
+  }
+  return null;
+}, applyPrompt:function(prompt) {
+  if (prompt) {
+    var config = {label:false};
+    if (Ext.isObject(prompt)) {
+      Ext.apply(config, prompt);
+    }
+    if (config.multiLine) {
+      config.height = Ext.isNumber(config.multiLine) ? parseFloat(config.multiLine) : this.getDefaultTextHeight();
+      return Ext.factory(config, Ext.field['TextArea'], this.getPrompt());
+    } else {
+      return Ext.factory(config, Ext.field['Text'], this.getPrompt());
+    }
+  }
+  return prompt;
+}, updatePrompt:function(newPrompt, oldPrompt) {
+  if (newPrompt) {
+    this.add(newPrompt);
+  }
+  if (oldPrompt && !oldPrompt.destroyed) {
+    this.remove(oldPrompt);
+  }
+}, onClick:function(button) {
+  var me = this, msgBoxOptions = me.msgBoxOptions, prompt = me.getPrompt(), fn = msgBoxOptions.fn, which;
+  if (button) {
+    if (typeof fn == 'function') {
+      button.disable();
+      prompt = prompt ? prompt.getValue() : null;
+      which = button.getItemId() || button.getText();
+      me.on({single:true, hiddenchange:function() {
+        fn.call(msgBoxOptions.scope || me, which, prompt, msgBoxOptions);
+        button.enable();
+      }});
+    }
+  }
+  me.hide();
+}, show:function(msgBoxOptions, options) {
+  var me = this, buttons, config, prompt;
+  Ext.util.InputBlocker.blockInputs();
+  if (!msgBoxOptions) {
+    return me.callParent(arguments);
+  }
+  config = Ext.apply({buttons:Ext.MessageBox.OK, draggable:false, prompt:null, defaultFocus:null}, msgBoxOptions);
+  if (config.multiLine) {
+    config.prompt = config.prompt || {};
+    config.prompt.multiLine = config.multiLine;
+    delete config.multiLine;
+  }
+  delete config.value;
+  delete config.fn;
+  delete config.scope;
+  config = Ext.merge({}, me.defaultAllowedConfig, config);
+  me.setConfig(config);
+  me.msgBoxOptions = msgBoxOptions;
+  buttons = me.getButtons();
+  buttons.items.each(function(btn) {
+    if (btn.isButton) {
+      var value = btn.getScope();
+      if (btn.fn && value) {
+        btn.fn = btn.fn.bind(value);
+      }
+      value = btn.getHandler();
+      if (!value || value === 'me.onClick') {
+        btn.setHandler('onClick');
+        btn.setScope(me);
+      }
+    }
+  });
+  prompt = me.getPrompt();
+  if (prompt) {
+    prompt.setValue(msgBoxOptions.value || '');
+  }
+  me.callParent([null, options]);
+  return me;
+}, alert:function(title, message, fn, scope) {
+  return this.show({title:title || null, message:message || null, buttons:Ext.MessageBox.OK, defaultFocus:'#ok', prompt:false, fn:function() {
+    if (fn) {
+      Ext.callback(fn, scope, arguments);
+    }
+  }, scope:scope});
+}, confirm:function(title, message, fn, scope) {
+  return this.show({title:title || null, message:message || null, buttons:Ext.MessageBox.YESNO, defaultFocus:'#yes', prompt:false, scope:scope, fn:function() {
+    if (fn) {
+      Ext.callback(fn, scope, arguments);
+    }
+  }});
+}, prompt:function(title, message, fn, scope, multiLine, value, prompt) {
+  return this.show({title:title || null, message:message || null, buttons:Ext.MessageBox.OKCANCEL, scope:scope, prompt:prompt || true, defaultFocus:'textfield', multiLine:multiLine, value:value, fn:function() {
+    if (fn) {
+      Ext.callback(fn, scope, arguments);
+    }
+  }});
+}}, function(MessageBox) {
+  Ext.onInternalReady(function() {
+    Ext.Msg = new Ext.MessageBox({id:'ext-messagebox'});
+  });
+});
 Ext.define('Ext.SegmentedButton', {extend:Ext.Container, xtype:'segmentedbutton', alternateClassName:'Ext.button.Segmented', isSegmentedButton:true, classCls:Ext.baseCSSPrefix + 'segmentedbutton', config:{allowMultiple:false, allowDepress:false, allowToggle:true, forceSelection:false, pressedButtons:null, defaultType:'button', defaultUI:'segmented', value:undefined, vertical:false}, defaults:{flex:'1 1 auto'}, autoSize:null, layout:{type:'box', vertical:false, align:'stretch'}, defaultBindProperty:'value', 
 twoWayBindable:'value', publishes:'value', constructor:function(config) {
   this.valueMap = {};
@@ -53821,10 +54237,519 @@ twoWayBindable:'value', publishes:'value', constructor:function(config) {
     }
   }
 }}});
+Ext.define('Ext.menu.Item', {extend:Ext.Component, alias:'widget.menuitem', alternateClassName:'Ext.menu.TextItem', isMenuItem:true, menuExpandDelay:200, menuHideDelay:200, scope:null, destroyMenu:true, clickHideDelay:0, hideOnClick:true, config:{href:null, target:null, handler:null, text:null, menu:{lazy:true, $value:null}, menuAlign:'tl-tr?', icon:null, iconCls:null, iconAlign:'left', indented:null, separator:null}, inheritUi:true, ariaRole:'menuitem', focusable:true, classCls:Ext.baseCSSPrefix + 
+'menuitem', activeCls:Ext.baseCSSPrefix + 'active', hasLeftIconCls:Ext.baseCSSPrefix + 'has-left-icon', hasRightIconCls:Ext.baseCSSPrefix + 'has-right-icon', hasArrowCls:Ext.baseCSSPrefix + 'has-arrow', hasHrefCls:Ext.baseCSSPrefix + 'has-href', isMenuOwner:true, template:[{reference:'bodyElement', tag:'a', href:'#', cls:Ext.baseCSSPrefix + 'body-el ' + Ext.baseCSSPrefix + 'unselectable', children:[{reference:'leftIconWrapElement', cls:Ext.baseCSSPrefix + 'left-icon-wrap-el ' + Ext.baseCSSPrefix + 
+'icon-wrap-el', children:[{reference:'leftIconElement', cls:Ext.baseCSSPrefix + 'left-icon-el ' + Ext.baseCSSPrefix + 'icon-el ' + Ext.baseCSSPrefix + 'font-icon'}]}, {html:' ', reference:'textElement', cls:Ext.baseCSSPrefix + 'text-el'}, {reference:'rightIconWrapElement', cls:Ext.baseCSSPrefix + 'right-icon-wrap-el ' + Ext.baseCSSPrefix + 'icon-wrap-el', children:[{reference:'rightIconElement', cls:Ext.baseCSSPrefix + 'right-icon-el ' + Ext.baseCSSPrefix + 'icon-el ' + Ext.baseCSSPrefix + 'font-icon'}]}, 
+{reference:'arrowElement', cls:Ext.baseCSSPrefix + 'arrow-el ' + Ext.baseCSSPrefix + 'font-icon'}]}], ariaEl:'bodyElement', focusEl:'bodyElement', initialize:function() {
+  this.callParent();
+  this.syncHasIconCls();
+}, getFocusClsEl:function() {
+  return this.el;
+}, expandMenu:function(event) {
+  var me = this, menu = me.getMenu();
+  if (!me.getDisabled() && menu) {
+    menu.parentMenu = me.parentMenu;
+    me.hideOnClick = false;
+    if (menu.isVisible()) {
+      if (event && event.type === 'keydown') {
+        menu.focus();
+      }
+    } else {
+      menu.autoFocus = !event || !event.pointerType;
+      menu.showBy(me, me.getMenuAlign(), {axisLock:true});
+    }
+  }
+}, getRefItems:function(deep) {
+  var menu = this.getMenu(), items;
+  if (menu) {
+    items = menu.getRefItems(deep);
+    items.unshift(menu);
+  }
+  return items || [];
+}, onFocusEnter:function(e) {
+  var me = this;
+  me.callParent([e]);
+  me.addCls(me.activeCls);
+  me.activated = true;
+  if (me.hasListeners.activate) {
+    me.fireEvent('activate', me);
+  }
+  if (me.parentMenu) {
+    me.parentMenu.setActiveItem(me);
+  }
+}, onFocusLeave:function(e) {
+  var me = this, menu = me.menu;
+  me.callParent([e]);
+  me.removeCls(me.activeCls);
+  if (menu) {
+    menu.hide();
+  }
+  me.activated = false;
+  if (me.hasListeners.deactivate) {
+    me.fireEvent('deactivate', me);
+  }
+  if (me.parentMenu) {
+    me.parentMenu.setActiveItem(null);
+  }
+}, onRemoved:function(destroying) {
+  this.callParent([destroying]);
+  this.parentMenu = null;
+}, doDestroy:function() {
+  var me = this;
+  me.separatorElement = Ext.destroy(me.separatorElement);
+  me.setMenu(null);
+  me.callParent();
+}, updateText:function(text) {
+  if (text == null || text === '') {
+    text = ' ';
+  }
+  this.textElement.dom.firstChild.data = text;
+}, applyMenu:function(menu) {
+  var me = this, ariaDom = me.ariaEl.dom;
+  if (menu) {
+    if (menu.isMenu) {
+      menu.setConstrainAlign(Ext.getBody());
+      menu.ownerCmp = me;
+    } else {
+      menu = Ext.menu.Menu.create(menu, {ownerCmp:me, $initParent:me, constrainAlign:Ext.getBody()});
+    }
+    ariaDom.setAttribute('aria-haspopup', true);
+    ariaDom.setAttribute('aria-owns', menu.id);
+  } else {
+    ariaDom.removeAttribute('aria-haspopup');
+    ariaDom.removeAttribute('aria-owns');
+  }
+  me.toggleCls(me.hasArrowCls, !!menu);
+  return menu;
+}, updateMenu:function(menu, oldMenu) {
+  if (oldMenu) {
+    if (this.destroyMenu) {
+      Ext.destroy(oldMenu);
+    } else {
+      oldMenu.parentMenu = null;
+    }
+  }
+  this.menu = menu;
+}, updateHref:function(href) {
+  this.bodyElement.dom.href = href;
+  this.toggleCls(this.hasHrefCls, !!href);
+}, updateTarget:function(target) {
+  this.bodyElement.dom.target = target;
+}, updateIcon:function(icon) {
+  var me = this, iconElement = me.getIconAlign() === 'left' ? this.leftIconElement : this.rightIconElement;
+  if (icon) {
+    iconElement.setStyle('background-image', 'url(' + icon + ')');
+  } else {
+    iconElement.setStyle('background-image', '');
+  }
+  if (!me.isConfiguring) {
+    me.syncHasIconCls();
+  }
+}, updateIconCls:function(iconCls, oldIconCls) {
+  var me = this, iconElement = me.getIconAlign() === 'left' ? this.leftIconElement : this.rightIconElement;
+  if (iconCls) {
+    iconElement.replaceCls(oldIconCls, iconCls);
+  } else {
+    iconElement.removeCls(oldIconCls);
+  }
+  if (!me.isConfiguring) {
+    me.syncHasIconCls();
+  }
+}, updateIconAlign:function(iconAlign) {
+  if (!this.isConfiguring) {
+    this.syncHasIconCls();
+  }
+}, updateSeparator:function(separator) {
+  var me = this, separatorElement = me.separatorElement;
+  if (separator) {
+    if (separatorElement) {
+      separatorElement.show();
+    } else {
+      me.separatorElement = separatorElement = Ext.Element.create({cls:Ext.baseCSSPrefix + 'menuseparator'});
+      me.el.dom.insertBefore(separatorElement.dom, me.el.dom.firstChild);
+    }
+  } else {
+    if (separatorElement) {
+      separatorElement.hide();
+    }
+  }
+}, privates:{onSpace:function(e) {
+  return this.onClick(e);
+}, onClick:function(e) {
+  var me = this, href = me.getHref(), clickHideDelay = me.clickHideDelay, browserEvent = e.browserEvent, handler = me.getHandler(), clickResult;
+  if ((!href || me.getDisabled()) && me.bodyElement.dom === e.getTarget('a')) {
+    e.stopEvent();
+    if (me.getDisabled()) {
+      return false;
+    }
+  }
+  if (me.getDisabled() || me.handlingClick) {
+    return;
+  }
+  if (me.hideOnClick && !me.getMenu()) {
+    if (!clickHideDelay) {
+      me.hideParentMenus();
+    } else {
+      me.hideParentMenusTimer = Ext.defer(me.hideParentMenus, clickHideDelay, me);
+    }
+  }
+  clickResult = me.fireEvent('click', me, e);
+  if (me.destroyed) {
+    return;
+  }
+  if (clickResult !== false && handler) {
+    Ext.callback(handler, me.scope, [me, e], 0, me);
+  }
+  if (me.destroyed) {
+    return;
+  }
+  if (href && e.type !== 'click' && !browserEvent.defaultPrevented) {
+    me.handlingClick = true;
+    me.bodyElement.dom.click();
+    me.handlingClick = false;
+  }
+  return clickResult;
+}, hideParentMenus:function() {
+  for (var menu = this.getRefOwner(); menu && (menu.isMenu && menu.getFloated() || menu.isMenuItem); menu = menu.getRefOwner()) {
+    if (menu.isMenu) {
+      menu.hide();
+    }
+  }
+}, hasIcon:function() {
+  return !!(this.getIconCls() || this.getIcon());
+}, syncHasIconCls:function() {
+  var me = this, rightCls = me.hasRightIconCls, leftCls = me.hasLeftIconCls, iconAlign = me.getIconAlign();
+  if (me.hasIcon()) {
+    if (iconAlign === 'left') {
+      me.replaceCls(rightCls, leftCls);
+    } else {
+      if (iconAlign === 'right') {
+        me.replaceCls(leftCls, rightCls);
+      }
+    }
+  } else {
+    me.removeCls([leftCls, rightCls]);
+  }
+}}});
+Ext.define('Ext.menu.Manager', {singleton:true, alternateClassName:'Ext.menu.MenuMgr', hideAll:function() {
+  var allMenus = this.visible, len = allMenus.length, result = false, i;
+  if (len) {
+    allMenus = allMenus.slice();
+    for (i = 0; i < len; i++) {
+      allMenus[i].hide();
+      result = true;
+    }
+  }
+  return result;
+}, privates:{groups:{}, visible:[], constructor:function() {
+  var me = this;
+  me.onShow = function() {
+    me.registerGlobalListeners();
+    return me.onShow.apply(me, arguments);
+  };
+}, onGlobalScroll:function(scroller) {
+  var allMenus = this.visible, len = allMenus.length, i, menu;
+  if (len && scroller !== Ext.scroll.Scroller.viewport) {
+    allMenus = allMenus.slice();
+    for (i = 0; i < len; ++i) {
+      menu = allMenus[i];
+      if (scroller.contains(menu)) {
+        menu.hide();
+      }
+    }
+  }
+}, checkActiveMenus:function(e) {
+  var allMenus = this.visible, len = allMenus.length, i, menu, mousedownCmp = Ext.Component.from(e);
+  if (len) {
+    allMenus = allMenus.slice();
+    for (i = 0; i < len; ++i) {
+      menu = allMenus[i];
+      if (!(menu.owns(e) || mousedownCmp && mousedownCmp.isMenuOwner && mousedownCmp.getMenu() === menu)) {
+        menu.hide();
+      }
+    }
+  }
+}, onShow:function(menu) {
+  if (menu.getFloated()) {
+    Ext.Array.include(this.visible, menu);
+  }
+}, onHide:function(menu) {
+  if (menu.getFloated()) {
+    Ext.Array.remove(this.visible, menu);
+  }
+}, registerGlobalListeners:function() {
+  var me = this;
+  delete me.onShow;
+  Ext.on({mousedown:me.checkActiveMenus, scrollstart:me.onGlobalScroll, scope:me});
+  if (window.jasmine && jasmine.addAllowedListener) {
+    jasmine.addAllowedListener('mousedown');
+    jasmine.addAllowedListener('scrollstart');
+  }
+}}});
+Ext.define('Ext.menu.Menu', {extend:Ext.Panel, xtype:'menu', isMenu:true, config:{align:'tl-bl?', indented:true, separator:null, autoHide:null, groups:null}, allowOtherMenus:false, ignoreParentClicks:false, mouseLeaveDelay:50, defaultType:'menuitem', autoSize:null, keyMap:{scope:'this', SPACE:'onSpaceKey', ESC:'onEscKey'}, layout:{type:'vbox', align:'stretch'}, classCls:Ext.baseCSSPrefix + 'menu', indentedCls:Ext.baseCSSPrefix + 'indented', hasSeparatorCls:Ext.baseCSSPrefix + 'has-separator', nonMenuItemCls:Ext.baseCSSPrefix + 
+'non-menuitem', allowFocusingDisabledChildren:true, border:true, defaultFocus:':focusable', floated:true, focusable:true, focusableContainer:true, nameHolder:true, weighted:true, initialize:function() {
+  var me = this, listeners = {click:me.onClick, mouseover:me.onMouseOver, scope:me};
+  me.callParent();
+  if (Ext.supports.Touch) {
+    listeners.pointerdown = me.onMouseOver;
+  }
+  me.element.on(listeners);
+  me.itemOverTask = new Ext.util.DelayedTask(me.handleItemOver, me);
+  me.mouseMonitor = me.el.monitorMouseLeave(me.mouseLeaveDelay, me.onMouseLeave, me);
+}, doDestroy:function() {
+  var me = this;
+  me.itemOverTask.cancel();
+  Ext.menu.Manager.onHide(me);
+  me.parentMenu = me.ownerCmp = null;
+  if (me.rendered) {
+    me.el.un(me.mouseMonitor);
+  }
+  me.callParent();
+}, showBy:function(component, alignment, options) {
+  this.callParent([component, alignment || this.getAlign(), options]);
+}, onFocusEnter:function(e) {
+  var me = this, hierarchyState;
+  me.callParent([e]);
+  me.mixins.focusablecontainer.onFocusEnter.call(me, e);
+  if (me.getFloated()) {
+    hierarchyState = me.getInherited();
+    if (!hierarchyState.topmostFocusEvent) {
+      hierarchyState.topmostFocusEvent = e;
+    }
+  }
+}, onFocusLeave:function(e) {
+  this.callParent([e]);
+  if (this.getAutoHide() !== false) {
+    this.hide();
+  }
+}, onItemAdd:function(item, index) {
+  this.callParent([item, index]);
+  this.syncItemIndentedCls(item);
+  if (!item.isMenuItem && !item.isMenuSeparator) {
+    item.addCls(this.nonMenuItemCls);
+  }
+}, onItemRemove:function(item, index, destroying) {
+  this.callParent([item, index, destroying]);
+  item.removeCls(this.indentedCls, this.nonMenuItemCls);
+}, beforeShow:function() {
+  var me = this, parent;
+  if (me.getFloated()) {
+    parent = me.hasFloatMenuParent();
+    if (!parent && !me.allowOtherMenus) {
+      Ext.menu.Manager.hideAll();
+    }
+  }
+  me.callParent(arguments);
+}, afterShow:function() {
+  var me = this, ariaDom = me.ariaEl.dom;
+  me.callParent(arguments);
+  Ext.menu.Manager.onShow(me);
+  if (me.getFloated() && ariaDom) {
+    ariaDom.setAttribute('aria-expanded', true);
+  }
+  if (me.getFloated()) {
+    me.maxHeight = me.savedMaxHeight;
+  }
+  if (me.autoFocus) {
+    me.focus();
+  }
+}, afterHide:function() {
+  var me = this, ariaDom = me.ariaEl.dom;
+  me.callParent();
+  me.lastHide = Ext.Date.now();
+  Ext.menu.Manager.onHide(me);
+  if (me.getFloated() && ariaDom) {
+    ariaDom.setAttribute('aria-expanded', false);
+  }
+  delete me.getInherited().topmostFocusEvent;
+}, factoryItem:function(cfg) {
+  var result;
+  if (typeof cfg === 'string' && cfg[0] !== '@') {
+    if (cfg === '-') {
+      cfg = {xtype:'menuseparator'};
+    } else {
+      cfg = {};
+    }
+  }
+  result = this.callParent([cfg]);
+  if (result.isMenuItem) {
+    result.parentMenu = this;
+  }
+  return result;
+}, updateIndented:function(indented) {
+  var me = this;
+  if (!me.isConfiguring) {
+    me.bodyElement.toggleCls(me.hasSeparatorCls, !!(indented && me.getSeparator()));
+    me.items.each(me.syncItemIndentedCls, me);
+  }
+}, updateSeparator:function(separator) {
+  this.bodyElement.toggleCls(this.hasSeparatorCls, !!(separator && this.getIndented()));
+}, privates:{applyItemDefaults:function(item) {
+  item = this.callParent([item]);
+  if (!item.isComponent && !item.xtype && !item.xclass) {
+    if (item.group || item.name) {
+      item.xtype = 'menuradioitem';
+    } else {
+      if ('checked' in item) {
+        item.xtype = 'menucheckitem';
+      }
+    }
+  }
+  return item;
+}, applyGroups:function(groups, oldGroups) {
+  var me = this, currentGroups = Ext.apply({}, oldGroups), isConfiguring = me.isConfiguring, groupName, members, len, i, item, value, oldValue;
+  if (groups) {
+    for (groupName in groups) {
+      oldValue = currentGroups[groupName];
+      currentGroups[groupName] = value = groups[groupName];
+      if (!isConfiguring) {
+        members = me.lookupName(groupName);
+        for (i = 0, len = members.length; i < len; i++) {
+          item = members[i];
+          item.setChecked(item.getValue() === value);
+        }
+        me.fireEvent('groupchange', me, groupName, value, oldValue);
+      }
+    }
+    if (!isConfiguring) {
+      me.addBindableUpdater('groups');
+    }
+  }
+  return currentGroups;
+}, processFocusableContainerKeyEvent:function(e) {
+  var keyCode = e.keyCode, item;
+  if (keyCode === e.ESC || Ext.fly(e.target).is('input[type\x3dcheckbox]') && (keyCode === e.LEFT || keyCode === e.RIGHT || keyCode === e.UP || keyCode === e.DOWN)) {
+    e.preventDefault();
+    item = this.getItemFromEvent(e);
+    e.target = item && item.focusEl.dom;
+  } else {
+    if (keyCode === e.TAB && Ext.fly(e.target).is('input[type\x3dtext],textarea')) {
+      e.preventDefault();
+      item = this.getItemFromEvent(e);
+      e.target = item && item.focusEl.dom;
+      if (e.shiftKey) {
+        e.shiftKey = false;
+        e.keyCode = e.UP;
+      } else {
+        e.keyCode = e.DOWN;
+      }
+    } else {
+      return this.callParent([e]);
+    }
+  }
+  return e;
+}, onEscKey:function(e) {
+  if (this.getFloated()) {
+    this.hide();
+  }
+}, onSpaceKey:function(e) {
+  var clickedItem = this.getItemFromEvent(e);
+  if (clickedItem && clickedItem.isMenuItem) {
+    clickedItem.onSpace(e);
+  }
+}, onFocusableContainerLeftKey:function(e) {
+  e.preventDefault();
+  if (this.parentMenu) {
+    this.hide();
+  }
+}, onFocusableContainerRightKey:function(e) {
+  var clickedItem = this.getItemFromEvent(e);
+  e.preventDefault();
+  if (clickedItem) {
+    clickedItem.expandMenu(e);
+  }
+}, onClick:function(e) {
+  var me = this, type = e.type, clickedItem, clickResult, isKeyEvent = type === 'keydown', isTouchEvent = e.pointerType === 'touch';
+  if (me.getDisabled()) {
+    return e.stopEvent();
+  }
+  clickedItem = me.getItemFromEvent(e);
+  if (clickedItem && clickedItem.isMenuItem) {
+    if (!clickedItem.getMenu() || !me.ignoreParentClicks) {
+      clickResult = clickedItem.onClick(e);
+    } else {
+      e.stopEvent();
+    }
+    if (me.destroyed) {
+      return;
+    }
+    if (clickedItem.getMenu() && clickResult !== false && (isKeyEvent || isTouchEvent)) {
+      clickedItem.expandMenu(e);
+    }
+  }
+  if (!clickedItem || clickedItem.getDisabled()) {
+    clickedItem = undefined;
+  }
+  me.fireEvent('click', me, clickedItem, e);
+}, onMouseLeave:function(e) {
+  var me = this;
+  if (me.itemOverTask) {
+    me.itemOverTask.cancel();
+  }
+  if (me.getDisabled()) {
+    return;
+  }
+  me.fireEvent('mouseleave', me, e);
+}, onMouseOver:function(e) {
+  var me = this, activeItem = me.getActiveItem(), activeItemMenu = activeItem && activeItem.getMenu && activeItem.getMenu(), activeItemExpanded = activeItemMenu && activeItemMenu.isVisible(), isTouch = e.pointerType === 'touch', mouseEnter, overItem, el;
+  if (!me.getDisabled()) {
+    if (isTouch) {
+      mouseEnter = !me.el.contains(document.activeElement);
+    } else {
+      mouseEnter = !me.el.contains(e.getRelatedTarget());
+    }
+    overItem = me.getItemFromEvent(e);
+    if (overItem) {
+      if (isTouch) {
+        me.handleItemOver(e, overItem);
+      } else {
+        el = overItem.isMenuItem ? overItem.bodyElement : overItem.el;
+        if (!el.contains(e.getRelatedTarget())) {
+          me.itemOverTask.delay(activeItemExpanded ? me.mouseLeaveDelay : 0, null, null, [e, overItem]);
+        }
+      }
+    }
+    if (mouseEnter) {
+      me.fireEvent('mouseenter', me, e);
+    }
+    me.fireEvent('mouseover', me, overItem, e);
+  }
+}, handleItemOver:function(e, item) {
+  var isMouseover = e.pointerType === 'mouse';
+  if (!item.containsFocus && (isMouseover || item.isMenuItem)) {
+    item.focus();
+  }
+  if (item.expandMenu && isMouseover) {
+    item.expandMenu(e);
+  }
+}, getItemFromEvent:function(e) {
+  var bodyDom = this.bodyElement.dom, toEl = e.getTarget(), component;
+  while (toEl && toEl.parentNode !== bodyDom) {
+    toEl = toEl.parentNode;
+  }
+  component = toEl && Ext.getCmp(toEl.id);
+  if (component && component.isMenuItem && !e.within(component.bodyElement)) {
+    component = null;
+  }
+  return component;
+}, hasFloatMenuParent:function() {
+  return this.parentMenu || this.up('menu[_floated\x3dtrue]');
+}, syncItemIndentedCls:function(item) {
+  var indented = item.isMenuItem ? item.getIndented() : item.indented;
+  item.toggleCls(this.indentedCls, !!(indented || this.getIndented() && indented !== false));
+}}, statics:{create:function(menu, config) {
+  if (Ext.isArray(menu)) {
+    menu = Ext.apply({xtype:'menu', items:menu}, config);
+  } else {
+    menu = Ext.apply({xtype:'menu'}, menu, config);
+  }
+  return Ext.create(menu);
+}}, deprecated:{'6.5':{configs:{plain:{message:'To achieve classic toolkit "plain" effect, use "indented".'}, showSeparator:{message:'To achieve classic toolkit "showSeparator" effect, use "separator".'}}}}});
 Ext.define('Ext.TitleBar', {extend:Ext.Container, xtype:'titlebar', defaultBindProperty:'title', isToolbar:true, classCls:Ext.baseCSSPrefix + 'titlebar', inheritUi:true, config:{cls:Ext.baseCSSPrefix + 'navigation-bar', title:null, titleAlign:'center', defaultType:'button', defaultButtonUI:null, minHeight:null, layout:{type:'hbox', align:'center'}, items:[], maxButtonWidth:'40%'}, autoSize:null, border:false, beforeInitialize:function() {
   this.applyItems = this.applyInitialItems;
 }, initialize:function() {
   var me = this;
+  me.callParent();
   delete me.applyItems;
   me.add(me.initialItems);
   delete me.initialItems;
@@ -54120,7 +55045,7 @@ Ext.define('Ext.dataview.NavigationModel', {extend:Ext.Evented, alias:'navmodel.
   if (me.location) {
     me.previousLocation = me.location;
     targetElement = me.location.getFocusEl();
-    if (targetElement) {
+    if (targetElement && !targetElement.destroyed) {
       Ext.fly(targetElement).removeCls(me.focusedCls);
     }
     me.location = null;
@@ -54187,17 +55112,19 @@ Ext.define('Ext.dataview.NavigationModel', {extend:Ext.Evented, alias:'navmodel.
   target = location && location.getFocusEl('dom');
   if (target) {
     item = location.get();
-    if (item.isWidget) {
-      item = item.el;
-    } else {
-      item = Ext.get(item);
+    if (item) {
+      if (item.isWidget) {
+        item = item.el;
+      } else {
+        item = Ext.get(item);
+      }
+      if (item && target === item.dom) {
+        item.addCls(me.focusedCls);
+      }
+      if (options && (options.event || options.select) && options.navigate !== false) {
+        me.onNavigate(options.event);
+      }
     }
-    if (item && target === item.dom) {
-      item.addCls(me.focusedCls);
-    }
-  }
-  if (options && (options.event || options.select) && options.navigate !== false) {
-    me.onNavigate(options.event);
   }
   if (!view.destroyed) {
     view.fireEvent('navigate', view, location, oldLocation);
@@ -54264,7 +55191,12 @@ Ext.define('Ext.dataview.NavigationModel', {extend:Ext.Evented, alias:'navmodel.
   e.stopEvent();
   this.getView()._onChildTap(e);
 }, onSelectAllKeyPress:function(e) {
-  this.onNavigate(e);
+  var view = this.getView(), selModel = view.getSelectable();
+  if (selModel && view.getStore().getCount()) {
+    selModel[selModel.allSelected ? 'deselectAll' : 'selectAll']();
+    e.preventDefault();
+    return false;
+  }
 }, moveUp:function(e) {
   var view = this.getView(), location = this.location, el = this.location.sourceElement, topCentre = Ext.fly(el).getAnchorXY('t'), item;
   topCentre[1] -= Ext.fly(el).getMargin('tb') + 10;
@@ -54727,10 +55659,20 @@ Ext.define('Ext.dataview.selection.Records', {extend:Ext.dataview.selection.Rows
   }
   return selected;
 }, refresh:function() {
-  var me = this, selModel = me.getSelectionModel(), storeCollection = me.view.getStore().getData(), selected = me.getSelected(), lastSelected = selModel.getLastSelected(), newLastSelected, selections, toDeselect = [], toReselect = [], selectionLength, i, rec, matchingSelection;
-  storeCollection = storeCollection.getSource() || storeCollection;
+  var me = this, view = me.view, selModel = me.getSelectionModel(), storeCollection = view.getStore().getData(), filterFn = storeCollection.getFilters().getFilterFn(), ignoredFilter = selModel.ignoredFilter, selected = me.getSelected(), lastSelected = selModel.getLastSelected(), newLastSelected, selections, toDeselect = [], toReselect = [], selectionLength, i, rec, matchingSelection;
+  if (ignoredFilter) {
+    if (ignoredFilter.getDisabled()) {
+      ignoredFilter = null;
+    } else {
+      ignoredFilter.setDisabled(true);
+      storeCollection = storeCollection.getSource() || storeCollection;
+    }
+  }
   if (lastSelected) {
     newLastSelected = storeCollection.get(storeCollection.getKey(lastSelected));
+    if (newLastSelected && ignoredFilter && !filterFn(newLastSelected)) {
+      newLastSelected = null;
+    }
   }
   if (me.getCount()) {
     selections = selected.getRange();
@@ -54738,6 +55680,9 @@ Ext.define('Ext.dataview.selection.Records', {extend:Ext.dataview.selection.Rows
     for (i = 0; i < selectionLength; i++) {
       rec = selections[i];
       matchingSelection = storeCollection.get(storeCollection.getKey(rec));
+      if (matchingSelection && ignoredFilter && !filterFn(matchingSelection)) {
+        matchingSelection = null;
+      }
       if (matchingSelection) {
         if (matchingSelection !== rec) {
           toDeselect.push(rec);
@@ -54747,9 +55692,15 @@ Ext.define('Ext.dataview.selection.Records', {extend:Ext.dataview.selection.Rows
         toDeselect.push(rec);
       }
     }
+    if (view.beforeSelectionRefresh) {
+      view.beforeSelectionRefresh(toDeselect, toReselect);
+    }
     selected.suppressEvent = true;
     selected.splice(selected.getCount(), toDeselect, toReselect);
     selected.suppressEvent = false;
+  }
+  if (ignoredFilter) {
+    ignoredFilter.setDisabled(false);
   }
   selModel.setLastSelected(newLastSelected || toReselect[toReselect.length - 1] || null);
 }}});
@@ -54786,7 +55737,9 @@ Ext.define('Ext.dataview.selection.Model', {extend:Ext.Evented, alias:'selmodel.
 }, updateSelected:function(selected) {
   this.setSelectedRecord(selected.last() || null);
 }, applyMode:function(mode) {
+  var view = this.getView(), el = view.getRenderTarget();
   mode = mode ? mode.toLowerCase() : 'single';
+  el.toggleCls(view.multiSelectCls, mode === 'multi');
   return this.modes[mode] ? mode : 'single';
 }, updateView:function(view) {
   this.setStore(view ? view.getStore() : null);
@@ -54795,11 +55748,7 @@ Ext.define('Ext.dataview.selection.Model', {extend:Ext.Evented, alias:'selmodel.
 }, updateStore:function(newStore, oldStore) {
   var me = this, bindEvents = Ext.apply({scope:me}, me.getStoreListeners());
   if (oldStore && Ext.isObject(oldStore) && oldStore.isStore) {
-    if (oldStore.autoDestroy) {
-      oldStore.destroy();
-    } else {
-      oldStore.un(bindEvents);
-    }
+    oldStore.un(bindEvents);
   }
   if (newStore) {
     newStore.on(bindEvents);
@@ -54814,7 +55763,6 @@ Ext.define('Ext.dataview.selection.Model', {extend:Ext.Evented, alias:'selmodel.
   this.select(location.record);
 }, selectAll:function(suppressEvent) {
   this.select(this.getStore().getRange(), true, suppressEvent);
-  this.allSelected = true;
 }, deselectAll:function(suppressEvent) {
   var selected = this.getSelected();
   selected.suppressEvent = suppressEvent;
@@ -54861,17 +55809,7 @@ Ext.define('Ext.dataview.selection.Model', {extend:Ext.Evented, alias:'selmodel.
   if (shift && start) {
     me.selectRange(start, record, ctrl);
   } else {
-    if (ctrl || e.pointerType === 'touch' && e.type === 'tap') {
-      me[isSelected ? 'deselect' : 'select'](record, true);
-    } else {
-      if (isSelected && !shift && !ctrl) {
-        me.getSelection().clear();
-      } else {
-        if (!isSelected) {
-          me.select(record, true);
-        }
-      }
-    }
+    me[isSelected ? 'deselect' : 'select'](record, true);
   }
 }, selectRange:function(startRecord, endRecord, keepExisting) {
   var store = this.getStore();
@@ -54923,7 +55861,7 @@ Ext.define('Ext.dataview.selection.Model', {extend:Ext.Evented, alias:'selmodel.
   selection.remove(records, suppressEvent);
 }, onCollectionRemove:function(selectedCollection, chunk) {
   var me = this, view = me.getView(), records = chunk.items;
-  me.getSelection().allSelected = false;
+  me.getSelection().allSelected = this.allSelected = false;
   if (!chunk.next && !chunk.replacement) {
     me.setSelectedRecord(selectedCollection.last() || null);
   }
@@ -54936,7 +55874,7 @@ Ext.define('Ext.dataview.selection.Model', {extend:Ext.Evented, alias:'selmodel.
   if (view.destroyed) {
     return;
   }
-  selection.allSelected = selection.getCount() === view.getStore().getCount();
+  selection.allSelected = this.allSelected = selection.getCount() === view.getStore().getCount();
   me.setSelectedRecord(selectedCollection.last() || null);
   view.onItemSelect(me.getMode() === 'single' ? records[0] : records, selectedCollection.suppressEvent);
   if (!selectedCollection.suppressEvent) {
@@ -54998,7 +55936,7 @@ Ext.define('Ext.dataview.selection.Model', {extend:Ext.Evented, alias:'selmodel.
 }}});
 Ext.define('Ext.dataview.EmptyText', {extend:Ext.Component, xtype:'emptytext', classCls:Ext.baseCSSPrefix + 'emptytext', inheritUi:true, html:'No data to display', top:0, right:0, bottom:0, left:0});
 Ext.define('Ext.dataview.Abstract', {extend:Ext.Container, mixins:[Ext.mixin.ConfigProxy, Ext.mixin.ItemRippler], isDataView:true, cachedConfig:{associatedData:null, deferEmptyText:true, deselectOnContainerClick:true, disableSelection:false, emptyTextDefaults:{xtype:'emptytext'}, emptyItemText:' ', itemsFocusable:true, itemTpl:'\x3cdiv\x3e{text:htmlEncode}\x3c/div\x3e', loadingText:'Loading...', pressedDelay:100, scrollToTopOnRefresh:true, storeEventListeners:{add:'onStoreAdd', beforeload:'onStoreBeforeLoad', 
-clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onStoreRemove', update:'onStoreUpdate'}, triggerEvent:'childtap', triggerCtEvent:'tap'}, config:{data:null, emptyState:null, emptyText:null, enableTextSelection:null, inline:null, itemCls:null, loadingHeight:null, markDirty:null, navigationModel:{type:'dataview'}, selectable:true}, autoSize:null, publishes:{selection:1}, twoWayBindable:{selection:1}, eventedConfig:{store:undefined}, proxyConfig:{selectable:{configs:['mode', 
+clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onStoreRemove', update:'onStoreUpdate'}, triggerEvent:'childtap', triggerCtEvent:'tap'}, config:{itemButtonMode:false, data:null, emptyState:null, emptyText:null, enableTextSelection:null, inline:null, itemCls:null, loadingHeight:null, markDirty:null, navigationModel:{type:'dataview'}, selectable:true}, autoSize:null, publishes:{selection:1}, twoWayBindable:{selection:1}, eventedConfig:{store:undefined}, proxyConfig:{selectable:{configs:['mode', 
 'deselectable', 'lastSelected', 'selected'], methods:['isSelected', 'select', 'selectAll', 'deselectAll', 'getSelections', 'hasSelection', 'getSelectionCount']}}, emptyTextProperty:'html', restoreFocus:true, refreshCounter:0, selectionModel:'dataview', defaultBindProperty:'store', focusable:true, scrollable:true, tabIndex:0, classCls:Ext.baseCSSPrefix + 'dataview', focusedCls:Ext.baseCSSPrefix + 'focused', hoveredCls:Ext.baseCSSPrefix + 'hovered', inlineCls:Ext.baseCSSPrefix + 'inline', noWrapCls:Ext.baseCSSPrefix + 
 'nowrap', pressedCls:Ext.baseCSSPrefix + 'pressed', scrollDockCls:Ext.baseCSSPrefix + 'scrolldock', selectedCls:Ext.baseCSSPrefix + 'selected', hasLoadedStore:false, scrollDockedItems:null, beforeInitialize:function(config) {
   this.dataItems = [];
@@ -55007,7 +55945,7 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
   var me = this;
   me.generateSelectorFunctions();
   me.callParent();
-  me.bodyElement.on({touchstart:'_onChildTouchStart', touchend:'_onChildTouchEnd', touchcancel:'_onChildTouchCancel', tap:'_onChildTap', longpress:'_onChildLongPress', taphold:'_onChildTapHold', singletap:'_onChildSingleTap', doubletap:'_onChildDoubleTap', swipe:'_onChildSwipe', mouseover:'_onChildMouseOver', mouseout:'_onChildMouseOut', contextmenu:'_onChildContextMenu', delegate:me.eventDelegate, scope:me});
+  me.bodyElement.on({touchstart:'_onChildTouchStart', touchend:'_onChildTouchEnd', touchcancel:'_onChildTouchCancel', tap:'_onChildTap', tapcancel:'_onChildTapCancel', longpress:'_onChildLongPress', taphold:'_onChildTapHold', singletap:'_onChildSingleTap', doubletap:'_onChildDoubleTap', swipe:'_onChildSwipe', mouseover:'_onChildMouseOver', mouseout:'_onChildMouseOut', contextmenu:'_onChildContextMenu', delegate:me.eventDelegate, scope:me});
   if (Ext.getScrollbarSize().width) {
     me.bodyElement.on('touchstart', '_onContainerTouchStart', me);
   }
@@ -55022,10 +55960,12 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
   }
 }, doDestroy:function() {
   var me = this;
+  me.destroyAllRipples();
   me.clearPressedTimer();
   me.setStore(null);
   me.setNavigationModel(null);
   me.setSelectable(null);
+  me.lastPressedLocation = null;
   me.callParent();
 }, createEmptyText:function(emptyText) {
   var ret = Ext.apply({}, this.getEmptyTextDefaults());
@@ -55370,9 +56310,14 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
 }, onChildTouchCancel:function(location) {
   this.clearPressedCls('touchcancel', location);
 }, onChildTouchMove:function(location) {
-  this.clearPressedCls('touchmove', location);
+  this.fireChildEvent('touchmove', location);
 }, onChildTap:function(location) {
   this.fireChildEvent('tap', location);
+}, onChildTapCancel:function(location) {
+  var me = this, itemButtonMode = me.getItemButtonMode();
+  if (!itemButtonMode) {
+    this.clearPressedCls('tapcancel', location);
+  }
 }, onChildContextMenu:function(location) {
   this.fireChildEvent('contextmenu', location);
 }, onChildLongPress:function(location) {
@@ -55395,12 +56340,16 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
     me.fireChildEvent('mouseenter', location);
   }
 }, onChildMouseOut:function(location) {
-  var me = this, child = location.item, relatedTarget = location.event.getRelatedTarget(me.itemSelector);
+  var me = this, itemButtonMode = me.getItemButtonMode(), child = location.item, relatedTarget = location.event.getRelatedTarget(me.itemSelector);
   if (child && child.dom !== relatedTarget) {
     if (me.doHover) {
       me.toggleHoverCls(false);
     }
-    me.fireChildEvent('mouseleave', location);
+    if (!itemButtonMode) {
+      this.clearPressedCls('mouseleave', location);
+    } else {
+      me.fireChildEvent('mouseleave', location);
+    }
     me.mouseOverItem = null;
   }
 }, onNavigate:function(e) {
@@ -55444,7 +56393,9 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
 }, updateData:function(data) {
   var store = this.store;
   if (!store) {
+    this.settingStoreFromData = true;
     this.setStore({data:data, autoDestroy:true});
+    this.settingStoreFromData = false;
   } else {
     store.loadData(data);
   }
@@ -55541,17 +56492,17 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
 }, updateStore:function(newStore, oldStore) {
   var me = this, storeEvents = Ext.apply({scope:me}, me.getStoreEventListeners()), mask = me.autoMask, newLoad;
   if (oldStore) {
-    if (!oldStore.destroyed && !oldStore.getAutoDestroy()) {
-      oldStore.un(storeEvents);
-      oldStore = null;
-    }
-    if (!me.destroying && !me.destroyed) {
-      me.doClear();
-    }
-    if (oldStore) {
-      oldStore.destroy();
+    if (!oldStore.destroyed) {
+      if (oldStore.getAutoDestroy()) {
+        oldStore.destroy();
+      } else {
+        oldStore.un(storeEvents);
+      }
     }
     me.dataRange = me.store = Ext.destroy(me.dataRange);
+    if (!me.destroying && !me.destroyed && !newStore) {
+      me.doClear();
+    }
   }
   if (newStore) {
     me.store = newStore;
@@ -55568,7 +56519,7 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
       me.refresh();
     }
   }
-  if (!me.isConfiguring) {
+  if (!me.isConfiguring || me.settingStoreFromData) {
     me.getSelectable().setStore(newStore);
   }
   if (mask && !newLoad) {
@@ -55579,7 +56530,10 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
       me.handleBeforeLoad();
     }
   }
-}, privates:{associatedData:true, doHover:true, showSelectionCls:Ext.baseCSSPrefix + 'show-selection', markDirtyCls:Ext.baseCSSPrefix + 'mark-dirty', scrollDockAliases:{top:'start', bottom:'end'}, getSelection:function() {
+}, updateHidden:function(hidden, oldHidden) {
+  this.callParent([hidden, oldHidden]);
+  this.destroyAllRipples();
+}, privates:{associatedData:true, doHover:true, showSelectionCls:Ext.baseCSSPrefix + 'show-selection', multiSelectCls:Ext.baseCSSPrefix + 'multi-select', markDirtyCls:Ext.baseCSSPrefix + 'mark-dirty', scrollDockAliases:{top:'start', bottom:'end'}, getSelection:function() {
   return this.getSelectable().getSelectedRecord();
 }, setSelection:function(record) {
   return this.getSelectable().setSelectedRecord(record);
@@ -55593,14 +56547,14 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
 }, clearMask:function() {
   this.setMasked(false);
   this.autoMask = false;
-}, clearPressedCls:function(type, e) {
-  var me = this, record = e.record, child = e.child, el;
+}, clearPressedCls:function(type, location) {
+  var me = this, record = location.record, child = location.child, el;
   me.clearPressedTimer();
   if (record && child) {
     el = child.isWidget ? child.element : Ext.fly(child);
     el.removeCls(me.pressedCls);
   }
-  me.fireChildEvent(type, e);
+  me.fireChildEvent(type, location);
 }, clearPressedTimer:function() {
   var timeout = this.pressedTimeout;
   if (timeout) {
@@ -55616,7 +56570,7 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
 }, doClear:function() {
   this.syncEmptyState();
 }, doChildTouchStart:function(location) {
-  var me = this, record = location.record, pressedDelay = me.getPressedDelay();
+  var me = this, record = location.record, itemButtonMode = me.getItemButtonMode(), pressedDelay = me.getPressedDelay();
   me.clearPressedTimer();
   if (record) {
     if (pressedDelay > 0) {
@@ -55624,7 +56578,17 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
     } else {
       me.doAddPressedCls(record);
     }
+    if (itemButtonMode) {
+      me.lastPressedLocation = location;
+      Ext.GlobalEvents.setPressedComponent(me, location);
+    }
   }
+}, onRelease:function() {
+  var me = this;
+  if (me.lastPressedLocation) {
+    me.clearPressedCls('release', me.lastPressedLocation);
+  }
+  me.lastPressedLocation = null;
 }, ensureVisiblePlan:function(record, plan) {
   var store = this.store, recIndex;
   if (record.record) {
@@ -55753,14 +56717,16 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
   var me = this, scroller = me.getScrollable(), scrollPosition = scroller.getPosition(), scrollSize = scroller.getSize(), offset = me.getScrollerTarget().getXY();
   return me.getItemFromPagePoint(Math.max(Math.min(x, scrollSize.x), 0) + offset[0] - scrollPosition.x, Math.max(Math.min(y, scrollSize.y), 0) + offset[1] - scrollPosition.y);
 }, getItemFromPagePoint:function(x, y) {
-  var items = this.getFastItems(), len = items.length, point = new Ext.util.Point(x, y), i, item, el;
+  var items = this.getFastItems(), len = items.length, point = new Ext.util.Point(x, y), ret = null, i, item, el;
   for (i = 0; i < len; i++) {
     item = items[i];
     el = item.isWidget ? item.element : Ext.fly(item);
     if (el.getRegion().contains(point)) {
-      return item;
+      ret = item;
+      break;
     }
   }
+  return ret;
 }, handleBeforeLoad:function() {
   var me = this, loadingText = me.getLoadingText();
   if (loadingText) {
@@ -55877,7 +56843,8 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
     }
   }
 }, shouldRippleItem:function(item, e) {
-  if (this.isItemSelected(item)) {
+  var disableSelection = this.getDisableSelection();
+  if (!disableSelection && this.isItemSelected(item)) {
     return false;
   }
   return this.mixins.itemrippler.shouldRippleItem.call(this, item, e);
@@ -55909,8 +56876,9 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
     el.toggleCls(this.hoveredCls, on);
   }
 }, _onChildEvent:function(fn, e) {
-  var me = this, location = me.getNavigationModel().createLocation(e);
+  var me = this, last = me.lastPressedLocation, location = me.getNavigationModel().createLocation(e);
   if (location.child) {
+    location.pressing = !!(last && last.child === location.child);
     me[fn](location);
   }
   return location;
@@ -55936,6 +56904,8 @@ clear:'onStoreClear', load:'onStoreLoad', refresh:'onStoreRefresh', remove:'onSt
   if (!target) {
     this._onChildEvent('onChildTap', e);
   }
+}, _onChildTapCancel:function(e) {
+  this._onChildEvent('onChildTapCancel', e);
 }, _onChildContextMenu:function(e) {
   this._onChildEvent('onChildContextMenu', e);
 }, _onChildLongPress:function(e) {
@@ -56813,8 +57783,17 @@ classCls:Ext.baseCSSPrefix + 'list', itemConfig:{xtype:'simplelistitem'}, mainta
   this.setItemConfig(itemConfig);
 }, updateVariableHeights:function(variableHeights) {
   this.variableHeights = variableHeights;
-}, privates:{toolSelector:'.' + Ext.baseCSSPrefix + 'tool', infiniteCls:Ext.baseCSSPrefix + 'infinite', groupFirstCls:Ext.baseCSSPrefix + 'group-first', groupLastCls:Ext.baseCSSPrefix + 'group-last', groupedCls:Ext.baseCSSPrefix + 'grouped', hasPinnedFooterCls:Ext.baseCSSPrefix + 'has-pinned-footer', hasPinnedHeaderCls:Ext.baseCSSPrefix + 'has-pinned-header', noRowLinesCls:Ext.baseCSSPrefix + 'no-row-lines', stickyCls:Ext.baseCSSPrefix + 'sticky', tombstoneCls:Ext.baseCSSPrefix + 'tombstone', blockingScroll:0, 
-discardMeasureRow:false, gapAfter:0, groupingInfo:null, measuredFirstRow:false, pinnedFooter:null, pinnedHeader:null, lastAdjustedPosition:null, measuredHeight:null, renderInfo:null, suspendSync:false, onAnimationFrame:function() {
+}, updateStore:function(store, oldStore) {
+  var me = this;
+  me.callParent([store, oldStore]);
+  if (store) {
+    if (me.isConfiguring && this.getGrouped() != null) {
+      return;
+    }
+    this.setGrouped(store.getGrouper());
+  }
+}, privates:{toolSelector:'.' + Ext.baseCSSPrefix + 'tool:not(.' + Ext.baseCSSPrefix + 'passive)', infiniteCls:Ext.baseCSSPrefix + 'infinite', groupFirstCls:Ext.baseCSSPrefix + 'group-first', groupLastCls:Ext.baseCSSPrefix + 'group-last', groupedCls:Ext.baseCSSPrefix + 'grouped', hasPinnedFooterCls:Ext.baseCSSPrefix + 'has-pinned-footer', hasPinnedHeaderCls:Ext.baseCSSPrefix + 'has-pinned-header', noRowLinesCls:Ext.baseCSSPrefix + 'no-row-lines', stickyCls:Ext.baseCSSPrefix + 'sticky', tombstoneCls:Ext.baseCSSPrefix + 
+'tombstone', blockingScroll:0, discardMeasureRow:false, gapAfter:0, groupingInfo:null, measuredFirstRow:false, pinnedFooter:null, pinnedHeader:null, lastAdjustedPosition:null, measuredHeight:null, renderInfo:null, suspendSync:false, onAnimationFrame:function() {
   var me = this, info = me.scrollInfo, x = info.x, y = info.y;
   if (x !== null) {
     me.setVisibleLeft(x);
@@ -56891,11 +57870,12 @@ discardMeasureRow:false, gapAfter:0, groupingInfo:null, measuredFirstRow:false, 
     height = this.measureItem(item);
   }
   this.adjustScrollDockHeight(item.scrollDock, height);
-}, onStoreGroupChange:function() {
+}, onStoreGroupChange:function(store, grouper) {
   if (this.initialized) {
     this.refreshGrouping();
     this.syncRows();
   }
+  this.setGrouped(!!grouper);
 }, onStoreTotalCountChange:function() {
   if (this.getVisibleHeight()) {
     this.syncRowsToHeight();
@@ -58215,7 +59195,7 @@ Ext.define('Ext.dataview.BoundListNavigationModel', {extend:Ext.dataview.Navigat
 }, onKeyEnter:function(e) {
   var view = this.getView(), selectable = view.getSelectable(), field = view.ownerField;
   e.stopEvent();
-  if (!(field.getMultiSelect && field.getMultiSelect()) && selectable.isSelected(this.location.record) && field.collapse) {
+  if (selectable.isSelected(this.location.record) && field.collapse) {
     field.collapse();
   } else {
     this.selectHighlighted(e);
@@ -58246,7 +59226,18 @@ Ext.define('Ext.dataview.BoundListNavigationModel', {extend:Ext.dataview.Navigat
     }
   }
 }}});
-Ext.define('Ext.dataview.BoundList', {extend:Ext.dataview.List, xtype:'boundlist', tabIndex:null, focusEl:null, itemsFocusable:false, navigationModel:{type:'boundlist'}, onFocusEnter:Ext.emptyFn, onFocusLeave:Ext.emptyFn});
+Ext.define('Ext.dataview.BoundList', {extend:Ext.dataview.List, xtype:'boundlist', tabIndex:null, focusEl:null, itemsFocusable:false, navigationModel:{type:'boundlist'}, itemConfig:{cls:Ext.baseCSSPrefix + 'boundlistitem', tools:{selected:{zone:'start', passive:true, cls:Ext.baseCSSPrefix + 'selected-icon', iconCls:Ext.baseCSSPrefix + 'fa fa-check'}}}, onFocusEnter:Ext.emptyFn, onFocusLeave:Ext.emptyFn, privates:{beforeSelectionRefresh:function(toDeselect, toReselect) {
+  var len = toDeselect.length, i, rec;
+  for (i = 0; i < len;) {
+    rec = toDeselect[i];
+    if (rec.isEntered) {
+      toDeselect.splice(i, 1);
+      len--;
+    } else {
+      i++;
+    }
+  }
+}}});
 Ext.define('Ext.dataview.DataView', {extend:Ext.dataview.Abstract, alternateClassName:'Ext.DataView', xtype:'dataview', isElementDataView:true, constructor:function(config) {
   if (config && config.useComponents) {
     if (this.self !== Ext.dataview.DataView) {
@@ -58289,6 +59280,8 @@ Ext.define('Ext.dataview.DataView', {extend:Ext.dataview.Abstract, alternateClas
 }, doClear:function() {
   this.clearItems();
   this.callParent();
+}, resetSelection:function(records) {
+  this.setItemSelection(records, false);
 }, doRefresh:function(scrollToTop) {
   var me = this, records = me.dataRange.records, storeCount = records.length, itemCount = me.dataItems.length, scroller = me.getScrollable(), restoreFocus, i;
   if (scroller && scrollToTop) {
@@ -58300,6 +59293,7 @@ Ext.define('Ext.dataview.DataView', {extend:Ext.dataview.Abstract, alternateClas
   } else {
     restoreFocus = me.saveFocusState();
     me.hideEmptyText();
+    me.resetSelection(records);
     if (itemCount > storeCount) {
       me.removeItems(storeCount, itemCount);
       itemCount = storeCount;
@@ -58645,7 +59639,7 @@ titleCls:Ext.baseCSSPrefix + 'tooltiptitle', toolCls:[Ext.baseCSSPrefix + 'panel
   }
   me.attachTargetListeners();
 }, updateTrackMouse:function(trackMouse) {
-  if (!this.getAnchor()) {
+  if (trackMouse) {
     this.setAllowOver(trackMouse);
   }
 }, updateDisabled:function(disabled, oldDisabled) {
@@ -58789,7 +59783,9 @@ titleCls:Ext.baseCSSPrefix + 'tooltiptitle', toolCls:[Ext.baseCSSPrefix + 'panel
   }
 }, onTargetOut:function(e) {
   if (this.currentTarget.dom && !this.currentTarget.contains(e.relatedTarget)) {
-    this.handleTargetOut();
+    if (!this.getAllowOver() && e.within(this.el, true)) {
+      this.handleTargetOut();
+    }
   }
 }, handleTargetOut:function() {
   var me = this;
@@ -58802,8 +59798,8 @@ titleCls:Ext.baseCSSPrefix + 'tooltiptitle', toolCls:[Ext.baseCSSPrefix + 'panel
 }, onTipOver:function() {
   this.clearTimer('hide');
   this.clearTimer('dismiss');
-}, onTipOut:function() {
-  if (!this.currentTarget.dom || !this.pointerEvent.getPoint().isContainedBy(this.currentTarget.getRegion())) {
+}, onTipOut:function(e) {
+  if (!this.currentTarget.dom || !e.getPoint().isContainedBy(this.currentTarget.getRegion())) {
     this.handleTargetOut();
   }
 }, onMouseMove:function(e) {
@@ -59023,7 +60019,9 @@ autoComplete:false, classCls:Ext.baseCSSPrefix + 'pickerfield', initialize:funct
     }
   }
 }, applyFocusTrap:function(focusTrap) {
-  return this.el.appendChild(Ext.dom.Element.create(focusTrap));
+  var result = this.el.appendChild(Ext.dom.Element.create(focusTrap));
+  result.$isFocusTrap = true;
+  return result;
 }, onResize:function() {
   var picker = this.getConfig('picker', false, true);
   if (picker && picker.isVisible()) {
@@ -59089,6 +60087,9 @@ autoComplete:false, classCls:Ext.baseCSSPrefix + 'pickerfield', initialize:funct
 }, onPickerShow:function() {
   var me = this;
   me.expanded = true;
+  if (me.pickerType === 'edge') {
+    me.el.dom.scrollIntoView();
+  }
   me.hideEventListeners = Ext.on({mousedown:'collapseIf', scroll:'onGlobalScroll', scope:me, destroyable:true});
   me.fireEvent('expand', me);
 }, onPickerHide:function() {
@@ -59262,7 +60263,7 @@ navigationModel:{type:'boundlist', keyboard:false}, onFocusEnter:Ext.emptyFn, on
   }
   me._value = value;
 }, privates:{forceRefreshOnRender:true}});
-Ext.define('Ext.picker.Picker', {extend:Ext.Sheet, alias:'widget.picker', alternateClassName:'Ext.Picker', isPicker:true, config:{doneButton:true, cancelButton:true, useTitles:false, slots:null, value:null, height:220, layout:{type:'hbox', align:'stretch'}, centered:false, left:0, right:0, bottom:0, defaultType:'pickerslot', toolbarPosition:'top', toolbar:{xtype:'titlebar'}, side:'bottom'}, baseCls:Ext.baseCSSPrefix + 'picker', floated:true, focusable:true, tabIndex:-1, initialize:function() {
+Ext.define('Ext.picker.Picker', {extend:Ext.Sheet, alias:'widget.picker', alternateClassName:'Ext.Picker', isPicker:true, config:{doneButton:true, cancelButton:true, useTitles:false, slots:null, value:null, height:220, layout:{type:'hbox', align:'stretch'}, centered:false, left:0, right:0, bottom:0, defaultType:'pickerslot', toolbarPosition:'top', toolbar:{xtype:'titlebar'}, side:'bottom'}, baseCls:Ext.baseCSSPrefix + 'picker', floated:true, focusEl:null, focusable:true, tabIndex:-1, initialize:function() {
   this.callParent();
   this.on({scope:this, delegate:'pickerslot', slotpick:'onSlotPick'});
 }, getTemplate:function() {
@@ -60021,9 +61022,9 @@ Ext.define('Ext.layout.Carousel', {extend:Ext.layout.Auto, alias:'layout.carouse
 }, sortByOrder:function(a, b) {
   return +a.$carouselOrder - b.$carouselOrder;
 }}});
-Ext.define('Ext.panel.DateView', {extend:Ext.Widget, xtype:'dateview', config:{disabledDates:null, disabledDays:null, specialDates:null, specialDays:null, maxDate:null, minDate:null, monthOffset:0}, cachedConfig:{captionFormat:null, dateCellFormat:null, format:null, headerLength:null, hideCaption:true, hideOutside:true, startDay:null, weekendDays:null}, element:{reference:'element'}, tableTpl:{reference:'tableElement', tag:'table', cellspacing:'0', cellpadding:'0', children:[]}, captionTpl:{reference:'captionElement', 
-tag:'caption'}, headTpl:{tag:'thead', reference:'headElement'}, headRowTpl:{tag:'tr'}, headCellTpl:{tag:'th', cls:Ext.baseCSSPrefix + 'cell', children:[{tag:'div', cls:Ext.baseCSSPrefix + 'inner ' + Ext.dom.Element.unselectableCls}]}, bodyTpl:{tag:'tbody', reference:'bodyElement'}, bodyRowTpl:{tag:'tr'}, bodyCellTpl:{tag:'td', cls:Ext.baseCSSPrefix + 'cell', tabIndex:-1, children:[{tag:'div', cls:Ext.baseCSSPrefix + 'inner ' + Ext.dom.Element.unselectableCls}]}, rows:6, columns:7, cellCls:Ext.baseCSSPrefix + 
-'cell', emptyCls:Ext.baseCSSPrefix + 'empty', weekendDayCls:Ext.baseCSSPrefix + 'weekend', disabledDayCls:Ext.baseCSSPrefix + 'disabled', specialDateCls:Ext.baseCSSPrefix + 'special', todayCls:Ext.baseCSSPrefix + 'today', outsideCls:Ext.baseCSSPrefix + 'outside', prevMonthCls:Ext.baseCSSPrefix + 'prev-month', nextMonthCls:Ext.baseCSSPrefix + 'next-month', currentMonthCls:Ext.baseCSSPrefix + 'current-month', constructor:function(config) {
+Ext.define('Ext.panel.DateView', {extend:Ext.Widget, xtype:'dateview', config:{specialDates:null, specialDays:null, monthOffset:0}, cachedConfig:{captionFormat:null, dateCellFormat:null, format:null, headerLength:null, hideCaption:true, hideOutside:true, startDay:null, weekendDays:null}, element:{reference:'element'}, tableTpl:{reference:'tableElement', tag:'table', cellspacing:'0', cellpadding:'0', children:[]}, captionTpl:{reference:'captionElement', tag:'caption'}, headTpl:{tag:'thead', reference:'headElement'}, 
+headRowTpl:{tag:'tr'}, headCellTpl:{tag:'th', cls:Ext.baseCSSPrefix + 'cell', children:[{tag:'div', cls:Ext.baseCSSPrefix + 'inner ' + Ext.dom.Element.unselectableCls}]}, bodyTpl:{tag:'tbody', reference:'bodyElement'}, bodyRowTpl:{tag:'tr'}, bodyCellTpl:{tag:'td', cls:Ext.baseCSSPrefix + 'cell', tabIndex:-1, children:[{tag:'div', cls:Ext.baseCSSPrefix + 'inner ' + Ext.dom.Element.unselectableCls}]}, rows:6, columns:7, cellCls:Ext.baseCSSPrefix + 'cell', emptyCls:Ext.baseCSSPrefix + 'empty', weekendDayCls:Ext.baseCSSPrefix + 
+'weekend', disabledDayCls:Ext.baseCSSPrefix + 'disabled', specialDateCls:Ext.baseCSSPrefix + 'special', todayCls:Ext.baseCSSPrefix + 'today', outsideCls:Ext.baseCSSPrefix + 'outside', prevMonthCls:Ext.baseCSSPrefix + 'prev-month', nextMonthCls:Ext.baseCSSPrefix + 'next-month', currentMonthCls:Ext.baseCSSPrefix + 'current-month', constructor:function(config) {
   this.firstOfMonth = Ext.Date.getFirstDateOfMonth(new Date);
   this.callParent([config]);
 }, initElement:function() {
@@ -60072,22 +61073,6 @@ tag:'caption'}, headTpl:{tag:'thead', reference:'headElement'}, headRowTpl:{tag:
   if (!this.isConfiguring) {
     this.refresh();
   }
-}, updateDisabledDates:function() {
-  if (!this.isConfiguring) {
-    this.refresh();
-  }
-}, updateDisabledDays:function() {
-  if (!this.isConfiguring) {
-    this.refresh();
-  }
-}, updateMinDate:function() {
-  if (!this.isConfiguring) {
-    this.refresh();
-  }
-}, updateMaxDate:function() {
-  if (!this.isConfiguring) {
-    this.refresh();
-  }
 }, applyMonthOffset:function(offset) {
   return !isNaN(offset) ? offset : 0;
 }, updateMonthOffset:function() {
@@ -60114,7 +61099,7 @@ tag:'caption'}, headTpl:{tag:'thead', reference:'headElement'}, headRowTpl:{tag:
   startDate = ExtDate.add(monthStart, ExtDate.DAY, startOffset);
   cellMap = me.cellMap = {};
   currentMonth = monthStart.getMonth();
-  params = {today:Ext.Date.clearTime(new Date), weekendDays:me.getWeekendDays(), specialDates:me.getSpecialDates(), specialDays:me.getSpecialDays(), disabledDays:me.getDisabledDays(), disabledDates:me.getDisabledDates(), minDate:me.getMinDate(), maxDate:me.getMaxDate(), format:me.getFormat(), dateCellFormat:me.getDateCellFormat(), hideOutside:me.getHideOutside()};
+  params = {today:Ext.Date.clearTime(new Date), weekendDays:me.getWeekendDays(), specialDates:me.getSpecialDates(), specialDays:me.getSpecialDays(), format:me.getFormat(), dateCellFormat:me.getDateCellFormat(), hideOutside:me.getHideOutside()};
   for (i = 0, len = cells.length; i < len; i++) {
     cell = cells[i];
     date = ExtDate.add(startDate, ExtDate.DAY, i);
@@ -60132,7 +61117,7 @@ tag:'caption'}, headTpl:{tag:'thead', reference:'headElement'}, headRowTpl:{tag:
   me.captionElement.setHtml(Ext.Date.format(monthStart, me.getCaptionFormat()));
   me.refreshing = false;
 }, refreshCell:function(params) {
-  var me = this, cell = params.cell, date = params.date, dayOfWeek = date.getDay(), ms = date.getTime(), specialDates = params.specialDates, specialDays = params.specialDays, disabledDates = params.disabledDates, disabledDays = params.disabledDays, cls = [me.cellCls], formatted = Ext.Date.format(date, params.format), empty = params.outside && params.hideOutside, html, special, disabled;
+  var me = this, cell = params.cell, date = params.date, dayOfWeek = date.getDay(), ms = date.getTime(), specialDates = params.specialDates, specialDays = params.specialDays, cls = [me.cellCls], formatted = Ext.Date.format(date, params.format), empty = params.outside && params.hideOutside, html, special, disabled;
   if (!empty) {
     if (params.outsidePrevious) {
       cls.push(me.outsideCls, me.prevMonthCls);
@@ -60161,13 +61146,7 @@ tag:'caption'}, headTpl:{tag:'thead', reference:'headElement'}, headRowTpl:{tag:
   } else {
     cls.push(me.emptyCls);
   }
-  disabled = params.minDate && ms < params.minDate.getTime() || params.maxDate && ms > params.maxDate.getTime();
-  if (!disabled && disabledDays) {
-    disabled = disabledDays[dayOfWeek];
-  }
-  if (!disabled && disabledDates) {
-    disabled = disabledDates.dates[ms] || disabledDates.re && disabledDates.re.test(formatted);
-  }
+  disabled = me.getParent().isDateDisabled(date);
   if (!empty && disabled) {
     cls.push(me.disabledDayCls);
   }
@@ -60276,7 +61255,7 @@ $value:false}, titleActive:{cached:true, $value:true}, year:null}, initialize:fu
 }, onYearTap:function(e) {
   this.fireEvent('yeartap', this, e);
 }}});
-Ext.define('Ext.panel.YearPicker', {extend:Ext.dataview.BoundList, xtype:'yearpicker', classCls:Ext.baseCSSPrefix + 'yearpicker', config:{defaultOffset:100, end:undefined, start:undefined}, itemConfig:{ui:'yearpicker'}, itemTpl:'{year}', pinFooters:false, pinHeaders:false, scrollToTopOnRefresh:false, initialize:function() {
+Ext.define('Ext.panel.YearPicker', {extend:Ext.dataview.BoundList, xtype:'yearpicker', classCls:Ext.baseCSSPrefix + 'yearpicker', config:{defaultOffset:100, end:undefined, start:undefined}, itemConfig:{ui:'yearpicker', tools:null}, itemTpl:'{year}', pinFooters:false, pinHeaders:false, scrollToTopOnRefresh:false, initialize:function() {
   this.callParent();
   this.rebuildStore();
 }, focusYear:function(year) {
@@ -60287,6 +61266,7 @@ Ext.define('Ext.panel.YearPicker', {extend:Ext.dataview.BoundList, xtype:'yearpi
 }, onChildTap:function(location) {
   var rec = location.record;
   if (rec) {
+    location.event.stopEvent();
     this.fireEvent('yeartap', this, rec.id);
   }
 }, applyEnd:function(end) {
@@ -60391,12 +61371,12 @@ initialize:function() {
     }
   }
   return cfg;
-}, updateDisabledDates:function(cfg) {
-  this.broadcastConfig('disabledDates', cfg);
+}, updateDisabledDates:function() {
+  this.refreshPanes();
 }, applyDisabledDays:function(days) {
   return days ? Ext.Array.toMap(days) : days;
-}, updateDisabledDays:function(daysMap) {
-  this.broadcastConfig('disabledDays', daysMap);
+}, updateDisabledDays:function() {
+  this.refreshPanes();
 }, updateFormat:function(format) {
   this.broadcastConfig('format', format);
 }, updateHeader:function(header, oldHeader) {
@@ -60407,15 +61387,15 @@ initialize:function() {
     date = Ext.Date.parse(date, this.getFormat());
   }
   return date;
-}, updateMaxDate:function(date) {
-  this.broadcastConfig('maxDate', date);
+}, updateMaxDate:function() {
+  this.refreshPanes();
 }, applyMinDate:function(date) {
   if (typeof date === 'string') {
     date = Ext.Date.parse(date, this.getFormat());
   }
   return date;
-}, updateMinDate:function(date) {
-  this.broadcastConfig('minDate', date);
+}, updateMinDate:function() {
+  this.refreshPanes();
 }, updateNavigationPosition:function(pos) {
   var me = this, toolList = me.toolList, len = toolList.length, isHeader = pos === 'header', ct = isHeader ? me.toolCt : me.getHeader(), tools, i, c;
   if (isHeader && me.isConfiguring) {
@@ -60653,19 +61633,21 @@ initialize:function() {
   }
   me.navIncrement = 0;
 }, onDateClick:function(e) {
-  var me = this, cell = e.getTarget(me.cellSelector, me.bodyElement), date = cell && cell.date;
+  var me = this, cell = e.getTarget(me.cellSelector, me.bodyElement), date = cell && cell.date, focus = true, disabled = cell && cell.disabled;
   if (!date || me.getDisabled()) {
     return;
   }
-  if (!cell.disabled) {
+  if (!disabled) {
     me.setValue(date);
-  }
-  if (me.getAutoConfirm()) {
-    if (e.pointerType === 'touch') {
-      e.preventDefault();
+    if (me.getAutoConfirm()) {
+      if (e.pointerType === 'touch') {
+        e.preventDefault();
+      }
+      focus = false;
+      me.fireEvent('select', me, date);
     }
-    me.fireEvent('select', me, date);
-  } else {
+  }
+  if (focus) {
     me.focusDate(date);
   }
 }, onMouseWheel:function(e) {
@@ -60749,7 +61731,11 @@ initialize:function() {
   if (!me.getDisabled()) {
     date = me.getFocusableDate();
     newDate = unit ? Ext.Date.add(date, unit, increment) : date;
-    me.setValue(newDate);
+    if (me.isDateDisabled(newDate)) {
+      me.focusDate(newDate);
+    } else {
+      me.setValue(newDate);
+    }
   }
 }, onBodyFocus:function(e) {
   var me = this, date = me.getFocusableDate(), cell = me.getCellByDate(date);
@@ -60855,10 +61841,30 @@ initialize:function() {
   return !index ? index : index % 2 ? Math.floor(index / 2) + 1 : Math.floor(index / 2);
 }, getPaneTemplate:function(offset) {
   var me = this;
-  return {xtype:me.paneXtype, monthOffset:offset, hideOutside:me.getHideOutside(), hideCaption:me.getHideCaptions(), startDay:me.getStartDay(), weekendDays:me.getWeekendDays(), specialDates:me.getSpecialDates(), specialDays:me.getSpecialDays(), disabledDays:me.getDisabledDays(), disabledDates:me.getDisabledDates(), minDate:me.getMinDate(), maxDate:me.getMaxDate(), format:me.getFormat(), captionFormat:me.getCaptionFormat(), dateCellFormat:me.getDateCellFormat(), headerLength:me.getHeaderLength(), 
-  transformCellCls:me.transformCellCls};
+  return {xtype:me.paneXtype, monthOffset:offset, hideOutside:me.getHideOutside(), hideCaption:me.getHideCaptions(), startDay:me.getStartDay(), weekendDays:me.getWeekendDays(), specialDates:me.getSpecialDates(), specialDays:me.getSpecialDays(), format:me.getFormat(), captionFormat:me.getCaptionFormat(), dateCellFormat:me.getDateCellFormat(), headerLength:me.getHeaderLength(), transformCellCls:me.transformCellCls};
 }, getPositionedItemTarget:function() {
   return this.bodyElement;
+}, isDateDisabled:function(date) {
+  var me = this, ms = date.getTime(), minDate = me.getMinDate(), maxDate = me.getMaxDate(), disabled = false, disabledDays, disabledDates, formatted, re;
+  disabled = minDate && ms < minDate.getTime() || maxDate && ms > maxDate.getTime();
+  if (!disabled) {
+    disabledDays = me.getDisabledDays();
+    if (disabledDays) {
+      disabled = disabledDays[date.getDay()];
+    }
+  }
+  if (!disabled) {
+    disabledDates = me.getDisabledDates();
+    if (disabledDates) {
+      disabled = disabledDates.dates[ms];
+      re = disabledDates.re;
+      if (!disabled && re) {
+        formatted = Ext.Date.format(date, me.getFormat());
+        disabled = re.test(formatted);
+      }
+    }
+  }
+  return !!disabled;
 }, measurePaneSize:function() {
   var me = this, count = me.getPanes(), ui = me.getUi() || 'default', map = me.paneWidthMap, borderWidth;
   if (!map.hasOwnProperty(ui)) {
@@ -60888,14 +61894,22 @@ initialize:function() {
   } else {
     visible = !this.pickerVisible;
   }
-  this.togglePicker(visible);
+  this.toggleYearPicker(visible);
 }, onYearPickerTap:function(picker, year) {
-  this.togglePicker(false);
+  this.toggleYearPicker(false);
   var d = Ext.Date.clone(this.getFocusableDate());
   d.setFullYear(year);
   this.setValue(d);
 }, onYearTitleTap:function() {
-  this.togglePicker(!this.pickerVisible);
+  this.toggleYearPicker(!this.pickerVisible);
+}, refreshPanes:function() {
+  if (this.isConfiguring) {
+    return;
+  }
+  var panes = this.getPanes(), len = panes.length, i;
+  for (i = 0; i < len; ++i) {
+    panes[i].refresh();
+  }
 }, setTitleByDate:function(date) {
   var me = this, prev = me.lastTitleDate, anim;
   if (prev && prev.getTime() === date.getTime()) {
@@ -60939,7 +61953,7 @@ initialize:function() {
   if (tool) {
     tool.setTooltip(text);
   }
-}, togglePicker:function(visible) {
+}, toggleYearPicker:function(visible) {
   var me = this, picker = me.getYearPicker();
   if (picker) {
     if (me.getSplitTitle()) {
@@ -61084,7 +62098,15 @@ autoConfirm:true, floated:true, listeners:{tabout:'onTabOut', select:'onPickerCh
     }
   }
   return this.callParent([value, errors]);
-}, transformValue:Ext.identityFn, doDestroy:function() {
+}, transformValue:function(value) {
+  if (Ext.isObject(value)) {
+    value = new Date(value.year, value.month, value.day);
+    if (isNaN(value.getTime())) {
+      value = null;
+    }
+  }
+  return value;
+}, doDestroy:function() {
   var picker = this._picker;
   if (picker && picker.isPicker) {
     picker.destroy();
@@ -61097,10 +62119,9 @@ Ext.define('Ext.theme.material.field.Date', {override:'Ext.field.Date', config:{
 Ext.define('Ext.field.Email', {extend:Ext.field.Text, alternateClassName:'Ext.form.Email', xtype:'emailfield', config:{autoCapitalize:false}, inputType:'email', classCls:Ext.baseCSSPrefix + 'emailfield'});
 Ext.define('Ext.field.Number', {extend:Ext.field.Text, xtype:'numberfield', alternateClassName:'Ext.form.Number', config:{minValue:null, maxValue:null, decimals:2, trim:true}, inputType:Ext.os.is.Desktop ? 'text' : 'number', minValueText:'The minimum value for this field is {0}', maxValueText:'The maximum value for this field is {0}', decimalsText:'The maximum decimal places is {0}', badFormatMessage:'Value is not a valid number', classCls:Ext.baseCSSPrefix + 'numberfield', parseValidator:'number', 
 initialize:function() {
-  var inputElement = this.inputElement.dom;
   this.getDecimals();
   this.callParent();
-  inputElement.setAttribute('inputmode', 'numeric');
+  this.inputElement.dom.setAttribute('inputmode', 'numeric');
   if (this.getInputMask()) {
     Ext.raise('NumberFields cannot use input masks');
   }
@@ -61123,17 +62144,14 @@ initialize:function() {
   }
   return value;
 }, doValidate:function(value, errors, skipLazy) {
-  var me = this, minValue = me.getMinValue(), maxValue = me.getMaxValue();
+  var me = this, String = Ext.String, minValue = me.getMinValue(), maxValue = me.getMaxValue();
   me.callParent([value, errors, skipLazy]);
   if (minValue != null && value < minValue) {
-    errors.push(Ext.String.format(me.minValueText, minValue));
+    errors.push(String.format(me.minValueText, minValue));
   } else {
     if (maxValue != null && value > maxValue) {
-      errors.push(Ext.String.format(me.maxValueText, maxValue));
+      errors.push(String.format(me.maxValueText, maxValue));
     }
-  }
-  if (me.inputElement.dom.validity.badInput) {
-    errors.push(me.badInputText);
   }
 }, onKeyDown:function(e) {
   var me = this, raw;
@@ -61329,9 +62347,8 @@ Ext.define('Ext.form.Panel', {extend:Ext.field.Panel, xtype:'formpanel', alterna
   template.push({tag:'input', type:'submit', cls:Ext.baseCSSPrefix + 'hidden-submit'});
   return template;
 }, initialize:function() {
-  var me = this;
-  me.callParent();
-  me.element.on({submit:'onSubmit', scope:me});
+  this.callParent();
+  this.element.on('submit', 'onSubmit', this);
 }, applyEnctype:function(newValue) {
   var form = this.element.dom || null;
   if (form) {
@@ -61770,10 +62787,11 @@ Ext.define('Ext.grid.Location', {extend:Ext.dataview.Location, isGridLocation:tr
   }
   return actionable;
 }, navigate:function(reverse) {
-  var me = this, activeEl = me.sourceElement, view = me.view, scrollable = view.getScrollable(), actionables = view.getNavigationModel().actionables, len = actionables && actionables.length, candidate = me.clone(), previousCandidate = me.clone(), visitOptions = {callback:function(el) {
-    if (Ext.fly(el).isFocusable()) {
+  var me = this, activeEl = me.sourceElement, view = me.view, scrollable = view.getScrollable(), actionables = view.getNavigationModel().actionables, len = actionables && actionables.length, candidate = me.clone(), previousCandidate = me.clone(), testEl, visitOptions = {callback:function(el) {
+    testEl = Ext.fly(el);
+    if (!testEl.$isFocusTrap && testEl.isFocusable()) {
       component = Ext.Component.from(el);
-      if (!(component && component.getDisabled())) {
+      if (!component || !component.getDisabled()) {
         focusables.push(el);
       }
     }
@@ -62134,9 +63152,10 @@ Ext.define('Ext.grid.NavigationModel', {extend:Ext.dataview.NavigationModel, ali
     this.onKeySpace(e);
   }
 }, onSelectAllKeyPress:function(e) {
-  this.onNavigate(e);
   if (Ext.fly(e.target).isInputField()) {
     return true;
+  } else {
+    return this.callParent([e]);
   }
 }, moveUp:function(e) {
   var location = this.getLocation();
@@ -62846,6 +63865,7 @@ Ext.define('Ext.grid.HeaderContainer', {extend:Ext.Container, xtype:'headerconta
     columns = me.bulkAdd;
     length = columns && columns.length;
     if (length) {
+      me.visibleColumns = null;
       me.columns = me.query('[isLeafHeader]');
       for (i = 0; i < length; i++) {
         item = columns[i];
@@ -63073,200 +64093,6 @@ Ext.define('Ext.grid.HeaderContainer', {extend:Ext.Container, xtype:'headerconta
   this.el.setStyle('padding-right', reserve ? Ext.getScrollbarSize().width + 'px' : 0);
 }, visibleLeafFilter:function(c) {
   return c.isLeafHeader && !c.isHidden();
-}}});
-Ext.define('Ext.menu.Item', {extend:Ext.Component, alias:'widget.menuitem', alternateClassName:'Ext.menu.TextItem', isMenuItem:true, menuExpandDelay:200, menuHideDelay:200, scope:null, destroyMenu:true, clickHideDelay:0, hideOnClick:true, config:{href:null, target:null, handler:null, text:null, menu:{lazy:true, $value:null}, menuAlign:'tl-tr?', icon:null, iconCls:null, iconAlign:'left', indented:null, separator:null}, inheritUi:true, ariaRole:'menuitem', focusable:true, classCls:Ext.baseCSSPrefix + 
-'menuitem', activeCls:Ext.baseCSSPrefix + 'active', hasLeftIconCls:Ext.baseCSSPrefix + 'has-left-icon', hasRightIconCls:Ext.baseCSSPrefix + 'has-right-icon', hasArrowCls:Ext.baseCSSPrefix + 'has-arrow', hasHrefCls:Ext.baseCSSPrefix + 'has-href', isMenuOwner:true, template:[{reference:'bodyElement', tag:'a', href:'#', cls:Ext.baseCSSPrefix + 'body-el ' + Ext.baseCSSPrefix + 'unselectable', children:[{reference:'leftIconWrapElement', cls:Ext.baseCSSPrefix + 'left-icon-wrap-el ' + Ext.baseCSSPrefix + 
-'icon-wrap-el', children:[{reference:'leftIconElement', cls:Ext.baseCSSPrefix + 'left-icon-el ' + Ext.baseCSSPrefix + 'icon-el ' + Ext.baseCSSPrefix + 'font-icon'}]}, {html:' ', reference:'textElement', cls:Ext.baseCSSPrefix + 'text-el'}, {reference:'rightIconWrapElement', cls:Ext.baseCSSPrefix + 'right-icon-wrap-el ' + Ext.baseCSSPrefix + 'icon-wrap-el', children:[{reference:'rightIconElement', cls:Ext.baseCSSPrefix + 'right-icon-el ' + Ext.baseCSSPrefix + 'icon-el ' + Ext.baseCSSPrefix + 'font-icon'}]}, 
-{reference:'arrowElement', cls:Ext.baseCSSPrefix + 'arrow-el ' + Ext.baseCSSPrefix + 'font-icon'}]}], ariaEl:'bodyElement', focusEl:'bodyElement', initialize:function() {
-  this.callParent();
-  this.syncHasIconCls();
-}, getFocusClsEl:function() {
-  return this.el;
-}, expandMenu:function(event) {
-  var me = this, menu = me.getMenu();
-  if (!me.getDisabled() && menu) {
-    menu.parentMenu = me.parentMenu;
-    me.hideOnClick = false;
-    if (menu.isVisible()) {
-      if (event && event.type === 'keydown') {
-        menu.focus();
-      }
-    } else {
-      menu.autoFocus = !event || !event.pointerType;
-      menu.showBy(me, me.getMenuAlign(), {axisLock:true});
-    }
-  }
-}, getRefItems:function(deep) {
-  var menu = this.getMenu(), items;
-  if (menu) {
-    items = menu.getRefItems(deep);
-    items.unshift(menu);
-  }
-  return items || [];
-}, onFocusEnter:function(e) {
-  var me = this;
-  me.callParent([e]);
-  me.addCls(me.activeCls);
-  me.activated = true;
-  if (me.hasListeners.activate) {
-    me.fireEvent('activate', me);
-  }
-  if (me.parentMenu) {
-    me.parentMenu.setActiveItem(me);
-  }
-}, onFocusLeave:function(e) {
-  var me = this, menu = me.menu;
-  me.callParent([e]);
-  me.removeCls(me.activeCls);
-  if (menu) {
-    menu.hide();
-  }
-  me.activated = false;
-  if (me.hasListeners.deactivate) {
-    me.fireEvent('deactivate', me);
-  }
-  if (me.parentMenu) {
-    me.parentMenu.setActiveItem(null);
-  }
-}, onRemoved:function(destroying) {
-  this.callParent([destroying]);
-  this.parentMenu = null;
-}, doDestroy:function() {
-  var me = this;
-  me.separatorElement = Ext.destroy(me.separatorElement);
-  me.setMenu(null);
-  me.callParent();
-}, updateText:function(text) {
-  if (text == null || text === '') {
-    text = ' ';
-  }
-  this.textElement.dom.firstChild.data = text;
-}, applyMenu:function(menu) {
-  var me = this, ariaDom = me.ariaEl.dom;
-  if (menu) {
-    if (menu.isMenu) {
-      menu.setConstrainAlign(Ext.getBody());
-      menu.ownerCmp = me;
-    } else {
-      menu = Ext.menu.Menu.create(menu, {ownerCmp:me, $initParent:me, constrainAlign:Ext.getBody()});
-    }
-    ariaDom.setAttribute('aria-haspopup', true);
-    ariaDom.setAttribute('aria-owns', menu.id);
-  } else {
-    ariaDom.removeAttribute('aria-haspopup');
-    ariaDom.removeAttribute('aria-owns');
-  }
-  me.toggleCls(me.hasArrowCls, !!menu);
-  return menu;
-}, updateMenu:function(menu, oldMenu) {
-  if (oldMenu) {
-    if (this.destroyMenu) {
-      Ext.destroy(oldMenu);
-    } else {
-      oldMenu.parentMenu = null;
-    }
-  }
-  this.menu = menu;
-}, updateHref:function(href) {
-  this.bodyElement.dom.href = href;
-  this.toggleCls(this.hasHrefCls, !!href);
-}, updateTarget:function(target) {
-  this.el.dom.target = target;
-}, updateIcon:function(icon) {
-  var me = this, iconElement = me.getIconAlign() === 'left' ? this.leftIconElement : this.rightIconElement;
-  if (icon) {
-    iconElement.setStyle('background-image', 'url(' + icon + ')');
-  } else {
-    iconElement.setStyle('background-image', '');
-  }
-  if (!me.isConfiguring) {
-    me.syncHasIconCls();
-  }
-}, updateIconCls:function(iconCls, oldIconCls) {
-  var me = this, iconElement = me.getIconAlign() === 'left' ? this.leftIconElement : this.rightIconElement;
-  if (iconCls) {
-    iconElement.replaceCls(oldIconCls, iconCls);
-  } else {
-    iconElement.removeCls(oldIconCls);
-  }
-  if (!me.isConfiguring) {
-    me.syncHasIconCls();
-  }
-}, updateIconAlign:function(iconAlign) {
-  if (!this.isConfiguring) {
-    this.syncHasIconCls();
-  }
-}, updateSeparator:function(separator) {
-  var me = this, separatorElement = me.separatorElement;
-  if (separator) {
-    if (separatorElement) {
-      separatorElement.show();
-    } else {
-      me.separatorElement = separatorElement = Ext.Element.create({cls:Ext.baseCSSPrefix + 'menuseparator'});
-      me.el.dom.insertBefore(separatorElement.dom, me.el.dom.firstChild);
-    }
-  } else {
-    if (separatorElement) {
-      separatorElement.hide();
-    }
-  }
-}, privates:{onSpace:function(e) {
-  return this.onClick(e);
-}, onClick:function(e) {
-  var me = this, href = me.getHref(), clickHideDelay = me.clickHideDelay, browserEvent = e.browserEvent, handler = me.getHandler(), clickResult;
-  if ((!href || me.getDisabled()) && me.bodyElement.dom === e.getTarget('a')) {
-    e.stopEvent();
-    if (me.getDisabled()) {
-      return false;
-    }
-  }
-  if (me.getDisabled() || me.handlingClick) {
-    return;
-  }
-  if (me.hideOnClick && !me.getMenu()) {
-    if (!clickHideDelay) {
-      me.hideParentMenus();
-    } else {
-      me.hideParentMenusTimer = Ext.defer(me.hideParentMenus, clickHideDelay, me);
-    }
-  }
-  clickResult = me.fireEvent('click', me, e);
-  if (me.destroyed) {
-    return;
-  }
-  if (clickResult !== false && handler) {
-    Ext.callback(handler, me.scope, [me, e], 0, me);
-  }
-  if (me.destroyed) {
-    return;
-  }
-  if (href && e.type !== 'click' && !browserEvent.defaultPrevented) {
-    me.handlingClick = true;
-    me.bodyElement.dom.click();
-    me.handlingClick = false;
-  }
-  return clickResult;
-}, hideParentMenus:function() {
-  for (var menu = this.getRefOwner(); menu && (menu.isMenu && menu.getFloated() || menu.isMenuItem); menu = menu.getRefOwner()) {
-    if (menu.isMenu) {
-      menu.hide();
-    }
-  }
-}, hasIcon:function() {
-  return !!(this.getIconCls() || this.getIcon());
-}, syncHasIconCls:function() {
-  var me = this, rightCls = me.hasRightIconCls, leftCls = me.hasLeftIconCls, iconAlign = me.getIconAlign();
-  if (me.hasIcon()) {
-    if (iconAlign === 'left') {
-      me.replaceCls(rightCls, leftCls);
-    } else {
-      if (iconAlign === 'right') {
-        me.replaceCls(leftCls, rightCls);
-      }
-    }
-  } else {
-    me.removeCls([leftCls, rightCls]);
-  }
 }}});
 Ext.define('Ext.menu.CheckItem', {extend:Ext.menu.Item, xtype:'menucheckitem', isMenuCheckItem:true, hideOnClick:false, config:{checked:false, checkHandler:null, checkChangeDisabled:false, value:null, showCheckbox:null}, classCls:Ext.baseCSSPrefix + 'menucheckitem', checkedCls:Ext.baseCSSPrefix + 'checked', checkboxIconElCls:Ext.baseCSSPrefix + 'checkbox-icon-el', ariaRole:'menuitemcheckbox', defaultBindProperty:'checked', submenuText:'{0} submenu', href:null, target:null, element:{reference:'element', 
 cls:Ext.baseCSSPrefix + 'unselectable ' + Ext.baseCSSPrefix + 'has-left-icon', onmousedown:'return Ext.doEv(this, event);'}, eventHandlers:{change:'onCheckboxChange', mousedown:'onCheckboxMousedown'}, focusEl:'checkboxElement', ariaEl:'checkboxElement', getTemplate:function() {
@@ -63513,7 +64339,14 @@ $value:{xtype:'menucheckitem'}}}, toolDefaults:{ui:'gridcolumn', zone:'tail'}, t
     oldMenu.destroy();
   }
 }, beforeShowMenu:function(menu) {
-  var me = this, store = me.getGrid().getStore(), isGrouped = !!store.getGrouper(), groupByThis = menu.getComponent('groupByThis'), showInGroups = menu.getComponent('showInGroups'), sortAsc = menu.getComponent('sortAsc'), sortDesc = menu.getComponent('sortDesc');
+  var me = this, store = me.getGrid().getStore(), isGrouped = store && !!store.getGrouper(), groupByThis = menu.getComponent('groupByThis'), showInGroups = menu.getComponent('showInGroups'), sortAsc = menu.getComponent('sortAsc'), sortDesc = menu.getComponent('sortDesc');
+  sortAsc.setDisabled(!store);
+  sortDesc.setDisabled(!store);
+  if (!store) {
+    groupByThis.setHidden(true);
+    showInGroups.setHidden(true);
+    return;
+  }
   menu.suspendEvent('groupchange');
   if (sortAsc) {
     me.syncMenuItemState(sortAsc);
@@ -63593,11 +64426,11 @@ $value:{xtype:'menucheckitem'}}}, toolDefaults:{ui:'gridcolumn', zone:'tail'}, t
     this.triggerElement.setVisible(!menuDisabled);
   }
 }, onColumnTap:function(e) {
-  var me = this, grid = me.getGrid(), selModel = grid.getSelectable(), store = grid.getStore(), sorters = store.getSorters(true), sorter = me.pickSorter(), sorterIndex = sorter ? sorters.indexOf(sorter) : -1, isSorted = sorter && (sorterIndex !== -1 || sorter === store.getGrouper());
+  var me = this, grid = me.getGrid(), selModel = grid.getSelectable(), store = grid.getStore(), sorters = store && store.getSorters(true), sorter = store && me.pickSorter(), sorterIndex = sorter ? sorters.indexOf(sorter) : -1, isSorted = sorter && (sorterIndex !== -1 || sorter === store.getGrouper());
   if (Ext.Component.from(e) !== me || e.getTarget('.' + Ext.baseCSSPrefix + 'item-no-tap', me)) {
     return;
   }
-  if (me.isSortable() && (!selModel || !selModel.getColumns())) {
+  if (store && me.isSortable() && (!selModel || !selModel.getColumns())) {
     if (sorter.isGrouper) {
       sorter.toggle();
       store.group(sorter);
@@ -63634,7 +64467,6 @@ $value:{xtype:'menucheckitem'}}}, toolDefaults:{ui:'gridcolumn', zone:'tail'}, t
   if (grouper) {
     store.setGrouper(grouper);
   }
-  grid.setGrouped(true);
 }, onColumnMenuGroupChange:function(menu, groupName, value) {
   if (groupName === 'sortDir') {
     this.setSortDirection(value);
@@ -63674,7 +64506,6 @@ $value:{xtype:'menucheckitem'}}}, toolDefaults:{ui:'gridcolumn', zone:'tail'}, t
   }
 }, onToggleShowInGroups:function(menuItem) {
   var grid = this.getGrid(), store = grid.getStore();
-  grid.setGrouped(false);
   store.setGrouper(null);
 }, updateResizable:function(resizable) {
   var me = this, widthed = me.getWidth() != null, flexed = me.getFlex() != null;
@@ -65571,12 +66402,13 @@ Ext.define('Ext.grid.selection.Model', {extend:Ext.dataview.selection.Model, ali
     }
   }
 }, updateRows:function(rows) {
-  var me = this, sel = me.getSelection(), checkHeader = me.getCheckbox();
-  if (checkHeader) {
-    checkHeader.setHidden(!rows);
-  }
-  if (!rows && sel && sel.isRows) {
-    sel.clear();
+  var sel;
+  if (!rows) {
+    this.setCheckbox(false);
+    sel = this.getSelection();
+    if (sel && sel.isRows) {
+      sel.clear();
+    }
   }
 }, updateColumns:function(columns) {
   var me = this, view = me.getView(), sel = me.getSelection();
@@ -65650,6 +66482,7 @@ Ext.define('Ext.grid.selection.Model', {extend:Ext.dataview.selection.Model, ali
     }
     if (checkbox) {
       view.registerColumn(checkbox);
+      me.setRows(true);
     }
   }
 }, applyView:function(view) {
@@ -65787,320 +66620,6 @@ Ext.define('Ext.grid.RowHeader', {extend:Ext.dataview.ItemHeader, xtype:'rowhead
   }
   return data;
 }}});
-Ext.define('Ext.menu.Manager', {singleton:true, alternateClassName:'Ext.menu.MenuMgr', hideAll:function() {
-  var allMenus = this.visible, len = allMenus.length, result = false, i;
-  if (len) {
-    allMenus = allMenus.slice();
-    for (i = 0; i < len; i++) {
-      allMenus[i].hide();
-      result = true;
-    }
-  }
-  return result;
-}, privates:{groups:{}, visible:[], constructor:function() {
-  var me = this;
-  me.onShow = function() {
-    me.registerGlobalListeners();
-    return me.onShow.apply(me, arguments);
-  };
-}, onGlobalScroll:function(scroller) {
-  var allMenus = this.visible, len = allMenus.length, i, menu;
-  if (len && scroller !== Ext.scroll.Scroller.viewport) {
-    allMenus = allMenus.slice();
-    for (i = 0; i < len; ++i) {
-      menu = allMenus[i];
-      if (scroller.contains(menu)) {
-        menu.hide();
-      }
-    }
-  }
-}, checkActiveMenus:function(e) {
-  var allMenus = this.visible, len = allMenus.length, i, menu, mousedownCmp = Ext.Component.from(e);
-  if (len) {
-    allMenus = allMenus.slice();
-    for (i = 0; i < len; ++i) {
-      menu = allMenus[i];
-      if (!(menu.owns(e) || mousedownCmp && mousedownCmp.isMenuOwner && mousedownCmp.getMenu() === menu)) {
-        menu.hide();
-      }
-    }
-  }
-}, onShow:function(menu) {
-  if (menu.getFloated()) {
-    Ext.Array.include(this.visible, menu);
-  }
-}, onHide:function(menu) {
-  if (menu.getFloated()) {
-    Ext.Array.remove(this.visible, menu);
-  }
-}, registerGlobalListeners:function() {
-  var me = this;
-  delete me.onShow;
-  Ext.on({mousedown:me.checkActiveMenus, scrollstart:me.onGlobalScroll, scope:me});
-  if (window.jasmine && jasmine.addAllowedListener) {
-    jasmine.addAllowedListener('mousedown');
-    jasmine.addAllowedListener('scrollstart');
-  }
-}}});
-Ext.define('Ext.menu.Menu', {extend:Ext.Panel, xtype:'menu', isMenu:true, config:{align:'tl-bl?', indented:true, separator:null, autoHide:null, groups:null}, allowOtherMenus:false, ignoreParentClicks:false, mouseLeaveDelay:50, defaultType:'menuitem', autoSize:null, keyMap:{scope:'this', SPACE:'onSpaceKey', ESC:'onEscKey'}, layout:{type:'vbox', align:'stretch'}, classCls:Ext.baseCSSPrefix + 'menu', indentedCls:Ext.baseCSSPrefix + 'indented', hasSeparatorCls:Ext.baseCSSPrefix + 'has-separator', nonMenuItemCls:Ext.baseCSSPrefix + 
-'non-menuitem', allowFocusingDisabledChildren:true, border:true, defaultFocus:':focusable', floated:true, focusable:true, focusableContainer:true, nameHolder:true, weighted:true, initialize:function() {
-  var me = this, listeners = {click:me.onClick, mouseover:me.onMouseOver, scope:me};
-  me.callParent();
-  if (Ext.supports.Touch) {
-    listeners.pointerdown = me.onMouseOver;
-  }
-  me.element.on(listeners);
-  me.itemOverTask = new Ext.util.DelayedTask(me.handleItemOver, me);
-  me.mouseMonitor = me.el.monitorMouseLeave(me.mouseLeaveDelay, me.onMouseLeave, me);
-}, doDestroy:function() {
-  var me = this;
-  me.itemOverTask.cancel();
-  Ext.menu.Manager.onHide(me);
-  me.parentMenu = me.ownerCmp = null;
-  if (me.rendered) {
-    me.el.un(me.mouseMonitor);
-  }
-  me.callParent();
-}, showBy:function(component, alignment, options) {
-  this.callParent([component, alignment || this.getAlign(), options]);
-}, onFocusEnter:function(e) {
-  var me = this, hierarchyState;
-  me.callParent([e]);
-  me.mixins.focusablecontainer.onFocusEnter.call(me, e);
-  if (me.getFloated()) {
-    hierarchyState = me.getInherited();
-    if (!hierarchyState.topmostFocusEvent) {
-      hierarchyState.topmostFocusEvent = e;
-    }
-  }
-}, onFocusLeave:function(e) {
-  this.callParent([e]);
-  if (this.getAutoHide() !== false) {
-    this.hide();
-  }
-}, onItemAdd:function(item, index) {
-  this.callParent([item, index]);
-  this.syncItemIndentedCls(item);
-  if (!item.isMenuItem && !item.isMenuSeparator) {
-    item.addCls(this.nonMenuItemCls);
-  }
-}, onItemRemove:function(item, index, destroying) {
-  this.callParent([item, index, destroying]);
-  item.removeCls(this.indentedCls, this.nonMenuItemCls);
-}, beforeShow:function() {
-  var me = this, parent;
-  if (me.getFloated()) {
-    parent = me.hasFloatMenuParent();
-    if (!parent && !me.allowOtherMenus) {
-      Ext.menu.Manager.hideAll();
-    }
-  }
-  me.callParent(arguments);
-}, afterShow:function() {
-  var me = this, ariaDom = me.ariaEl.dom;
-  me.callParent(arguments);
-  Ext.menu.Manager.onShow(me);
-  if (me.getFloated() && ariaDom) {
-    ariaDom.setAttribute('aria-expanded', true);
-  }
-  if (me.getFloated()) {
-    me.maxHeight = me.savedMaxHeight;
-  }
-  if (me.autoFocus) {
-    me.focus();
-  }
-}, afterHide:function() {
-  var me = this, ariaDom = me.ariaEl.dom;
-  me.callParent();
-  me.lastHide = Ext.Date.now();
-  Ext.menu.Manager.onHide(me);
-  if (me.getFloated() && ariaDom) {
-    ariaDom.setAttribute('aria-expanded', false);
-  }
-  delete me.getInherited().topmostFocusEvent;
-}, factoryItem:function(cfg) {
-  var result;
-  if (typeof cfg === 'string' && cfg[0] !== '@') {
-    if (cfg === '-') {
-      cfg = {xtype:'menuseparator'};
-    } else {
-      cfg = {};
-    }
-  }
-  result = this.callParent([cfg]);
-  if (result.isMenuItem) {
-    result.parentMenu = this;
-  }
-  return result;
-}, updateIndented:function(indented) {
-  var me = this;
-  if (!me.isConfiguring) {
-    me.bodyElement.toggleCls(me.hasSeparatorCls, !!(indented && me.getSeparator()));
-    me.items.each(me.syncItemIndentedCls, me);
-  }
-}, updateSeparator:function(separator) {
-  this.bodyElement.toggleCls(this.hasSeparatorCls, !!(separator && this.getIndented()));
-}, privates:{applyItemDefaults:function(item) {
-  item = this.callParent([item]);
-  if (!item.isComponent && !item.xtype && !item.xclass) {
-    if (item.group || item.name) {
-      item.xtype = 'menuradioitem';
-    } else {
-      if ('checked' in item) {
-        item.xtype = 'menucheckitem';
-      }
-    }
-  }
-  return item;
-}, applyGroups:function(groups, oldGroups) {
-  var me = this, currentGroups = Ext.apply({}, oldGroups), isConfiguring = me.isConfiguring, groupName, members, len, i, item, value, oldValue;
-  if (groups) {
-    for (groupName in groups) {
-      oldValue = currentGroups[groupName];
-      currentGroups[groupName] = value = groups[groupName];
-      if (!isConfiguring) {
-        members = me.lookupName(groupName);
-        for (i = 0, len = members.length; i < len; i++) {
-          item = members[i];
-          item.setChecked(item.getValue() === value);
-        }
-        me.fireEvent('groupchange', me, groupName, value, oldValue);
-      }
-    }
-    if (!isConfiguring) {
-      me.addBindableUpdater('groups');
-    }
-  }
-  return currentGroups;
-}, processFocusableContainerKeyEvent:function(e) {
-  var keyCode = e.keyCode, item;
-  if (keyCode === e.ESC || Ext.fly(e.target).is('input[type\x3dcheckbox]') && (keyCode === e.LEFT || keyCode === e.RIGHT || keyCode === e.UP || keyCode === e.DOWN)) {
-    e.preventDefault();
-    item = this.getItemFromEvent(e);
-    e.target = item && item.focusEl.dom;
-  } else {
-    if (keyCode === e.TAB && Ext.fly(e.target).is('input[type\x3dtext],textarea')) {
-      e.preventDefault();
-      item = this.getItemFromEvent(e);
-      e.target = item && item.focusEl.dom;
-      if (e.shiftKey) {
-        e.shiftKey = false;
-        e.keyCode = e.UP;
-      } else {
-        e.keyCode = e.DOWN;
-      }
-    } else {
-      return this.callParent([e]);
-    }
-  }
-  return e;
-}, onEscKey:function(e) {
-  if (this.getFloated()) {
-    this.hide();
-  }
-}, onSpaceKey:function(e) {
-  var clickedItem = this.getItemFromEvent(e);
-  if (clickedItem && clickedItem.isMenuItem) {
-    clickedItem.onSpace(e);
-  }
-}, onFocusableContainerLeftKey:function(e) {
-  e.preventDefault();
-  if (this.parentMenu) {
-    this.hide();
-  }
-}, onFocusableContainerRightKey:function(e) {
-  var clickedItem = this.getItemFromEvent(e);
-  e.preventDefault();
-  if (clickedItem) {
-    clickedItem.expandMenu(e);
-  }
-}, onClick:function(e) {
-  var me = this, type = e.type, clickedItem, clickResult, isKeyEvent = type === 'keydown', isTouchEvent = e.pointerType === 'touch';
-  if (me.getDisabled()) {
-    return e.stopEvent();
-  }
-  clickedItem = me.getItemFromEvent(e);
-  if (clickedItem && clickedItem.isMenuItem) {
-    if (!clickedItem.getMenu() || !me.ignoreParentClicks) {
-      clickResult = clickedItem.onClick(e);
-    } else {
-      e.stopEvent();
-    }
-    if (me.destroyed) {
-      return;
-    }
-    if (clickedItem.getMenu() && clickResult !== false && (isKeyEvent || isTouchEvent)) {
-      clickedItem.expandMenu(e);
-    }
-  }
-  if (!clickedItem || clickedItem.getDisabled()) {
-    clickedItem = undefined;
-  }
-  me.fireEvent('click', me, clickedItem, e);
-}, onMouseLeave:function(e) {
-  var me = this;
-  if (me.itemOverTask) {
-    me.itemOverTask.cancel();
-  }
-  if (me.getDisabled()) {
-    return;
-  }
-  me.fireEvent('mouseleave', me, e);
-}, onMouseOver:function(e) {
-  var me = this, activeItem = me.getActiveItem(), activeItemMenu = activeItem && activeItem.getMenu && activeItem.getMenu(), activeItemExpanded = activeItemMenu && activeItemMenu.isVisible(), isTouch = e.pointerType === 'touch', mouseEnter, overItem, el;
-  if (!me.getDisabled()) {
-    if (isTouch) {
-      mouseEnter = !me.el.contains(document.activeElement);
-    } else {
-      mouseEnter = !me.el.contains(e.getRelatedTarget());
-    }
-    overItem = me.getItemFromEvent(e);
-    if (overItem) {
-      if (isTouch) {
-        me.handleItemOver(e, overItem);
-      } else {
-        el = overItem.isMenuItem ? overItem.bodyElement : overItem.el;
-        if (!el.contains(e.getRelatedTarget())) {
-          me.itemOverTask.delay(activeItemExpanded ? me.mouseLeaveDelay : 0, null, null, [e, overItem]);
-        }
-      }
-    }
-    if (mouseEnter) {
-      me.fireEvent('mouseenter', me, e);
-    }
-    me.fireEvent('mouseover', me, overItem, e);
-  }
-}, handleItemOver:function(e, item) {
-  var isMouseover = e.pointerType === 'mouse';
-  if (!item.containsFocus && (isMouseover || item.isMenuItem)) {
-    item.focus();
-  }
-  if (item.expandMenu && isMouseover) {
-    item.expandMenu(e);
-  }
-}, getItemFromEvent:function(e) {
-  var bodyDom = this.bodyElement.dom, toEl = e.getTarget(), component;
-  while (toEl && toEl.parentNode !== bodyDom) {
-    toEl = toEl.parentNode;
-  }
-  component = toEl && Ext.getCmp(toEl.id);
-  if (component && component.isMenuItem && !e.within(component.bodyElement)) {
-    component = null;
-  }
-  return component;
-}, hasFloatMenuParent:function() {
-  return this.parentMenu || this.up('menu[_floated\x3dtrue]');
-}, syncItemIndentedCls:function(item) {
-  var indented = item.isMenuItem ? item.getIndented() : item.indented;
-  item.toggleCls(this.indentedCls, !!(indented || this.getIndented() && indented !== false));
-}}, statics:{create:function(menu, config) {
-  if (Ext.isArray(menu)) {
-    menu = Ext.apply({xtype:'menu', items:menu}, config);
-  } else {
-    menu = Ext.apply({xtype:'menu'}, menu, config);
-  }
-  return Ext.create(menu);
-}}, deprecated:{'6.5':{configs:{plain:{message:'To achieve classic toolkit "plain" effect, use "indented".'}, showSeparator:{message:'To achieve classic toolkit "showSeparator" effect, use "separator".'}}}}});
 Ext.define('Ext.grid.Grid', {extend:Ext.dataview.List, xtype:'grid', isGrid:true, mixins:[Ext.mixin.ConfigProxy], storeEventListeners:{sort:'onStoreSort'}, config:{columns:null, columnMenu:{xtype:'menu', weighted:true, align:'tl-bl?', hideOnParentHide:false, items:{sortAsc:{xtype:'gridsortascmenuitem', group:'sortDir', weight:-100}, sortDesc:{xtype:'gridsortdescmenuitem', group:'sortDir', weight:-90}, groupByThis:{xtype:'gridgroupbythismenuitem', handler:'column.onGroupByThis', separator:true, weight:-70}, 
 showInGroups:{xtype:'gridshowingroupsmenuitem', handler:'column.onToggleShowInGroups', weight:-60}}}, columnResize:true, headerContainer:{xtype:'headercontainer'}, hideHeaders:false, itemsFocusable:false, title:'', titleBar:{xtype:'titlebar', docked:'top'}, sortable:true, multiColumnSort:false, columnsMenuItem:{lazy:true, $value:{xtype:'gridcolumnsmenu', weight:-80, separator:true}}, columnLines:null, rowNumbers:null}, itemConfig:{xtype:'gridrow'}, groupHeader:{xtype:'rowheader'}, infinite:true, 
 navigationModel:'grid', pinnedHeader:{xtype:'rowheader'}, scrollable:true, scrollToTopOnRefresh:false, striped:true, proxyConfig:{headerContainer:['reserveScrollbar']}, selectionModel:'grid', classCls:Ext.baseCSSPrefix + 'grid', columnLinesCls:Ext.baseCSSPrefix + 'column-lines', getTemplate:function() {
@@ -66262,6 +66781,8 @@ navigationModel:'grid', pinnedHeader:{xtype:'rowheader'}, scrollable:true, scrol
     }
     me.onColumnChange('columnshow', [me, column]);
   }
+}, onColumnSort:function(container, column, direction) {
+  this.fireEvent('columnsort', this, column, direction);
 }, onRender:function() {
   var hideHeaders = this._hideHeaders;
   this.callParent();
@@ -66443,7 +66964,7 @@ navigationModel:'grid', pinnedHeader:{xtype:'rowheader'}, scrollable:true, scrol
   return config;
 }, updateHeaderContainer:function(headerContainer) {
   if (headerContainer) {
-    headerContainer.on({columnresize:'onColumnResize', columnshow:'onColumnShow', columnhide:'onColumnHide', columnadd:'onColumnAdd', columnmove:'onColumnMove', columnremove:'onColumnRemove', scope:this});
+    headerContainer.on({columnresize:'onColumnResize', columnshow:'onColumnShow', columnhide:'onColumnHide', columnadd:'onColumnAdd', columnmove:'onColumnMove', columnremove:'onColumnRemove', columnsort:'onColumnSort', scope:this});
   }
 }, updateHideHeaders:function(hideHeaders) {
   if (this.isRendered) {
@@ -66575,15 +67096,21 @@ posProp:'x'}, 'true':{cls:Ext.baseCSSPrefix + 'vertical', crossSize:'width', get
     me.syncContainerScrollable();
     me.syncMouseWheel();
   }
-}, applyForwardTool:function(config, existing) {
-  var tool = Ext.updateWidget(existing, config, this, 'createForwardTool');
+}, applyForwardTool:function(tool, oldTool) {
+  var ct = this.getContainer();
+  tool = Ext.updateWidget(oldTool, tool, this, 'createForwardTool');
+  delete tool.$initParent;
+  tool.ownerCmp = ct;
   tool.doInheritUi();
-  tool.addUi('boxscroller-' + this.getContainer().xtype);
+  tool.addUi('boxscroller-' + ct.xtype);
   return tool;
-}, applyBackwardTool:function(config, existing) {
-  var tool = Ext.updateWidget(existing, config, this, 'createBackwardTool');
+}, applyBackwardTool:function(tool, oldTool) {
+  var ct = this.getContainer();
+  tool = Ext.updateWidget(oldTool, tool, this, 'createBackwardTool');
+  delete tool.$initParent;
+  tool.ownerCmp = ct;
   tool.doInheritUi();
-  tool.addUi('boxscroller-' + this.getContainer().xtype);
+  tool.addUi('boxscroller-' + ct.xtype);
   return tool;
 }, updateArrows:function(arrows) {
   var me = this, container = me.getContainer(), el = me.getWrap(), forward = me.getForwardTool(), backward = me.getBackwardTool();
@@ -66619,8 +67146,11 @@ posProp:'x'}, 'true':{cls:Ext.baseCSSPrefix + 'vertical', crossSize:'width', get
 }, getContainer:function() {
   return this.getOwner().getContainer();
 }, destroy:function() {
-  Ext.destroy(this.repeaters);
-  this.callParent();
+  var me = this;
+  Ext.destroy(me.repeaters);
+  me.getForwardTool().destroy();
+  me.getBackwardTool().destroy();
+  me.callParent();
 }, privates:{addClickListener:function(tool, clickFn) {
   var me = this, repeat = me.getRepeatInterval(), repeater;
   if (repeat) {
@@ -70576,6 +71106,7 @@ Ext.define('Ext.draw.sprite.Instancing', {extend:Ext.draw.sprite.Sprite, alias:'
   template.setSurface(this.getSurface());
   template.ownAttr = template.attr;
   this.clearAll();
+  this.setDirty(true);
 }, updateInstances:function(instances) {
   this.clearAll();
   if (Ext.isArray(instances)) {
@@ -73380,7 +73911,7 @@ Ext.define('Ext.chart.Util', {singleton:true, expandRange:function(range, data) 
   var length = data.length, min = range[0], max = range[1], i, value;
   for (i = 0; i < length; i++) {
     value = data[i];
-    if (!isFinite(value)) {
+    if (value == null || !isFinite(value)) {
       continue;
     }
     if (value < min || !isFinite(min)) {
@@ -73392,18 +73923,40 @@ Ext.define('Ext.chart.Util', {singleton:true, expandRange:function(range, data) 
   }
   range[0] = min;
   range[1] = max;
-}, validateRange:function(range, defaultRange, padding) {
-  if (!range) {
+}, defaultRange:[0, 1], validateRange:function(range, defaultRange, padding) {
+  defaultRange = defaultRange || this.defaultRange.slice();
+  if (!(padding === 0 || padding > 0)) {
+    padding = 0.5;
+  }
+  if (!range || range.length !== 2) {
     return defaultRange;
   }
-  if (range[0] === range[1]) {
-    padding = padding || 0.5;
+  range = [range[0], range[1]];
+  if (!range[0]) {
+    range[0] = 0;
+  }
+  if (!range[1]) {
+    range[1] = 0;
+  }
+  if (padding && range[0] === range[1]) {
     range = [range[0] - padding, range[0] + padding];
+    if (range[0] === range[1]) {
+      return defaultRange;
+    }
   }
-  if (range[0] === range[1]) {
+  var isFin0 = isFinite(range[0]);
+  var isFin1 = isFinite(range[1]);
+  if (!isFin0 && !isFin1) {
     return defaultRange;
   }
-  return [isFinite(range[0]) ? range[0] : defaultRange[0], isFinite(range[1]) ? range[1] : defaultRange[1]];
+  if (isFin0 && !isFin1) {
+    range[1] = range[0] + Ext.Number.sign(range[1]) * (defaultRange[1] - defaultRange[0]);
+  } else {
+    if (isFin1 && !isFin0) {
+      range[0] = range[1] + Ext.Number.sign(range[0]) * (defaultRange[1] - defaultRange[0]);
+    }
+  }
+  return [Math.min(range[0], range[1]), Math.max(range[0], range[1])];
 }, applyAnimation:function(animation, oldAnimation) {
   if (!animation) {
     animation = {duration:0};
@@ -73436,6 +73989,10 @@ Ext.define('Ext.chart.Markers', {extend:Ext.draw.sprite.Instancing, isMarkers:tr
   } else {
     this.revisions[category]++;
   }
+}, clearAll:function() {
+  this.callParent();
+  this.categories = {};
+  this.revisions = {};
 }, putMarkerFor:function(category, attr, index, bypassNormalization, keepRevision) {
   category = category || this.defaultCategory;
   var me = this, categoryInstances = me.categories[category] || (me.categories[category] = {}), instance;
@@ -73661,6 +74218,7 @@ markerSubStyle:null, itemInstancing:null, background:null, surface:null, overlay
 }, updateHighlight:function(highlight) {
   var me = this, sprites = me.sprites, highlightCfg = me.getHighlightCfg(), i, ln, sprite, items, markers;
   me.getStyle();
+  me.getMarker();
   if (!Ext.Object.isEmpty(highlight)) {
     me.addItemHighlight();
     for (i = 0, ln = sprites.length; i < ln; i++) {
@@ -73685,8 +74243,14 @@ markerSubStyle:null, itemInstancing:null, background:null, surface:null, overlay
   if (!this.isConfiguring && !Ext.Object.equals(highlightCfg, this.defaultConfig.highlightCfg)) {
     this.addItemHighlight();
   }
-}, applyItemInstancing:function(instancing, oldInstancing) {
-  return Ext.merge(oldInstancing || {}, instancing);
+}, applyItemInstancing:function(config, oldConfig) {
+  if (config && oldConfig && (!config.type || config.type === oldConfig.type)) {
+    config = Ext.merge({}, oldConfig, config);
+  }
+  if (config && !config.type) {
+    config = null;
+  }
+  return config;
 }, setAttributesForItem:function(item, change) {
   var sprite = item && item.sprite, i;
   if (sprite) {
@@ -73750,7 +74314,7 @@ markerSubStyle:null, itemInstancing:null, background:null, surface:null, overlay
   var chart = this.getChart();
   return chart ? chart.lookupViewModel(skipThis) : null;
 }, applyTooltip:function(tooltip, oldTooltip) {
-  var config = Ext.apply({xtype:'tooltip', renderer:Ext.emptyFn, constrainPosition:true, shrinkWrapDock:true, autoHide:true, hideDelay:200, mouseOffset:[20, 20], trackmouse:true}, tooltip);
+  var config = Ext.apply({xtype:'tooltip', renderer:Ext.emptyFn, constrainPosition:true, shrinkWrapDock:true, autoHide:true, hideDelay:200, mouseOffset:[20, 20], trackMouse:true}, tooltip);
   return Ext.create(config);
 }, updateTooltip:function() {
   this.addItemHighlight();
@@ -73834,7 +74398,7 @@ markerSubStyle:null, itemInstancing:null, background:null, surface:null, overlay
       Ext.chart.Util.expandRange(dataRange, data);
       style['data' + fieldCategory[i]] = data;
     }
-    dataRange = Ext.chart.Util.validateRange(dataRange, me.defaultRange);
+    dataRange = Ext.chart.Util.validateRange(dataRange, me.defaultRange, 0);
     me.dataRange[directionOffset] = dataRange[0];
     me.dataRange[directionOffset + directionCount] = dataRange[1];
     style['dataMin' + direction] = dataRange[0];
@@ -74070,22 +74634,13 @@ markerSubStyle:null, itemInstancing:null, background:null, surface:null, overlay
     markers.getTemplate().setAttributes({hidden:!showMarkers});
   }
 }, createSprite:function() {
-  var me = this, surface = me.getSurface(), itemInstancing = me.getItemInstancing(), sprite = surface.add(me.getDefaultSpriteConfig()), markerCfg = me.getMarker(), marker, animation, label;
+  var me = this, surface = me.getSurface(), itemInstancing = me.getItemInstancing(), sprite = surface.add(me.getDefaultSpriteConfig()), animation, label;
   sprite.setAttributes(me.getStyle());
   sprite.setSeries(me);
   if (itemInstancing) {
     me.createItemInstancingSprite(sprite, itemInstancing);
   }
-  if (sprite.bindMarker) {
-    if (markerCfg) {
-      marker = new Ext.chart.Markers;
-      markerCfg = Ext.Object.merge({modifiers:'highlight'}, markerCfg);
-      marker.setTemplate(markerCfg);
-      marker.getTemplate().getAnimation().setCustomDurations({translationX:0, translationY:0});
-      sprite.dataMarker = marker;
-      sprite.bindMarker('markers', marker);
-      me.getOverlaySurface().add(marker);
-    }
+  if (sprite.isMarkerHolder) {
     label = me.getLabel();
     if (label && label.getTemplate().getField()) {
       sprite.bindMarker('labels', label);
@@ -74099,7 +74654,7 @@ markerSubStyle:null, itemInstancing:null, background:null, surface:null, overlay
   animation.on('animationend', 'onSpriteAnimationEnd', me);
   me.sprites.push(sprite);
   return sprite;
-}, getSprites:Ext.emptyFn, getSprite:function() {
+}, getSprites:null, getSprite:function() {
   var sprites = this.getSprites();
   return sprites && sprites[0];
 }, withSprite:function(fn) {
@@ -74141,12 +74696,56 @@ markerSubStyle:null, itemInstancing:null, background:null, surface:null, overlay
   }
   return Ext.merge({}, oldSubStyle, subStyle);
 }, applyMarker:function(marker, oldMarker) {
-  var type = marker && marker.type || oldMarker && oldMarker.type || 'circle', cls = Ext.ClassManager.get(Ext.ClassManager.getNameByAlias('sprite.' + type));
-  if (cls && cls.def) {
-    marker = cls.def.normalize(Ext.isObject(marker) ? marker : {}, true);
-    marker.type = type;
+  var type, cls;
+  if (marker) {
+    if (!Ext.isObject(marker)) {
+      marker = {};
+    }
+    type = marker.type || 'circle';
+    if (oldMarker && type === oldMarker.type) {
+      marker = Ext.merge({}, oldMarker, marker);
+    }
   }
-  return Ext.merge(oldMarker || {}, marker);
+  if (type) {
+    cls = Ext.ClassManager.get(Ext.ClassManager.getNameByAlias('sprite.' + type));
+  }
+  if (cls && cls.def) {
+    marker = cls.def.normalize(marker, true);
+    marker.type = type;
+  } else {
+    marker = null;
+    Ext.log.warn('Invalid series marker type: ' + type);
+  }
+  return marker;
+}, updateMarker:function(marker) {
+  var me = this, sprites = me.getSprites(), seriesSprite, markerSprite, markerTplConfig, i, ln;
+  for (i = 0, ln = sprites.length; i < ln; i++) {
+    seriesSprite = sprites[i];
+    if (!seriesSprite.isMarkerHolder) {
+      continue;
+    }
+    markerSprite = seriesSprite.getMarker('markers');
+    if (marker) {
+      if (!markerSprite) {
+        markerSprite = new Ext.chart.Markers;
+        seriesSprite.bindMarker('markers', markerSprite);
+        me.getOverlaySurface().add(markerSprite);
+      }
+      markerTplConfig = Ext.Object.merge({modifiers:'highlight'}, marker);
+      markerSprite.setTemplate(markerTplConfig);
+      markerSprite.getTemplate().getAnimation().setCustomDurations({translationX:0, translationY:0});
+    } else {
+      if (markerSprite) {
+        seriesSprite.releaseMarker('markers');
+        me.getOverlaySurface().remove(markerSprite, true);
+      }
+    }
+    seriesSprite.setDirty(true);
+  }
+  if (!me.isConfiguring) {
+    me.doUpdateStyles();
+    me.updateHighlight(me.getHighlight());
+  }
 }, applyMarkerSubStyle:function(marker, oldMarker) {
   var type = marker && marker.type || oldMarker && oldMarker.type || 'circle', cls = Ext.ClassManager.get(Ext.ClassManager.getNameByAlias('sprite.' + type));
   if (cls && cls.def) {
@@ -74250,15 +74849,17 @@ markerSubStyle:null, itemInstancing:null, background:null, surface:null, overlay
 }, updateThemeStyle:function() {
   this.doUpdateStyles();
 }, doUpdateStyles:function() {
-  var me = this, sprites = me.sprites, itemInstancing = me.getItemInstancing(), i = 0, ln = sprites && sprites.length, showMarkers = me.getConfig('showMarkers', true), markerCfg = me.getMarker(), style;
-  for (; i < ln; i++) {
+  var me = this, sprites = me.sprites, itemInstancing = me.getItemInstancing(), ln = sprites && sprites.length, showMarkers = me.getConfig('showMarkers', true), style, sprite, marker, i;
+  for (i = 0; i < ln; i++) {
+    sprite = sprites[i];
     style = me.getStyleByIndex(i);
     if (itemInstancing) {
-      sprites[i].getMarker('items').getTemplate().setAttributes(style);
+      sprite.getMarker('items').getTemplate().setAttributes(style);
     }
-    sprites[i].setAttributes(style);
-    if (markerCfg && sprites[i].dataMarker) {
-      sprites[i].dataMarker.getTemplate().setAttributes(me.getMarkerStyleByIndex(i));
+    sprite.setAttributes(style);
+    marker = sprite.isMarkerHolder && sprite.getMarker('markers');
+    if (marker) {
+      marker.getTemplate().setAttributes(me.getMarkerStyleByIndex(i));
     }
   }
 }, getStyleWithTheme:function() {
@@ -75780,6 +76381,8 @@ radius:null, totalAngle:Math.PI, rotation:null, visibleRange:[0, 1], needHighPre
     me.oldRange = range;
   }
   return range;
+}, isSingleDataPoint:function(range) {
+  return range[0] + this.rangePadding === 0 && range[1] - this.rangePadding === 0;
 }, calculateRange:function() {
   var me = this, boundSeries = me.boundSeries, layout = me.getLayout(), segmenter = me.getSegmenter(), minimum = me.getMinimum(), maximum = me.getMaximum(), visibleRange = me.getVisibleRange(), getRangeMethod = 'get' + me.getDirection() + 'Range', expandRangeBy = me.getExpandRangeBy(), context, attr, majorTicks, series, i, ln, seriesRange, range = [NaN, NaN];
   for (i = 0, ln = boundSeries.length; i < ln; i++) {
@@ -75793,7 +76396,7 @@ radius:null, totalAngle:Math.PI, rotation:null, visibleRange:[0, 1], needHighPre
     }
   }
   range = Ext.chart.Util.validateRange(range, me.defaultRange, me.rangePadding);
-  if (expandRangeBy && range[0] + me.rangePadding !== range[1] - me.rangePadding) {
+  if (expandRangeBy && !me.isSingleDataPoint(range)) {
     range[0] -= expandRangeBy;
     range[1] += expandRangeBy;
   }
@@ -76066,6 +76669,13 @@ Ext.define('Ext.chart.legend.Legend', {extend:Ext.chart.legend.LegendBase, alter
       if (disabled || canToggle) {
         record.set('disabled', !disabled);
       }
+    }
+  }
+}, onResize:function(width, height, oldWidth, oldHeight) {
+  var me = this, chart = me.chart;
+  if (!me.isConfiguring) {
+    if (chart) {
+      chart.scheduleLayout();
     }
   }
 }});
@@ -76590,6 +77200,7 @@ bottom:true}, constructor:function(config) {
   if (surface) {
     markerConfig = series.getMarkerStyleByIndex(data.index);
     markerConfig.fillStyle = data.mark;
+    markerConfig.hidden = false;
     if (seriesMarker && seriesMarker.type) {
       markerConfig.type = seriesMarker.type;
     }
@@ -76638,6 +77249,7 @@ bottom:true}, constructor:function(config) {
     sprite.setConfig({series:data.series, record:record});
     markerConfig = series.getMarkerStyleByIndex(data.index);
     markerConfig.fillStyle = data.mark;
+    markerConfig.hidden = false;
     Ext.apply(markerConfig, this.getMarker());
     marker = sprite.getMarker();
     marker.setAttributes({fillStyle:markerConfig.fillStyle, strokeStyle:markerConfig.strokeStyle});
@@ -77344,7 +77956,7 @@ legendStore:null, animationSuspendCount:0, chartLayoutSuspendCount:0, chartLayou
   }
   this.setSeries(newSeries);
 }, applySeries:function(newSeries, oldSeries) {
-  var me = this, theme = me.getTheme(), result = [], oldMap, oldSeriesItem, i, ln, series;
+  var me = this, result = [], oldMap, oldSeriesItem, i, ln, series;
   me.animationSuspendCount++;
   me.getAxes();
   if (oldSeries) {
@@ -77376,7 +77988,6 @@ legendStore:null, animationSuspendCount:0, chartLayoutSuspendCount:0, chartLayou
             series = {type:series};
           }
           series.chart = me;
-          series.theme = theme;
           series = Ext.create(series.xclass || 'series.' + series.type, series);
         }
       }
@@ -77630,25 +78241,32 @@ legendStore:null, animationSuspendCount:0, chartLayoutSuspendCount:0, chartLayou
   }
   return chartRect;
 }, getEventXY:function(e) {
-  return this.getSurface().getEventXY(e);
+  return this.getSurface('series').getEventXY(e);
 }, getItemForPoint:function(x, y) {
-  var me = this, seriesList = me.getSeries(), rect = me.getMainRect(), ln = seriesList.length, item = null, i;
+  var me = this, seriesList = me.getSeries(), rect = me.getMainRect(), ln = seriesList.length, minDistance = Infinity, result = null, i, item;
   if (!(me.hasFirstLayout && rect && x >= 0 && x <= rect[2] && y >= 0 && y <= rect[3])) {
     return null;
   }
   for (i = ln - 1; i >= 0; i--) {
     item = seriesList[i].getItemForPoint(x, y);
     if (item) {
-      break;
+      if (!item.distance) {
+        result = item;
+        break;
+      }
+      if (item.distance < minDistance) {
+        minDistance = item.distance;
+        result = item;
+      }
     }
   }
-  return item;
+  return result;
 }, getItemsForPoint:function(x, y) {
   var me = this, seriesList = me.getSeries(), ln = seriesList.length, i = me.hasFirstLayout ? ln - 1 : -1, items = [], series, item;
   for (; i >= 0; i--) {
     series = seriesList[i];
     item = series.getItemForPoint(x, y);
-    if (item) {
+    if (item && item.category === 'items') {
       items.push(item);
     }
   }
@@ -78530,7 +79148,7 @@ Ext.define('Ext.chart.interactions.CrossZoom', {extend:Ext.chart.interactions.Ab
     }}, button));
   }
 }, getSurface:function() {
-  return this.getChart() && this.getChart().getSurface('main');
+  return this.getChart() && this.getChart().getSurface('overlay');
 }, setSeriesOpacity:function(opacity) {
   var surface = this.getChart() && this.getChart().getSurface('series');
   if (surface) {
@@ -78894,14 +79512,19 @@ Ext.define('Ext.chart.interactions.ItemHighlight', {extend:Ext.chart.interaction
   item.series.showTooltip(item, e);
   this.oldItem = item;
 }, showUntracked:function(item) {
-  var marker = item.sprite.getMarker(item.category), surface, surfaceXY, isInverseY, itemBBox;
+  var marker = item.sprite.getMarker(item.category), surface, surfaceXY, isInverseY, itemBBox, matrix;
   if (marker) {
     surface = marker.getSurface();
     isInverseY = surface.matrix.elements[3] < 0;
     surfaceXY = surface.element.getXY();
     itemBBox = Ext.clone(marker.getBBoxFor(item.index));
     if (isInverseY) {
-      itemBBox = surface.inverseMatrix.transformBBox(itemBBox);
+      if (surface.getInherited().rtl) {
+        matrix = surface.inverseMatrix.clone().flipX().translate(item.sprite.attr.innerWidth, 0, true);
+      } else {
+        matrix = surface.inverseMatrix;
+      }
+      itemBBox = matrix.transformBBox(itemBBox);
     }
     itemBBox.x += surfaceXY[0];
     itemBBox.y += surfaceXY[1];
@@ -78998,8 +79621,8 @@ Ext.define('Ext.chart.interactions.ItemEdit', {extend:Ext.chart.interactions.Ite
   me.showTooltip(e, me.target, item);
   surface.renderFrame();
 }, onDragScatter:function(e) {
-  var me = this, chart = me.getChart(), isRtl = chart.getInherited().rtl, flipXY = chart.isCartesian && chart.getFlipXY(), item = chart.getHighlightItem(), marker = item.sprite.getMarker('items'), instance = marker.getMarkerFor(item.sprite.getId(), item.index), surface = item.sprite.getSurface(), surfaceRect = surface.getRect(), xy = surface.getEventXY(e), matrix = item.sprite.attr.matrix, xAxis = item.series.getXAxis(), isEditableX = xAxis && xAxis.getLayout().isContinuous, renderer = me.getRenderer(), 
-  style, changes, params, positionX, positionY;
+  var me = this, chart = me.getChart(), isRtl = chart.getInherited().rtl, flipXY = chart.isCartesian && chart.getFlipXY(), item = chart.getHighlightItem(), marker = item.sprite.getMarker('markers'), instance = marker.getMarkerFor(item.sprite.getId(), item.index), surface = item.sprite.getSurface(), surfaceRect = surface.getRect(), xy = surface.getEventXY(e), matrix = item.sprite.attr.matrix, xAxis = item.series.getXAxis(), isEditableX = xAxis && xAxis.getLayout().isContinuous, renderer = me.getRenderer(), 
+  style, changes, params, positionX, positionY, hintX, hintY;
   if (flipXY) {
     positionY = isRtl ? surfaceRect[2] - xy[0] : xy[0];
   } else {
@@ -79014,7 +79637,19 @@ Ext.define('Ext.chart.interactions.ItemEdit', {extend:Ext.chart.interactions.Ite
   } else {
     positionX = instance.translationX;
   }
-  style = {translationX:positionX, translationY:positionY, scalingX:instance.scalingX, scalingY:instance.scalingY, r:instance.r, fillStyle:'none', lineDash:[4, 4], zIndex:100};
+  if (isEditableX) {
+    hintX = xy[0];
+    hintY = xy[1];
+  } else {
+    if (flipXY) {
+      hintX = xy[0];
+      hintY = instance.translationY;
+    } else {
+      hintX = instance.translationX;
+      hintY = xy[1];
+    }
+  }
+  style = {translationX:hintX, translationY:hintY, scalingX:instance.scalingX, scalingY:instance.scalingY, r:instance.r, fillStyle:'none', lineDash:[4, 4], zIndex:100};
   Ext.apply(style, me.getStyle());
   me.target = {index:item.index, yField:item.field, yValue:(positionY - matrix.getDY()) / matrix.getYY()};
   if (isEditableX) {
@@ -79025,7 +79660,7 @@ Ext.define('Ext.chart.interactions.ItemEdit', {extend:Ext.chart.interactions.Ite
   if (changes) {
     Ext.apply(style, changes);
   }
-  item.sprite.putMarker('items', style, 'itemedit');
+  item.sprite.putMarker('markers', style, 'itemedit');
   me.showTooltip(e, me.target, item);
   surface.renderFrame();
 }, showTooltip:function(e, target, item) {
@@ -79630,7 +80265,7 @@ Ext.define('Ext.chart.navigator.Navigator', {extend:Ext.chart.navigator.Navigato
   }
   this.callParent();
 }});
-Ext.define('Ext.chart.navigator.Container', {extend:Ext.chart.navigator.ContainerBase, xtype:'chartnavigator', config:{layout:'fit', chart:null, navigator:{}}, applyChart:function(chart, oldChart) {
+Ext.define('Ext.chart.navigator.Container', {extend:Ext.chart.navigator.ContainerBase, xtype:'chartnavigator', config:{chart:null, navigator:{}}, layout:'fit', applyChart:function(chart, oldChart) {
   if (oldChart) {
     oldChart.destroy();
   }
@@ -79639,7 +80274,9 @@ Ext.define('Ext.chart.navigator.Container', {extend:Ext.chart.navigator.Containe
       Ext.raise('Only cartesian charts are supported.');
     }
     if (!chart.isChart) {
+      chart.$initParent = this;
       chart = new Ext.chart.CartesianChart(chart);
+      delete chart.$initParent;
     }
   }
   return chart;
@@ -79771,19 +80408,11 @@ Ext.define('Ext.chart.series.Cartesian', {extend:Ext.chart.series.Series, config
 }, coordinateY:function() {
   return this.coordinate('Y', 1, 2);
 }, getItemForPoint:function(x, y) {
-  if (this.getSprites()) {
-    var me = this, sprite = me.getSprites()[0], store = me.getStore(), item, index;
-    if (me.getHidden()) {
-      return null;
-    }
-    if (sprite) {
-      index = sprite.getIndexNearPoint(x, y);
-      if (index !== -1) {
-        item = {series:me, index:index, category:me.getItemInstancing() ? 'items' : 'markers', record:store.getData().items[index], field:me.getYField(), sprite:sprite};
-        return item;
-      }
-    }
+  var me = this, sprite = me.getSprites()[0], store = me.getStore(), point;
+  if (sprite && !me.getHidden()) {
+    point = sprite.getNearestDataPoint(x, y);
   }
+  return point ? {series:me, sprite:sprite, category:me.getItemInstancing() ? 'items' : 'markers', index:point.index, record:store.getData().items[point.index], field:me.getYField(), distance:point.distance} : null;
 }, createSprite:function() {
   var me = this, sprite = me.callParent(), chart = me.getChart(), xAxis = me.getXAxis();
   sprite.setAttributes({flipXY:chart.getFlipXY(), xAxis:xAxis});
@@ -79966,22 +80595,24 @@ Ext.define('Ext.chart.series.StackedCartesian', {extend:Ext.chart.series.Cartesi
   }
   return sprites;
 }, getItemForPoint:function(x, y) {
-  var sprites = this.getSprites();
-  if (!sprites) {
-    return null;
-  }
-  var me = this, store = me.getStore(), hidden = me.getHidden(), item = null, index, yField, i, ln, sprite;
+  var me = this, sprites = me.getSprites(), store = me.getStore(), hidden = me.getHidden(), minDistance = Infinity, item = null, spriteIndex = -1, pointIndex = -1, point, yField, sprite, i, ln;
   for (i = 0, ln = sprites.length; i < ln; i++) {
     if (hidden[i]) {
       continue;
     }
     sprite = sprites[i];
-    index = sprite.getIndexNearPoint(x, y);
-    if (index !== -1) {
-      yField = me.getYField();
-      item = {series:me, index:index, category:me.getItemInstancing() ? 'items' : 'markers', record:store.getData().items[index], field:typeof yField === 'string' ? yField : yField[i], sprite:sprite};
-      break;
+    point = sprite.getNearestDataPoint(x, y);
+    if (point) {
+      if (point.distance < minDistance) {
+        minDistance = point.distance;
+        pointIndex = point.index;
+        spriteIndex = i;
+      }
     }
+  }
+  if (spriteIndex > -1) {
+    yField = me.getYField();
+    item = {series:me, sprite:sprites[spriteIndex], category:me.getItemInstancing() ? 'items' : 'markers', index:pointIndex, record:store.getData().items[pointIndex], field:typeof yField === 'string' ? yField : yField[spriteIndex], distance:minDistance};
   }
   return item;
 }, provideLegendInfo:function(target) {
@@ -80028,16 +80659,17 @@ dataY:'dataY,bbox', visibleMinX:'panzoom', visibleMinY:'panzoom', visibleMaxX:'p
   this.processDataY();
 }, panzoom:function(attr) {
   var dx = attr.visibleMaxX - attr.visibleMinX, dy = attr.visibleMaxY - attr.visibleMinY, innerWidth = attr.flipXY ? attr.innerHeight : attr.innerWidth, innerHeight = !attr.flipXY ? attr.innerHeight : attr.innerWidth, surface = this.getSurface(), isRtl = surface ? surface.getInherited().rtl : false;
-  if (isRtl && !attr.flipXY) {
-    attr.translationX = innerWidth + attr.visibleMinX * innerWidth / dx;
-  } else {
-    attr.translationX = -attr.visibleMinX * innerWidth / dx;
-  }
-  attr.translationY = -attr.visibleMinY * innerHeight / dy;
-  attr.scalingX = (isRtl && !attr.flipXY ? -1 : 1) * innerWidth / dx;
-  attr.scalingY = innerHeight / dy;
   attr.scalingCenterX = 0;
   attr.scalingCenterY = 0;
+  attr.scalingX = innerWidth / dx;
+  attr.scalingY = innerHeight / dy;
+  attr.translationX = -(attr.visibleMinX * attr.scalingX);
+  attr.translationY = -(attr.visibleMinY * attr.scalingY);
+  if (isRtl && !attr.flipXY) {
+    attr.scalingX *= -1;
+    attr.translationX *= -1;
+    attr.translationX += innerWidth;
+  }
   this.applyTransformations(true);
 }}}}, processDataY:Ext.emptyFn, processDataX:Ext.emptyFn, updatePlainBBox:function(plain) {
   var attr = this.attr;
@@ -80083,23 +80715,53 @@ dataY:'dataY,bbox', visibleMinX:'panzoom', visibleMinY:'panzoom', visibleMaxX:'p
   dataClipRect = dataClipRect[0].concat(dataClipRect[1]);
   me.renderClipped(surface, ctx, dataClipRect, surfaceClipRect);
 }, renderClipped:Ext.emptyFn, getIndexNearPoint:function(x, y) {
-  var me = this, matrix = me.attr.matrix, dataX = me.attr.dataX, dataY = me.attr.dataY, selectionTolerance = me.attr.selectionTolerance, dx = Infinity, dy = Infinity, index = -1, inverseMatrix = matrix.clone().prependMatrix(me.surfaceMatrix).inverse(), center = inverseMatrix.transformPoint([x, y]), hitboxBL = inverseMatrix.transformPoint([x - selectionTolerance, y - selectionTolerance]), hitboxTR = inverseMatrix.transformPoint([x + selectionTolerance, y + selectionTolerance]), left = Math.min(hitboxBL[0], 
-  hitboxTR[0]), right = Math.max(hitboxBL[0], hitboxTR[0]), bottom = Math.min(hitboxBL[1], hitboxTR[1]), top = Math.max(hitboxBL[1], hitboxTR[1]), xi, yi, i, ln;
-  for (i = 0, ln = dataX.length; i < ln; i++) {
-    xi = dataX[i];
-    yi = dataY[i];
-    if (xi >= left && xi < right && yi >= bottom && yi < top) {
-      if (index === -1 || Math.abs(xi - center[0]) < dx && Math.abs(yi - center[1]) < dy) {
-        dx = Math.abs(xi - center[0]);
-        dy = Math.abs(yi - center[1]);
+  var result = this.getNearestDataPoint(x, y);
+  return result ? result.index : -1;
+}, getNearestDataPoint:function(x, y) {
+  var me = this, attr = me.attr, series = me.getSeries(), surface = me.getSurface(), items = me.boundMarkers.items, matrix = attr.matrix, dataX = attr.dataX, dataY = attr.dataY, selectionTolerance = attr.selectionTolerance, minDistance = Infinity, index = -1, result = null, distance, dx, dy, xy, i, ln, end, inc;
+  if (items) {
+    ln = dataX.length;
+    if (series.reversedSpriteZOrder) {
+      i = ln - 1;
+      end = -1;
+      inc = -1;
+    } else {
+      i = 0;
+      end = ln;
+      inc = 1;
+    }
+    for (; i !== end; i += inc) {
+      var bbox = me.getMarkerBBox('items', i);
+      xy = surface.inverseMatrix.transformPoint([x, y]);
+      if (Ext.draw.Draw.isPointInBBox(xy[0], xy[1], bbox)) {
+        index = i;
+        minDistance = 0;
+        break;
+      }
+    }
+  } else {
+    for (i = 0, ln = dataX.length; i < ln; i++) {
+      xy = matrix.transformPoint([dataX[i], dataY[i]]);
+      xy = surface.matrix.transformPoint(xy);
+      dx = x - xy[0];
+      dy = y - xy[1];
+      distance = Math.sqrt(dx * dx + dy * dy);
+      if (selectionTolerance && distance > selectionTolerance) {
+        continue;
+      }
+      if (distance < minDistance) {
+        minDistance = distance;
         index = i;
       }
     }
   }
-  return index;
+  if (index > -1) {
+    result = {index:index, distance:minDistance};
+  }
+  return result;
 }});
 Ext.define('Ext.chart.series.sprite.StackedCartesian', {extend:Ext.chart.series.sprite.Cartesian, inheritableStatics:{def:{processors:{groupCount:'number', groupOffset:'number', dataStartY:'data'}, defaults:{selectionTolerance:20, groupCount:1, groupOffset:0, dataStartY:null}, triggers:{dataStartY:'dataY,bbox'}}}});
-Ext.define('Ext.chart.series.sprite.Area', {alias:'sprite.areaSeries', extend:Ext.chart.series.sprite.StackedCartesian, inheritableStatics:{def:{processors:{step:'bool'}, defaults:{step:false}}}, renderClipped:function(surface, ctx, dataClipRect) {
+Ext.define('Ext.chart.series.sprite.Area', {alias:'sprite.areaSeries', extend:Ext.chart.series.sprite.StackedCartesian, inheritableStatics:{def:{processors:{step:'bool'}, defaults:{selectionTolerance:0, step:false}}}, renderClipped:function(surface, ctx, dataClipRect) {
   var me = this, store = me.getStore(), series = me.getSeries(), attr = me.attr, dataX = attr.dataX, dataY = attr.dataY, dataStartY = attr.dataStartY, matrix = attr.matrix, x, y, i, lastX, lastY, startX, startY, xx = matrix.elements[0], dx = matrix.elements[4], yy = matrix.elements[3], dy = matrix.elements[5], surfaceMatrix = me.surfaceMatrix, markerCfg = {}, min = Math.min(dataClipRect[0], dataClipRect[2]), max = Math.max(dataClipRect[0], dataClipRect[2]), start = Math.max(0, this.binarySearch(min)), 
   end = Math.min(dataX.length - 1, this.binarySearch(max) + 1), renderer = attr.renderer, rendererData = {store:store}, rendererChanges;
   ctx.beginPath();
@@ -80312,34 +80974,13 @@ Ext.define('Ext.chart.series.sprite.Bar', {alias:'sprite.barSeries', extend:Ext.
     }
     me.putMarker('markers', {translationX:surfaceMatrix.x(center, top), translationY:surfaceMatrix.y(center, top)}, i, true);
   }
-}, getIndexNearPoint:function(x, y) {
-  var sprite = this, attr = sprite.attr, dataX = attr.dataX, surface = sprite.getSurface(), surfaceRect = surface.getRect() || [0, 0, 0, 0], surfaceHeight = surfaceRect[3], hitX, hitY, i, bbox, index = -1;
-  if (attr.flipXY) {
-    hitX = surfaceHeight - y;
-    if (surface.getInherited().rtl) {
-      hitY = surfaceRect[2] - x;
-    } else {
-      hitY = x;
-    }
-  } else {
-    hitX = x;
-    hitY = surfaceHeight - y;
-  }
-  for (i = 0; i < dataX.length; i++) {
-    bbox = sprite.getMarkerBBox('items', i);
-    if (Ext.draw.Draw.isPointInBBox(hitX, hitY, bbox)) {
-      index = i;
-      break;
-    }
-  }
-  return index;
 }});
 Ext.define('Ext.chart.series.Bar', {extend:Ext.chart.series.StackedCartesian, alias:'series.bar', type:'bar', seriesType:'barSeries', isBar:true, config:{itemInstancing:{type:'rect', animation:{customDurations:{x:0, y:0, width:0, height:0, radius:0}}}}, getItemForPoint:function(x, y) {
-  if (this.getSprites()) {
-    var me = this, chart = me.getChart(), padding = chart.getInnerPadding(), isRtl = chart.getInherited().rtl;
+  if (this.getSprites().length) {
+    var chart = this.getChart(), padding = chart.getInnerPadding(), isRtl = chart.getInherited().rtl;
     arguments[0] = x + (isRtl ? padding.right : -padding.left);
     arguments[1] = y + padding.bottom;
-    return me.callParent(arguments);
+    return this.callParent(arguments);
   }
 }, updateXAxis:function(xAxis) {
   if (!this.is3D && !xAxis.isCategory) {
@@ -80524,27 +81165,6 @@ Ext.define('Ext.chart.series.Bar3D', {extend:Ext.chart.series.Bar, alias:'series
 }, getDepth:function() {
   var sprite = this.getSprites()[0];
   return sprite ? sprite.depth || 0 : 0;
-}, getItemForPoint:function(x, y) {
-  var sprites = this.getSprites();
-  if (!sprites) {
-    return null;
-  }
-  var me = this, itemInstancing = me.getItemInstancing(), store = me.getStore(), hidden = me.getHidden(), chart = me.getChart(), padding = chart.getInnerPadding(), isRtl = chart.getInherited().rtl, item = null, index, yField, i, sprite;
-  x = x + (isRtl ? padding.right : -padding.left);
-  y = y + padding.bottom;
-  for (i = sprites.length - 1; i >= 0; i--) {
-    if (hidden[i]) {
-      continue;
-    }
-    sprite = sprites[i];
-    index = sprite.getIndexNearPoint(x, y);
-    if (index !== -1) {
-      yField = me.getYField();
-      item = {series:me, index:index, category:itemInstancing ? 'items' : 'markers', record:store.getData().items[index], field:typeof yField === 'string' ? yField : yField[i], sprite:sprite};
-      break;
-    }
-  }
-  return item;
 }});
 Ext.define('Ext.chart.series.sprite.BoxPlot', {alias:'sprite.boxplotSeries', extend:Ext.chart.series.sprite.Cartesian, inheritableStatics:{def:{processors:{dataLow:'data', dataQ1:'data', dataQ3:'data', dataHigh:'data', minBoxWidth:'number', maxBoxWidth:'number', minGapWidth:'number'}, aliases:{dataMedian:'dataY'}, defaults:{minBoxWidth:2, maxBoxWidth:40, minGapWidth:5}}}, renderClipped:function(surface, ctx, dataClipRect) {
   if (this.cleanRedraw) {
@@ -80576,27 +81196,6 @@ Ext.define('Ext.chart.series.sprite.BoxPlot', {alias:'sprite.boxplotSeries', ext
     }
     me.putMarker('items', itemCfg, i, !renderer);
   }
-}, getIndexNearPoint:function(x, y) {
-  var sprite = this, attr = sprite.attr, dataX = attr.dataX, surface = sprite.getSurface(), surfaceRect = surface.getRect() || [0, 0, 0, 0], surfaceHeight = surfaceRect[3], index = -1, hitX, hitY, i, bbox;
-  if (attr.flipXY) {
-    hitX = surfaceHeight - y;
-    if (surface.getInherited().rtl) {
-      hitY = surfaceRect[2] - x;
-    } else {
-      hitY = x;
-    }
-  } else {
-    hitX = x;
-    hitY = surfaceHeight - y;
-  }
-  for (i = 0; i < dataX.length; i++) {
-    bbox = sprite.getMarkerBBox('items', i);
-    if (Ext.draw.Draw.isPointInBBox(hitX, hitY, bbox)) {
-      index = i;
-      break;
-    }
-  }
-  return index;
 }});
 Ext.define('Ext.chart.sprite.BoxPlot', {extend:Ext.draw.sprite.Sprite, alias:'sprite.boxplot', type:'boxplot', inheritableStatics:{def:{processors:{x:'number', low:'number', q1:'number', median:'number', q3:'number', high:'number', boxWidth:'number', whiskerWidth:'number', crisp:'bool'}, triggers:{x:'bbox', low:'bbox', high:'bbox', boxWidth:'bbox', whiskerWidth:'bbox', crisp:'bbox'}, defaults:{x:0, low:-20, q1:-10, median:0, q3:10, high:20, boxWidth:12, whiskerWidth:0.5, crisp:true, fillStyle:'#ccc', 
 strokeStyle:'#000'}}}, updatePlainBBox:function(plain) {
@@ -81636,7 +82235,7 @@ list:null, curveUpdater:function(attr) {
     }
   }
 }});
-Ext.define('Ext.chart.series.Line', {extend:Ext.chart.series.Cartesian, alias:'series.line', type:'line', seriesType:'lineSeries', isLine:true, config:{selectionTolerance:5, curve:{type:'linear'}, smooth:null, step:null, nullStyle:'gap', fill:undefined, aggregator:{strategy:'double'}}, themeMarkerCount:function() {
+Ext.define('Ext.chart.series.Line', {extend:Ext.chart.series.Cartesian, alias:'series.line', type:'line', seriesType:'lineSeries', isLine:true, config:{selectionTolerance:20, curve:{type:'linear'}, smooth:null, step:null, nullStyle:'gap', fill:undefined, aggregator:{strategy:'double'}}, themeMarkerCount:function() {
   return 1;
 }, getDefaultSpriteConfig:function() {
   var me = this, parentConfig = me.callParent(arguments), style = Ext.apply({}, me.getStyle()), styleWithTheme, fillArea = false;
@@ -81964,21 +82563,22 @@ Ext.define('Ext.chart.series.Pie', {extend:Ext.chart.series.Polar, type:'pie', a
   }
   return null;
 }, getItemForPoint:function(x, y) {
-  var me = this, sprites = me.getSprites();
-  if (sprites) {
-    var center = me.getCenter(), offsetX = me.getOffsetX(), offsetY = me.getOffsetY(), dx = x - center[0] + offsetX, dy = y - center[1] + offsetY, store = me.getStore(), donut = me.getDonut(), records = store.getData().items, direction = Math.atan2(dy, dx) - me.getRotation(), radius = Math.sqrt(dx * dx + dy * dy), startRadius = me.getRadius() * donut * 0.01, hidden = me.getHidden(), i, ln, attr;
-    for (i = 0, ln = records.length; i < ln; i++) {
-      if (!hidden[i]) {
-        attr = sprites[i].attr;
-        if (radius >= startRadius + attr.margin && radius <= attr.endRho + attr.margin) {
-          if (me.betweenAngle(direction, attr.startAngle, attr.endAngle)) {
-            return {series:me, sprite:sprites[i], index:i, record:records[i], field:me.getXField()};
-          }
-        }
-      }
+  var me = this, sprites = me.getSprites(), center = me.getCenter(), offsetX = me.getOffsetX(), offsetY = me.getOffsetY(), dx = x - center[0] + offsetX, dy = y - center[1] + offsetY, store = me.getStore(), donut = me.getDonut(), records = store.getData().items, direction = Math.atan2(dy, dx) - me.getRotation(), radius = Math.sqrt(dx * dx + dy * dy), startRadius = me.getRadius() * donut * 0.01, hidden = me.getHidden(), result = null, i, ln, attr, sprite;
+  for (i = 0, ln = records.length; i < ln; i++) {
+    if (hidden[i]) {
+      continue;
     }
-    return null;
+    sprite = sprites[i];
+    if (!sprite) {
+      break;
+    }
+    attr = sprite.attr;
+    if (radius >= startRadius + attr.margin && radius <= attr.endRho + attr.margin && me.betweenAngle(direction, attr.startAngle, attr.endAngle)) {
+      result = {series:me, sprite:sprites[i], index:i, record:records[i], field:me.getXField()};
+      break;
+    }
   }
+  return result;
 }, provideLegendInfo:function(target) {
   var me = this, store = me.getStore();
   if (store) {
@@ -82727,7 +83327,7 @@ Ext.define('Ext.chart.series.sprite.Scatter', {alias:'sprite.scatterSeries', ext
   if (this.cleanRedraw) {
     return;
   }
-  var me = this, attr = me.attr, dataX = attr.dataX, dataY = attr.dataY, labels = attr.labels, series = me.getSeries(), isDrawLabels = labels && me.getMarker('labels'), matrix = me.attr.matrix, xx = matrix.getXX(), yy = matrix.getYY(), dx = matrix.getDX(), dy = matrix.getDY(), markerCfg = {}, changes, params, xScalingDirection = surface.getInherited().rtl && !attr.flipXY ? -1 : 1, left, right, top, bottom, x, y, i;
+  var me = this, attr = me.attr, dataX = attr.dataX, dataY = attr.dataY, labels = attr.labels, series = me.getSeries(), isDrawLabels = labels && me.getMarker('labels'), surfaceMatrix = me.surfaceMatrix, matrix = me.attr.matrix, xx = matrix.getXX(), yy = matrix.getYY(), dx = matrix.getDX(), dy = matrix.getDY(), markerCfg = {}, changes, params, xScalingDirection = surface.getInherited().rtl && !attr.flipXY ? -1 : 1, left, right, top, bottom, x, y, i;
   if (attr.flipXY) {
     left = surfaceClipRect[1] - xx * xScalingDirection;
     right = surfaceClipRect[1] + surfaceClipRect[3] + xx * xScalingDirection;
@@ -82746,15 +83346,15 @@ Ext.define('Ext.chart.series.sprite.Scatter', {alias:'sprite.scatterSeries', ext
     y = y * yy + dy;
     if (left <= x && x <= right && top <= y && y <= bottom) {
       if (attr.renderer) {
-        markerCfg = {type:'items', translationX:x, translationY:y};
+        markerCfg = {type:'markers', translationX:surfaceMatrix.x(x, y), translationY:surfaceMatrix.y(x, y)};
         params = [me, markerCfg, {store:me.getStore()}, i];
         changes = Ext.callback(attr.renderer, null, params, 0, series);
         markerCfg = Ext.apply(markerCfg, changes);
       } else {
-        markerCfg.translationX = x;
-        markerCfg.translationY = y;
+        markerCfg.translationX = surfaceMatrix.x(x, y);
+        markerCfg.translationY = surfaceMatrix.y(x, y);
       }
-      me.putMarker('items', markerCfg, i, !attr.renderer);
+      me.putMarker('markers', markerCfg, i, !attr.renderer);
       if (isDrawLabels && labels[i]) {
         me.drawLabel(labels[i], x, y, i, surfaceClipRect);
       }
@@ -82800,12 +83400,8 @@ Ext.define('Ext.chart.series.sprite.Scatter', {alias:'sprite.scatterSeries', ext
   }
   me.putMarker('labels', labelCfg, labelId);
 }});
-Ext.define('Ext.chart.series.Scatter', {extend:Ext.chart.series.Cartesian, alias:'series.scatter', type:'scatter', seriesType:'scatterSeries', config:{itemInstancing:{animation:{customDurations:{translationX:0, translationY:0}}}}, themeMarkerCount:function() {
+Ext.define('Ext.chart.series.Scatter', {extend:Ext.chart.series.Cartesian, alias:'series.scatter', type:'scatter', seriesType:'scatterSeries', config:{itemInstancing:null}, themeMarkerCount:function() {
   return 1;
-}, applyMarker:function(marker, oldMarker) {
-  this.getItemInstancing();
-  this.setItemInstancing(marker);
-  return this.callParent(arguments);
 }, provideLegendInfo:function(target) {
   var me = this, style = me.getMarkerStyleByIndex(0), fill = style.fillStyle;
   target.push({name:me.getTitle() || me.getYField() || me.getId(), mark:(Ext.isObject(fill) ? fill.stops && fill.stops[0].color : fill) || style.strokeStyle || 'black', disabled:me.getHidden(), series:me.getId(), index:0});
@@ -82911,7 +83507,7 @@ Ext.define('PortalStats.model.Session', {extend:Ext.data.Model, alias:'model.ses
 }}, isValid:function() {
   return !Ext.isEmpty(this.get('token')) && this.get('expires') > new Date && this.get('user') !== null;
 }});
-Ext.define('PortalStats.config.Runtime', {alternateClassName:['config'], singleton:true, config:{basePath:{dictionary:'resources/dictionary.json'}, months:['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'], back:'API_GATEWAY_URL/', token:null, warmUpTime:300000, dictionary:null, pageSize:25}, constructor:function(config) {
+Ext.define('PortalStats.config.Runtime', {alternateClassName:['config'], singleton:true, config:{basePath:{dictionary:'resources/dictionary.json'}, months:['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'], back:'https://y5787f31ki.execute-api.eu-west-1.amazonaws.com/production/', token:null, warmUpTime:300000, dictionary:null, pageSize:25}, constructor:function(config) {
   this.initConfig(config);
 }});
 Ext.define('PortalStats.model.Stat', {extend:Ext.data.Model, alias:'model.stat', idProperty:'id', fields:[{name:'stat_date', type:'date'}, {name:'active', type:'number'}, {name:'pending', type:'number'}, {name:'suspended', type:'number'}, {name:'retired', type:'number'}], proxy:{type:'rest', url:config.getBack() + 'stats', reader:{type:'json'}}});
@@ -88299,6 +88895,46 @@ __rt.register({
                 }
 
                 return new ColorRGBA(red.value, green.value, blue.value, alpha.value);
+            },
+    mix:  function (color_1, color_2, weight) {
+                if (color_1 == null || color_1.$isFashionNull) {
+                    return Literal.Null;
+                }
+                if (color_2 == null || color_2.$isFashionNull) {
+                    return Literal.Null;
+                }
+                
+                weight = (weight !== undefined) ? weight : new Numeric(50, '%');
+
+                if (color_1.type !== 'hsla' && color_1.type !== 'rgba') {
+                    Fashion.raise('arg 1 ' + color_1 + ' is not a color for \'mix\'');
+                }
+                if (color_2.type !== 'hsla' && color_2.type !== 'rgba') {
+                    Fashion.raise('arg 2 ' + color_2 + ' is not a color for \'mix\'');
+                }
+                if (weight.type !== 'number') {
+                    Fashion.raise('arg 3 ' + weight + ' is not a number for \'mix\'');
+                }
+                if (weight.value !== Color.constrainPercentage(weight.value)) {
+                    Fashion.raise('Weight ' + weight + ' must be between 0% and 100% for \'mix\'');
+                }
+
+                color_1 = color_1.getRGBA();
+                color_2 = color_2.getRGBA();
+
+                weight = weight.value / 100;
+
+                var factor = (weight * 2) - 1,
+                    alpha = color_1.a - color_2.a,
+                    weight1 = (((factor * alpha == -1) ? factor : (factor + alpha) / (1 + factor * alpha)) + 1) / 2,
+                    weight2 = 1 - weight1;
+
+                return new ColorRGBA(
+                    (weight1 * color_1.r) + (weight2 * color_2.r),
+                    (weight1 * color_1.g) + (weight2 * color_2.g),
+                    (weight1 * color_1.b) + (weight2 * color_2.b),
+                    (weight * color_1.a) + ((1 - weight) * color_2.a)
+                );
             }
 });
 var __rt_constructor = __rt.constructor.bind(__rt),
@@ -88624,36 +89260,33 @@ __rt_setDynamic("$disabled-color", __rt_getGlobalDefault("$disabled_color") || _
     __udf, 
     __udf, 
     __udf]))), 24);
-__rt_setDynamic("$divider-color", __rt_getGlobalDefault("$divider_color") || __rt_box(__rt.registered.rgba.apply(__rt.registered, __rt_applySpreadArgs([
+__rt_setDynamic("$reverse-color", __rt_getGlobalDefault("$reverse_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#222") : __ColorRGBA.fromHex("#fff")), 25);
+__rt_setDynamic("$divider-color", __rt_getGlobalDefault("$divider_color") || __rt_box(__rt.registered.mix.apply(__rt.registered, __rt_applySpreadArgs([
     __rt_get(__strings._), 
-    new __Numeric(0.12), 
-    __udf, 
-    __udf, 
-    __udf]))), 25);
-__rt_setDynamic("$reverse-color", __rt_getGlobalDefault("$reverse_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#222") : __ColorRGBA.fromHex("#fff")), 26);
-__rt_setDynamic("$reverse-highlight-color", __rt_getGlobalDefault("$reverse_highlight_color") || __rt_box(__rt.registered.rgba.apply(__rt.registered, __rt_applySpreadArgs([
     __rt_get("$reverse_color"), 
-    new __Numeric(0.54), 
-    __udf, 
-    __udf, 
-    __udf]))), 27);
+    new __Numeric(12, "%")]))), 26);
+__rt_setDynamic("$selected-background-color", __rt_getGlobalDefault("$selected_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __rt_get("$base_dark_color") : __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
+    new __Text("grey", "'"), 
+    new __Text("300", "'")])))), 27);
+__rt_setDynamic("$hovered-background-color", __rt_getGlobalDefault("$hovered_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#4d4d4d") : __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
+    new __Text("grey", "'"), 
+    new __Text("200", "'")])))), 28);
+__rt_setDynamic("$header-background-color", __rt_getGlobalDefault("$header_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
+    new __Text("grey", "'"), 
+    new __Text("800", "'")]))) : __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
+    new __Text("grey", "'"), 
+    new __Text("100", "'")])))), 29);
 __rt_setDynamic("$reverse-disabled-color", __rt_getGlobalDefault("$reverse_disabled_color") || __rt_box(__rt.registered.rgba.apply(__rt.registered, __rt_applySpreadArgs([
     __rt_get("$reverse_color"), 
     new __Numeric(0.38), 
     __udf, 
     __udf, 
-    __udf]))), 28);
-__rt_setDynamic("$reverse-divider-color", __rt_getGlobalDefault("$reverse_divider_color") || __rt_box(__rt.registered.rgba.apply(__rt.registered, __rt_applySpreadArgs([
-    __rt_get("$reverse_color"), 
-    new __Numeric(0.12), 
-    __udf, 
-    __udf, 
-    __udf]))), 29);
-__rt_setDynamic("$background-color", __rt_getGlobalDefault("$background_color") || __ColorRGBA.fromHex("#fff"), 30);
-__rt_setDynamic("$alt-background-color", __rt_getGlobalDefault("$alt_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#3a3a3a") : __ColorRGBA.fromHex("#f5f5f5")), 31);
-__rt_setDynamic("$reverse-background-color", __rt_getGlobalDefault("$reverse_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#fafafa") : __ColorRGBA.fromHex("#303030")), 32);
-__rt_setDynamic("$reverse-alt-background-color", __rt_getGlobalDefault("$reverse_alt_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#f5f5f5") : __ColorRGBA.fromHex("#3a3a3a")), 33);
-__rt_setDynamic("$faded-color", __rt_getGlobalDefault("$faded_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#4d4d4d") : __ColorRGBA.fromHex("#c3c3c3")), 34);
+    __udf]))), 30);
+__rt_setDynamic("$background-color", __rt_getGlobalDefault("$background_color") || __ColorRGBA.fromHex("#fff"), 31);
+__rt_setDynamic("$alt-background-color", __rt_getGlobalDefault("$alt_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#3a3a3a") : __ColorRGBA.fromHex("#f5f5f5")), 32);
+__rt_setDynamic("$reverse-background-color", __rt_getGlobalDefault("$reverse_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#fafafa") : __ColorRGBA.fromHex("#303030")), 33);
+__rt_setDynamic("$reverse-alt-background-color", __rt_getGlobalDefault("$reverse_alt_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#f5f5f5") : __ColorRGBA.fromHex("#3a3a3a")), 34);
+__rt_setDynamic("$faded-color", __rt_getGlobalDefault("$faded_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#4d4d4d") : __ColorRGBA.fromHex("#e1e1e1")), 35);
 __rt_setDynamic("$overlay-color", __rt_getGlobalDefault("$overlay_color") || (__rt_test(__rt_get("$dark_mode")) ? __rt_box(__rt.registered.rgba.apply(__rt.registered, __rt_applySpreadArgs([
     __ColorRGBA.fromHex("#fff"), 
     new __Numeric(0.03), 
@@ -88664,15 +89297,11 @@ __rt_setDynamic("$overlay-color", __rt_getGlobalDefault("$overlay_color") || (__
     new __Numeric(0.03), 
     __udf, 
     __udf, 
-    __udf])))), 35);
-__rt_setDynamic("$content-padding", __rt_getGlobalDefault("$content_padding") || new __Numeric(16, "px"), 36);
-__rt_setDynamic("$dataview_item_selected_background_color", __rt_getGlobalDefault("$dataview_item_selected_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
-    __rt_get("$base_color_name"), 
-    new __Text("700", "'")]))) : __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
-    new __Text("grey", "'"), 
-    new __Text("300", "'")])))), 37);
-__rt_setDynamic("$dataitem_selected_background_color", __rt_getGlobalDefault("$dataitem_selected_background_color") || __rt_get("$dataview_item_selected_background_color"), 38);
-__rt_setDynamic("$listitem-selected-background-color", __rt_getGlobalDefault("$listitem_selected_background_color") || __rt_get("$dataitem_selected_background_color"), 39);
+    __udf])))), 36);
+__rt_setDynamic("$content-padding", __rt_getGlobalDefault("$content_padding") || new __Numeric(16, "px"), 37);
+__rt_setDynamic("$dataview_item_selected_background_color", __rt_getGlobalDefault("$dataview_item_selected_background_color") || __rt_get("$selected_background_color"), 38);
+__rt_setDynamic("$dataitem_selected_background_color", __rt_getGlobalDefault("$dataitem_selected_background_color") || __rt_get("$dataview_item_selected_background_color"), 39);
+__rt_setDynamic("$listitem-selected-background-color", __rt_getGlobalDefault("$listitem_selected_background_color") || __rt_get("$dataitem_selected_background_color"), 40);
 },
  {
 	":root": [
@@ -88698,10 +89327,11 @@ __rt_setDynamic("$listitem-selected-background-color", __rt_getGlobalDefault("$l
 		"highlight-color",
 		"disabled-color",
 		"divider-color",
+		"selected-background-color",
+		"hovered-background-color",
+		"header-background-color",
 		"reverse-color",
-		"reverse-highlight-color",
 		"reverse-disabled-color",
-		"reverse-divider-color",
 		"background-color",
 		"alt-background-color",
 		"reverse-background-color",

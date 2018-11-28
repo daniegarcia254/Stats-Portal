@@ -5156,6 +5156,46 @@ __rt.register({
                 }
 
                 return new ColorRGBA(red.value, green.value, blue.value, alpha.value);
+            },
+    mix:  function (color_1, color_2, weight) {
+                if (color_1 == null || color_1.$isFashionNull) {
+                    return Literal.Null;
+                }
+                if (color_2 == null || color_2.$isFashionNull) {
+                    return Literal.Null;
+                }
+                
+                weight = (weight !== undefined) ? weight : new Numeric(50, '%');
+
+                if (color_1.type !== 'hsla' && color_1.type !== 'rgba') {
+                    Fashion.raise('arg 1 ' + color_1 + ' is not a color for \'mix\'');
+                }
+                if (color_2.type !== 'hsla' && color_2.type !== 'rgba') {
+                    Fashion.raise('arg 2 ' + color_2 + ' is not a color for \'mix\'');
+                }
+                if (weight.type !== 'number') {
+                    Fashion.raise('arg 3 ' + weight + ' is not a number for \'mix\'');
+                }
+                if (weight.value !== Color.constrainPercentage(weight.value)) {
+                    Fashion.raise('Weight ' + weight + ' must be between 0% and 100% for \'mix\'');
+                }
+
+                color_1 = color_1.getRGBA();
+                color_2 = color_2.getRGBA();
+
+                weight = weight.value / 100;
+
+                var factor = (weight * 2) - 1,
+                    alpha = color_1.a - color_2.a,
+                    weight1 = (((factor * alpha == -1) ? factor : (factor + alpha) / (1 + factor * alpha)) + 1) / 2,
+                    weight2 = 1 - weight1;
+
+                return new ColorRGBA(
+                    (weight1 * color_1.r) + (weight2 * color_2.r),
+                    (weight1 * color_1.g) + (weight2 * color_2.g),
+                    (weight1 * color_1.b) + (weight2 * color_2.b),
+                    (weight * color_1.a) + ((1 - weight) * color_2.a)
+                );
             }
 });
 var __rt_constructor = __rt.constructor.bind(__rt),
@@ -5481,36 +5521,33 @@ __rt_setDynamic("$disabled-color", __rt_getGlobalDefault("$disabled_color") || _
     __udf, 
     __udf, 
     __udf]))), 24);
-__rt_setDynamic("$divider-color", __rt_getGlobalDefault("$divider_color") || __rt_box(__rt.registered.rgba.apply(__rt.registered, __rt_applySpreadArgs([
+__rt_setDynamic("$reverse-color", __rt_getGlobalDefault("$reverse_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#222") : __ColorRGBA.fromHex("#fff")), 25);
+__rt_setDynamic("$divider-color", __rt_getGlobalDefault("$divider_color") || __rt_box(__rt.registered.mix.apply(__rt.registered, __rt_applySpreadArgs([
     __rt_get(__strings._), 
-    new __Numeric(0.12), 
-    __udf, 
-    __udf, 
-    __udf]))), 25);
-__rt_setDynamic("$reverse-color", __rt_getGlobalDefault("$reverse_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#222") : __ColorRGBA.fromHex("#fff")), 26);
-__rt_setDynamic("$reverse-highlight-color", __rt_getGlobalDefault("$reverse_highlight_color") || __rt_box(__rt.registered.rgba.apply(__rt.registered, __rt_applySpreadArgs([
     __rt_get("$reverse_color"), 
-    new __Numeric(0.54), 
-    __udf, 
-    __udf, 
-    __udf]))), 27);
+    new __Numeric(12, "%")]))), 26);
+__rt_setDynamic("$selected-background-color", __rt_getGlobalDefault("$selected_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __rt_get("$base_dark_color") : __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
+    new __Text("grey", "'"), 
+    new __Text("300", "'")])))), 27);
+__rt_setDynamic("$hovered-background-color", __rt_getGlobalDefault("$hovered_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#4d4d4d") : __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
+    new __Text("grey", "'"), 
+    new __Text("200", "'")])))), 28);
+__rt_setDynamic("$header-background-color", __rt_getGlobalDefault("$header_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
+    new __Text("grey", "'"), 
+    new __Text("800", "'")]))) : __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
+    new __Text("grey", "'"), 
+    new __Text("100", "'")])))), 29);
 __rt_setDynamic("$reverse-disabled-color", __rt_getGlobalDefault("$reverse_disabled_color") || __rt_box(__rt.registered.rgba.apply(__rt.registered, __rt_applySpreadArgs([
     __rt_get("$reverse_color"), 
     new __Numeric(0.38), 
     __udf, 
     __udf, 
-    __udf]))), 28);
-__rt_setDynamic("$reverse-divider-color", __rt_getGlobalDefault("$reverse_divider_color") || __rt_box(__rt.registered.rgba.apply(__rt.registered, __rt_applySpreadArgs([
-    __rt_get("$reverse_color"), 
-    new __Numeric(0.12), 
-    __udf, 
-    __udf, 
-    __udf]))), 29);
-__rt_setDynamic("$background-color", __rt_getGlobalDefault("$background_color") || __ColorRGBA.fromHex("#fff"), 30);
-__rt_setDynamic("$alt-background-color", __rt_getGlobalDefault("$alt_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#3a3a3a") : __ColorRGBA.fromHex("#f5f5f5")), 31);
-__rt_setDynamic("$reverse-background-color", __rt_getGlobalDefault("$reverse_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#fafafa") : __ColorRGBA.fromHex("#303030")), 32);
-__rt_setDynamic("$reverse-alt-background-color", __rt_getGlobalDefault("$reverse_alt_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#f5f5f5") : __ColorRGBA.fromHex("#3a3a3a")), 33);
-__rt_setDynamic("$faded-color", __rt_getGlobalDefault("$faded_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#4d4d4d") : __ColorRGBA.fromHex("#c3c3c3")), 34);
+    __udf]))), 30);
+__rt_setDynamic("$background-color", __rt_getGlobalDefault("$background_color") || __ColorRGBA.fromHex("#fff"), 31);
+__rt_setDynamic("$alt-background-color", __rt_getGlobalDefault("$alt_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#3a3a3a") : __ColorRGBA.fromHex("#f5f5f5")), 32);
+__rt_setDynamic("$reverse-background-color", __rt_getGlobalDefault("$reverse_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#fafafa") : __ColorRGBA.fromHex("#303030")), 33);
+__rt_setDynamic("$reverse-alt-background-color", __rt_getGlobalDefault("$reverse_alt_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#f5f5f5") : __ColorRGBA.fromHex("#3a3a3a")), 34);
+__rt_setDynamic("$faded-color", __rt_getGlobalDefault("$faded_color") || (__rt_test(__rt_get("$dark_mode")) ? __ColorRGBA.fromHex("#4d4d4d") : __ColorRGBA.fromHex("#e1e1e1")), 35);
 __rt_setDynamic("$overlay-color", __rt_getGlobalDefault("$overlay_color") || (__rt_test(__rt_get("$dark_mode")) ? __rt_box(__rt.registered.rgba.apply(__rt.registered, __rt_applySpreadArgs([
     __ColorRGBA.fromHex("#fff"), 
     new __Numeric(0.03), 
@@ -5521,15 +5558,11 @@ __rt_setDynamic("$overlay-color", __rt_getGlobalDefault("$overlay_color") || (__
     new __Numeric(0.03), 
     __udf, 
     __udf, 
-    __udf])))), 35);
-__rt_setDynamic("$content-padding", __rt_getGlobalDefault("$content_padding") || new __Numeric(16, "px"), 36);
-__rt_setDynamic("$dataview_item_selected_background_color", __rt_getGlobalDefault("$dataview_item_selected_background_color") || (__rt_test(__rt_get("$dark_mode")) ? __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
-    __rt_get("$base_color_name"), 
-    new __Text("700", "'")]))) : __rt_box((__rt.functions.material_color || material_color__fn).apply(__rt.functions, __rt_applySpreadArgs([
-    new __Text("grey", "'"), 
-    new __Text("300", "'")])))), 37);
-__rt_setDynamic("$dataitem_selected_background_color", __rt_getGlobalDefault("$dataitem_selected_background_color") || __rt_get("$dataview_item_selected_background_color"), 38);
-__rt_setDynamic("$listitem-selected-background-color", __rt_getGlobalDefault("$listitem_selected_background_color") || __rt_get("$dataitem_selected_background_color"), 39);
+    __udf])))), 36);
+__rt_setDynamic("$content-padding", __rt_getGlobalDefault("$content_padding") || new __Numeric(16, "px"), 37);
+__rt_setDynamic("$dataview_item_selected_background_color", __rt_getGlobalDefault("$dataview_item_selected_background_color") || __rt_get("$selected_background_color"), 38);
+__rt_setDynamic("$dataitem_selected_background_color", __rt_getGlobalDefault("$dataitem_selected_background_color") || __rt_get("$dataview_item_selected_background_color"), 39);
+__rt_setDynamic("$listitem-selected-background-color", __rt_getGlobalDefault("$listitem_selected_background_color") || __rt_get("$dataitem_selected_background_color"), 40);
 },
  {
 	":root": [
@@ -5555,10 +5588,11 @@ __rt_setDynamic("$listitem-selected-background-color", __rt_getGlobalDefault("$l
 		"highlight-color",
 		"disabled-color",
 		"divider-color",
+		"selected-background-color",
+		"hovered-background-color",
+		"header-background-color",
 		"reverse-color",
-		"reverse-highlight-color",
 		"reverse-disabled-color",
-		"reverse-divider-color",
 		"background-color",
 		"alt-background-color",
 		"reverse-background-color",

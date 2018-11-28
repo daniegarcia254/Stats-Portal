@@ -1,2 +1,2 @@
 // @tag full-page
-// @require /home/dgarcia/Devel/dgarcia/Stats-Portal/client/app.js
+// @require C:\Users\Daniel\Devel\StatsPortal\client\app.js

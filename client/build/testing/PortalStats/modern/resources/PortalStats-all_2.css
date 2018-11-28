@@ -1,0 +1,554 @@
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-person-outline::before {
+    content: 'person_outline';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-plus-one::before {
+    content: 'plus_one';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-poll::before {
+    content: 'poll';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-public::before {
+    content: 'public';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-school::before {
+    content: 'school';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-sentiment-dissatisfied::before {
+    content: 'sentiment_dissatisfied';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-sentiment-neutral::before {
+    content: 'sentiment_neutral';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-sentiment-satisfied::before {
+    content: 'sentiment_satisfied';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-sentiment-very-dissatisfied::before {
+    content: 'sentiment_very_dissatisfied';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-sentiment-very-satisfied::before {
+    content: 'sentiment_very_satisfied';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-share::before {
+    content: 'share';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-whatshot::before {
+    content: 'whatshot';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-check-box::before {
+    content: 'check_box';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-check-box-outline-blank::before {
+    content: 'check_box_outline_blank';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-indeterminate-check-box::before {
+    content: 'indeterminate_check_box';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-radio-button-checked::before {
+    content: 'radio_button_checked';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-radio-button-unchecked::before {
+    content: 'radio_button_unchecked';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-star::before {
+    content: 'star';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-star-border::before {
+    content: 'star_border';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/etc/mixins/icons.scss:8 */
+.md-icon-star-half::before {
+    content: 'star_half';
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Component.scss:67 */
+@font-face {
+    font-family: 'Roboto';
+    font-weight: 400;
+    font-style: normal;
+    src: local('Roboto Regular'), local('Roboto-Regular'), url("../../modern/resources/fonts/roboto/Roboto-Regular.ttf") format('truetype');
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Component.scss:75 */
+@font-face {
+    font-family: 'Roboto';
+    font-weight: 100;
+    font-style: normal;
+    src: local('Roboto Light'), local('Roboto-Light'), url("../../modern/resources/fonts/roboto/Roboto-Light.ttf") format('truetype');
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Component.scss:84 */
+@font-face {
+    font-family: 'Roboto';
+    font-weight: 600;
+    font-style: normal;
+    src: local('Roboto Medium'), local('Roboto-Medium'), url("../../modern/resources/fonts/roboto/Roboto-Medium.ttf") format('truetype');
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Component.scss:93 */
+@font-face {
+    font-family: 'Roboto';
+    font-weight: 900;
+    font-style: normal;
+    src: local('Roboto Bold'), local('Roboto-Bold'), url("../../modern/resources/fonts/roboto/Roboto-Bold.ttf") format('truetype');
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Component.scss:102 */
+@font-face {
+    font-family: 'Roboto';
+    font-weight: normal;
+    font-style: italic;
+    src: local('Roboto Italic'), local('Roboto-Italic'), url("../../modern/resources/fonts/roboto/Roboto-Italic.ttf") format('truetype');
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Component.scss:113 */
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Material Icons'), local('MaterialIcons-Regular'), url("../../modern/resources/fonts/MaterialIcons-Regular.ttf") format('truetype');
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Component.scss:122 */
+html,
+body {
+    font-family: 'Roboto', sans-serif;
+    color: #111;
+    color: var(--color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Indicator.scss:1 */
+.x-indicator span {
+    transition: background-color 0.25s ease-out, width 0.1s ease-out, height 0.1s ease-out;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Button.scss:10 */
+.x-button-fab .x-inner-el {
+    box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.18), 2px 2px 5px 0 rgba(0, 0, 0, 0.12);
+    z-index: 2;
+    color: #222;
+    color: var(--accent-foreground-color);
+    display: flex;
+    width: 56px;
+    height: 56px;
+    background-color: #ff9800;
+    background-color: var(--accent-color);
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background-color 450ms cubic-bezier(0.23, 1, 0.32, 1);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Button.scss:23 */
+.x-button-fab .x-ripple {
+    background-color: #222;
+    background-color: var(--accent-foreground-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Button.scss:27 */
+.x-button-fab.x-hovered .x-inner-el {
+    background-color: #ffb74d;
+    background-color: var(--accent-pressed-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Button.scss:31 */
+.x-keyboard-mode .x-button-fab.x-focused .x-inner-el {
+    background-color: #ffb74d;
+    background-color: var(--accent-pressed-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Button.scss:36 */
+.x-big .x-button-fab .x-inner-el {
+    border-radius: 50%;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Button.scss:41 */
+.x-button-fab .x-icon-el {
+    color: #222;
+    color: var(--accent-foreground-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Button.scss:46 */
+.x-button-fab.x-pressing .x-inner-el {
+    box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.21), 2px 2px 6px 0 rgba(0, 0, 0, 0.18);
+    z-index: 3;
+    background-color: #ffb74d;
+    background-color: var(--accent-pressed-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Button.scss:48 */
+.x-button-fab.x-pressing .x-inner-el .x-icon-el {
+    color: #222;
+    color: var(--accent-foreground-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Button.scss:57 */
+.x-docked-top .x-has-badge .x-badge-el {
+    top: -8px;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Button.scss:63 */
+.x-has-badge .x-badge-el {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    text-align: center;
+    display: block;
+    overflow: hidden;
+    box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.12), 2px 2px 5px 0 rgba(0, 0, 0, 0.08);
+    z-index: 1;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Toolbar.scss:1 */
+.x-toolbar-body-el {
+    overflow: visible;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Toolbar.scss:6 */
+.x-toolbar-body-el > .x-title {
+    transition: 0.25s padding ease-out;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Panel.scss:3 */
+.x-panelheader .x-field {
+    background-color: transparent;
+    border-bottom-color: rgba(255, 255, 255, 0.38);
+    border-bottom-color: var(--reverse-disabled-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Panel.scss:7 */
+.x-panelheader .x-field .x-label-el {
+    color: #ff9800;
+    color: var(--accent-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Panel.scss:11 */
+.x-panelheader .x-field.x-focused {
+    border-bottom-color: #ff9800;
+    border-bottom-color: var(--accent-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Panel.scss:17 */
+.x-panelheader .x-input .x-cleartrigger .x-icon-el {
+    color: #fff;
+    color: var(--base-foreground-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Panel.scss:22 */
+.x-panelheader .x-input .x-input-el {
+    -webkit-text-fill-color: #fff;
+    -webkit-text-fill-color: var(--base-foreground-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Panel.scss:28 */
+.x-panelheader .x-toggleslider.x-on {
+    background-color: #ffb74d;
+    background-color: var(--accent-pressed-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/Panel.scss:32 */
+.x-panelheader .x-toggleslider.x-on .x-thumb:after {
+    background-color: #ff9800;
+    background-color: var(--accent-color);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/dataview/ItemHeader.scss:2 */
+.x-itemheader.x-pinned {
+    box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.12), 2px 2px 5px 0 rgba(0, 0, 0, 0.08);
+    z-index: 3;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/dataview/SimpleListItem.scss:1 */
+.x-listitem-disclosure .x-icon-el {
+    transition: background-color 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/dataview/IndexBar.scss:1 */
+.x-indexbar-indicator {
+    box-shadow: 2px 2px 5px 0 rgba(0, 0, 0, 0.18), 2px 2px 5px 0 rgba(0, 0, 0, 0.12);
+    z-index: 2;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/tab/Bar.scss:2 */
+.x-tabbar-body-el {
+    overflow: visible;
+    padding: 0;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/modern/theme-material/sass/src/tab/Bar.scss:6 */
+.x-big .x-tabbar-body-el {
+    padding: 0;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/packages/local/moe-stats-modern/modern/sass/src/sencha-themer-defaults.scss:2 */
+a {
+    color: none;
+    text-decoration: none;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/packages/local/moe-stats-modern/modern/sass/src/sencha-themer-defaults.scss:6 */
+a:visited,
+a.x-sencha-themer-visited {
+    color: none;
+    text-decoration: none;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/packages/local/moe-stats-modern/modern/sass/src/sencha-themer-defaults.scss:11 */
+a:hover,
+a.x-sencha-themer-visited:hover {
+    color: none;
+    text-decoration: underline;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/packages/local/moe-stats-modern/modern/sass/src/sencha-themer-defaults.scss:16 */
+a:active,
+a.x-sencha-themer-visited:active {
+    color: none;
+    text-decoration: underline;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/packages/local/moe-stats-modern/modern/sass/src/sencha-themer-defaults.scss:21 */
+a.x-btn,
+a.x-btn:hover,
+a.x-btn:active {
+    text-decoration: none;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/draw/Surface.scss:2 */
+.x-surface,
+.x-surface-canvas {
+    position: absolute;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/draw/Container.scss:1 */
+.x-draw-container {
+    position: relative;
+    cursor: default;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:1 */
+.x-legend {
+    background: #fff;
+    outline: none;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:6 */
+.x-legend-horizontal {
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:12 */
+.x-legend-horizontal .x-legend-item {
+    display: inline-block;
+    border-right: 1px solid #ccc;
+    border-top: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:19 */
+.x-legend-horizontal .x-legend-item:first-child {
+    border-left: 1px solid #ccc;
+    border-bottom-left-radius: 2px;
+    border-top-left-radius: 2px;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:25 */
+.x-legend-horizontal .x-legend-item:last-child {
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 2px;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:31 */
+.x-legend-horizontal.x-rtl .x-legend-item:first-child {
+    border-right: 1px solid #ccc;
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 2px;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:36 */
+.x-legend-horizontal.x-rtl .x-legend-item:last-child {
+    border-right: none;
+    border-bottom-left-radius: 2px;
+    border-top-left-radius: 2px;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:44 */
+.x-legend-vertical {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:49 */
+.x-legend-vertical .x-legend-item {
+    border-left: 1px solid #ccc;
+    border-right: 1px solid #ccc;
+    border-bottom: 1px solid #ccc;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:54 */
+.x-legend-vertical .x-legend-item:first-child {
+    border-top: 1px solid #ccc;
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:60 */
+.x-legend-vertical .x-legend-item:last-child {
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:67 */
+.x-legend-item-inactive {
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=30)";
+    opacity: 0.3;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:71 */
+.x-legend-item {
+    padding: 0.8em 0.6em 0.8em 1.8em;
+    color: #333;
+    background: rgba(255, 255, 255, 0);
+    max-width: 16em;
+    min-width: 0;
+    font-size: 13px;
+    font-family: Zilla Slab, sans-serif;
+    line-height: 13px;
+    font-weight: normal;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    position: relative;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:87 */
+.x-rtl > * > .x-legend-item {
+    padding: 0.8em 1.8em 0.8em 1em;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:91 */
+.x-legend-item-marker {
+    position: absolute;
+    width: 0.8em;
+    height: 0.8em;
+    -webkit-border-radius: 0.4em;
+    -moz-border-radius: 0.4em;
+    -ms-border-radius: 0.4em;
+    -o-border-radius: 0.4em;
+    border-radius: 0.4em;
+    -webkit-box-shadow: rgba(255, 255, 255, 0.3) 0 1px 0, rgba(0, 0, 0, 0.4) 0 1px 0 inset;
+    -moz-box-shadow: rgba(255, 255, 255, 0.3) 0 1px 0, rgba(0, 0, 0, 0.4) 0 1px 0 inset;
+    box-shadow: rgba(255, 255, 255, 0.3) 0 1px 0, rgba(0, 0, 0, 0.4) 0 1px 0 inset;
+    left: 0.7em;
+    top: 0.85em;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/sass/src/chart/legend/Legend.scss:103 */
+.x-rtl > * > * > .x-legend-item-marker {
+    right: 0.7em;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/draw/Container.scss:1 */
+.x-chart-preview > img {
+    width: 100% !important;
+    height: auto !important;
+    position: absolute;
+    top: 50%;
+    transform: translate(0, -50%);
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/legend/Legend.scss:13 */
+.x-legend .x-legend-body-el {
+    /*
+ * The DOM looks like this:
+ *
+ *     ext-legend
+ *         x-legend-body-el x-legend-horizontal/vertical
+ *             x-legend-item
+ *             x-legend-item
+ *
+ * The `x-legend-body-el` is what is being scrolled.
+ */
+    display: inline-block;
+    margin: auto;
+    white-space: nowrap !important;
+    line-height: 0;
+    background: #fff;
+    -webkit-box-shadow: rgba(255, 255, 255, 0.6) 0 1px 1px;
+    -moz-box-shadow: rgba(255, 255, 255, 0.6) 0 1px 1px;
+    box-shadow: rgba(255, 255, 255, 0.6) 0 1px 1px;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/legend/Legend.scss:29 */
+.x-legend-horizontal .x-legend-body-el {
+    display: table;
+    margin: 0 auto;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/legend/Legend.scss:35 */
+.x-legend-item {
+    font-size: 13px;
+    line-height: 13px;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/legend/Legend.scss:40 */
+.x-legend-item-marker {
+    top: 0.95em;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/legend/Legend.scss:44 */
+.x-legend-body-el {
+    white-space: nowrap;
+    padding: 10px;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/legend/Legend.scss:49 */
+.x-legend-horizontal {
+    overflow-x: auto;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/legend/Legend.scss:53 */
+.x-legend-vertical .x-legend-body-el {
+    overflow-y: auto;
+    flex: none;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/AbstractChart.scss:1 */
+.x-chart-toolbar {
+    position: absolute;
+    z-index: 9;
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-box;
+    display: box;
+    padding: 0.6em;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/AbstractChart.scss:7 */
+.x-chart-toolbar .x-button {
+    margin: 0.2em;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/AbstractChart.scss:11 */
+.x-chart-toolbar[data-side=left],
+.x-chart-toolbar[data-side=right] {
+    top: 0;
+    -webkit-box-orient: vertical;
+    -moz-box-orient: vertical;
+    -ms-box-orient: vertical;
+    box-orient: vertical;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/AbstractChart.scss:16 */
+.x-chart-toolbar[data-side=left] {
+    left: 0;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/AbstractChart.scss:20 */
+.x-chart-toolbar[data-side=right] {
+    right: 0;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/AbstractChart.scss:24 */
+.x-chart-toolbar[data-side=top],
+.x-chart-toolbar[data-side=bottom] {
+    -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
+    -ms-box-orient: horizontal;
+    box-orient: horizontal;
+    right: 0;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/AbstractChart.scss:29 */
+.x-chart-toolbar[data-side=top] {
+    top: 0;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/ext/packages/charts/modern/sass/src/chart/AbstractChart.scss:33 */
+.x-chart-toolbar[data-side=bottom] {
+    bottom: 0;
+    -webkit-box-orient: horizontal;
+    -moz-box-orient: horizontal;
+    -ms-box-orient: horizontal;
+    box-orient: horizontal;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/modern/sass/src/view/main/Main.scss:5 */
+#main-header .x-paneltitle {
+    /**************************************************************************** 
+  HEADER 
+****************************************************************************/
+    display: none;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/modern/sass/src/view/main/Main.scss:8 */
+#main-header .x-panelheader-body-el {
+    background-color: #fff;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/modern/sass/src/view/login/Login.scss:4 */
+#auth-login {
+    /**************************************************************************** 
+  LOGIN SCREEN
+****************************************************************************/
+    background-image: url('../resources/images/auth-background.jpg');
+    padding: 0;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/modern/sass/src/view/login/Login.scss:11 */
+#auth-login .x-formpanel {
+    border-radius: 30px;
+}
+/* C:/Users/Daniel/Devel/StatsPortal/client/modern/sass/src/view/login/Login.scss:15 */
+#auth-login #login-form-error-label {
+    text-align: center;
+    color: #fb6060;
+    font-weight: bold;
+    font-size: 15px;
+}

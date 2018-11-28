@@ -1,2 +1,2 @@
 web: vendor/bin/heroku-php-apache2 client/build/testing/PortalStats/
-deployapigateway: npm install -g claudia@5.2.0; cd server; npm install; cd ..; chmod -R 0777 server/; cd server; mkdir /app/.aws; cp aws-credentials /app/.aws/credentials; bash deploy-api-gateway.sh
+deployapigateway: npm install -g claudia@5.2.0; cd server; npm install; mkdir /app/.aws; cp aws-credentials /app/.aws/credentials; bash deploy-api-gateway.sh

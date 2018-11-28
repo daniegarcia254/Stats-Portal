@@ -54,12 +54,14 @@ Ext.define('PortalStats.view.login.Login', {
                 xtype: 'textfield',
                 name: 'username',
                 emptyText : 'Username',
+                value: 'stats',
                 allowBlank: false
             }, {
                 xtype: 'textfield',
                 name: 'password',
                 emptyText : 'Password',
                 inputType: 'password',
+                value: 'st4ts',
                 allowBlank: false
             }],
             buttonAlign: 'center',

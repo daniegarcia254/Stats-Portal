@@ -2,7 +2,7 @@
   "name": "claudiajs-apibuilder-aws",
   "version": "1.0.0",
   "description": "Deploy Node.js project to AWS Lambda to recover data from a database with user authentication included",
-  "main": "main.js",
+  "main": "app.js",
   "scripts": {
     "deploy": "TMPDIR=/tmp claudia create --profile claudia --role claudia-lambda --name moe-stats --version dev --region eu-west-1 --api-module app --timeout 30 --memory 256 --set-env-from-json config-env.json",
     "update": "TMPDIR=/tmp claudia update --profile claudia --role claudia-lambda --version dev --region eu-west-1 --api-module app --set-env-from-json config-env.json",

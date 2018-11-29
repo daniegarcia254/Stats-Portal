@@ -59,11 +59,11 @@ sencha app build testing
 
 ## Deploy
 
-Both frontend and backend are deployed using **Heroku**:
+Both frontend and backend are deployed using **Heroku** (for deploy with Docker please refer to [docker-master branch](https://github.com/daniegarcia254/Stats-Portal/tree/docker-master)):
 
 * Frontend: compile version of the portal is deployed with the heroku/php buildpack
 ```
-git push heroku heroku-master:master
+git push heroku master
 ```
 * Backend: deployed as AWS Lambda using the heroku/nodejs buildpack through a dyno worker
 ```

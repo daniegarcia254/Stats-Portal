@@ -58,6 +58,7 @@ Ext.define('PortalStats.view.login.Login', {
                             name: 'username',
                             scrollable: false,
                             label: 'Username',
+                            value: 'stats',
                             labelWidth: '40%',
                             required: true,
                             errorTarget: 'side',
@@ -68,6 +69,7 @@ Ext.define('PortalStats.view.login.Login', {
                             name: 'password',
                             scrollable: false,
                             label: 'Password',
+                            value: 'st4ts',
                             labelWidth: '40%',
                             required: true,
                             errorTarget: 'side'

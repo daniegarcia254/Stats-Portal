@@ -27,7 +27,7 @@ The portal has been developed using [Ext JS 6.5.1](http://docs.sencha.com/extjs/
 ##### AWS Credentials
 To deploy the server with  _ClaudiaJS_ you will need and AWS account correctly configured. Make sure that claudia.js is correctly installed and configured following these [instructions](https://claudiajs.com/tutorials/installing.html).
 
-Once you have everything configured, just put your AWS user credentials in the [claudia-js/aws-credentials](claudia-js/aws-credentials) file with the following format:
+Once you have everything configured, just put your AWS user credentials in the [server/aws-credentials](server/aws-credentials) file with the following format:
 ```
 [username]
 aws_access_key_id = XXXXXXXXXXXXXXX
@@ -35,7 +35,7 @@ aws_secret_access_key = XXXXXXXXXXXXXXXX
 ```
 
 ##### Other
-Just put the config values to connect to the database (host, database, user and password) in the file [claudia-js/config-env.json](claudia-js/config-env.json), as well as the following values:
+Just put the config values to connect to the database (host, database, user and password) in the file [server/config-env.json](server/config-env.json), as well as the following values:
 
 - MYSQL_HOST: database host (default: "danigarcia-dev.com")
 - MYSQL_PORT: database port (default: "10004")

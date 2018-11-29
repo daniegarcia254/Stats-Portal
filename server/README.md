@@ -5,7 +5,7 @@ Use [Claudia.js](https://claudiajs.com/) and [Claudia API Builder](https://claud
 The system is prepared to work with a single master user (username and password set on enviroment vars), but it would be very easy to add a register method to create new users and check it against the database.
 
 ### Configuration
-Refer to [Service configuration](https://github.com/daniegarcia254/Stats-Portal#server)
+Refer to [Service configuration](https://github.com/daniegarcia254/Stats-Portal/tree/heroku-master#server)
 
 ### Create, Update && Release
 

@@ -1,63 +1,71 @@
 # Stats Portal
 
-Universal responsive web portal with:
-- Login screen
-- Main screen with graph and grid of user statistics
+ExtJS universal (modern && classic) responsive web portal with login and user statistics visualization.
 
-The portal has been developed using [Ext JS 6.5.1](http://docs.sencha.com/extjs/6.5.1/) on the client and with [Claudia.js](https://claudiajs.com/) in the server. The user will be able to login in the portal and see some user statistics represented in a graph and a grid.
+* Frontend has been developed using [Ext JS 6.5.3](http://docs.sencha.com/extjs/6.5.3/)
+* Backend has been developed with NodeJS && ExpressJS, and deployed as an AWS Lambda function using [Claudia.js](https://claudiajs.com/)
+
+User will be able to login in the portal and see some user statistics represented in a graph and a grid.
+
+## Table of Contents
+
+* [Configuration](#configuration)
+    * [Database](#database)
+    * [Server](#server)
+    * [Client](#client)
+* [Deploy](#deploy)
 
 ## Configuration
 
-#### Docker && Database
+### Database
 
-- _**[docker-compose.yml](docker-compose.yml)**_:
-    - Web app default port (Apache Server): 10001
-    - Database default port: 10004
-    
-- _**[mysql-environment.yml](mysql-environment.yml)**_: database configuration where the user stats will be stored
-    - MYSQL_ROOT_PASSWORD   --> MySQL Server ROOT user default password
-    - MYSQL_USER            --> MySQL username (default "stats")
-    - MYSQL_PASSWORD        --> MySQL username (default "stats")
-    - MYSQL_DATABASE        --> MySQL username (default "stats")
-    
-- _**[claudiajs-api/db-dump](claudiajs-api/db-dump)**_: data to create and populate the users' statistics database
+For the database, [JawsDB MySql](https://devcenter.heroku.com/articles/jawsdb#backup-import-data-from-jawsdb-or-another-mysql-database) Heroku plugin is used.
 
-#### Back-end
+Datbase credentials will be saved on Heroku Config Var: JAWSDB_URL
 
-##### AWS Credentials
+### Server
+##### AWS Credentiasl
 To deploy the server with  _ClaudiaJS_ you will need and AWS account correctly configured. Make sure that claudia.js is correctly installed and configured following these [instructions](https://claudiajs.com/tutorials/installing.html).
 
-Once you have everything configured, just put your AWS user credentials in the [claudia-js/aws-credentials](claudia-js/aws-credentials) file with the following format:
+Once you have everything configured, just put your AWS user credentials in the [server/aws-credentials](server/aws-credentials) file with the following format:
 ```
 [username]
 aws_access_key_id = XXXXXXXXXXXXXXX
 aws_secret_access_key = XXXXXXXXXXXXXXXX
 ```
 
-##### Other
-Just put the config values to connect to the database (host, database, user and password) in the file [claudia-js/config-env.json](claudia-js/config-env.json), as well as the following values:
+##### Database and other
+Fill the env var values in the file [server/config-env.json](server/config-env.json):
 
-- MYSQL_HOST: database host (default: "danigarcia-dev.com")
-- MYSQL_PORT: database port (default: "10004")
-- MYSQL_DB: database (default: "stats")
-- MYSQL_USER: database user (default: "stats")
-- MYSQL_PWD: database pwd for user (default: "stats")
-- MASTER_USER: username for the user that will be allowed to login (default: "stats")
-- MASTER_PWD: password for the user (default: "st4ts")
-- SESSION_DURATION: session duration for the JWT (default: "86400" )
-- SESSION_SECRET: secrete key fot the JWT tokens generation.
+- _MYSQL_HOST_: database host (get it from JAWSDB_URL)
+- _MYSQL_PORT_: database port (default: "3306")
+- _MYSQL_DB_: database (get it from JAWSDB_URL)
+- _MYSQL_USER_: database user (get it from JAWSDB_URL)
+- _MYSQL_PWD_: database pwd for user (get it from JAWSDB_URL)
+- _MASTER_USER_: client login username (default: "stats")
+- _MASTER_PWD_: client login password (default: "st4ts")
+- _SESSION_DURATION_: session duration for the JWT (default: "86400" )
+- _SESSION_SECRET_: secrte key fot the JWT tokens generation
 
-## Installation
+### Client
 
-Once you have everything configured, the easiest way to build and deploy the application is by using _Docker_:
+* In file [client/app/config/Runtime.js](client/app/config/Runtime.js) just replace _"API_GATEWAY_URL"_ with the backend service URI (usually the one returned by ClaudiaJS when backend is deployed in AWS)
+
+* Compilation
 ```
-docker-compose up && docker-compose build;
+sencha app build testing
 ```
-The _Docker_ container will already include all the necessary requirements: 
-- _Sencha CMD 6.5.1_, _Ext JS 6.5.1_, _NodeJS_, _Apache Server_.
 
-Two containers will be created:
-- *stats_portal*: where the web application will be available through Apache Server
-- *stats_db*: where the database will be hosted
 
-**NOTE**: the server, with _ClaudiaJS_, will be deployed in a _AWS API Gateway_.
+## Deploy
+
+Both frontend and backend are deployed using **Heroku**:
+
+* Frontend: compile version of the portal is deployed with the heroku/php buildpack
+```
+git push heroku heroku-master:master
+```
+* Backend: deployed as AWS Lambda using the heroku/nodejs buildpack through a dyno worker
+```
+heroku run deployapigateway
+```
